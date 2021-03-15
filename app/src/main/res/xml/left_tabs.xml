@@ -1,14 +1,14 @@
 <tabs>
     <tab
         id="@+id/tab_home"
-        icon="@drawable/ic_home"
+        icon="@drawable/ic_nav_home"
         title="Home" />
     <tab
         id="@+id/tab_menu"
-        icon="@drawable/ic_menu"
+        icon="@drawable/ic_nav_menu"
         title="Menu" />
     <tab
         id="@+id/tab_order"
-        icon="@drawable/ic_order"
+        icon="@drawable/ic_nav_order"
         title="Orders" />
 </tabs>

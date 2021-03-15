@@ -15,7 +15,7 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.pos.ui.menu.MenuFragment"
         android:label="@string/title_menu"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_home2" />
 
     <fragment
         android:id="@+id/navigation_notifications"

@@ -1,9 +1,9 @@
 package com.example.pos
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.Nullable
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.pos.ui.home.HomeFragment
@@ -62,29 +62,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val actionBar: ActionBar? = supportActionBar
+        var fm:Fragment = HomeFragment()
         val bottomBar = findViewById<View>(R.id.bottomBar) as BottomBar
         bottomBar.selectTabAtPosition(0)
         bottomBar.setOnTabSelectListener { tabId ->
             when(tabId){
-                R.id.tab_home ->{
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.contentContainer, HomeFragment())
-                        .commit()
+                R.id.tab_home -> {
+                    fm = HomeFragment()
+                    actionBar?.setTitle("Trang chủ")
                 }
-                R.id.tab_menu ->{
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.contentContainer, MenuFragment())
-                        .commit()
+                R.id.tab_menu -> {
+                    fm=MenuFragment()
+                    actionBar?.setTitle("Thực đơn")
                 }
-                R.id.tab_order ->{
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.contentContainer, OrderFragment())
-                        .commit()
+                R.id.tab_order -> {
+                    fm = OrderFragment()
+                    actionBar?.setTitle("Đơn hàng")
+
                 }
-                else -> supportFragmentManager.beginTransaction()
-                    .replace(R.id.contentContainer, HomeFragment())
-                    .commit()
             }
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.contentContainer, fm)
+                    .commit()
 
         }
     }

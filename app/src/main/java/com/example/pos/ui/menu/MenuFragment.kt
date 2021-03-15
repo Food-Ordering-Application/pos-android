@@ -21,11 +21,11 @@ class MenuFragment : Fragment() {
     ): View? {
         menuViewModel =
                 ViewModelProvider(this).get(MenuViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        val textView: TextView = root.findViewById(R.id.text_dashboard)
-        menuViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+        val root = inflater.inflate(R.layout.fragment_home2, container, false)
+        //val textView: TextView = root.findViewById(R.id.text_dashboard)
+//        menuViewModel.text.observe(viewLifecycleOwner, Observer {
+//            textView.text = it
+//        })
         return root
     }
 }
