@@ -11,7 +11,7 @@
     <fragment
         android:id="@+id/master_list"
         android:layout_width="0dp"
-        android:name="com.foa.pos.DashboardFragment"
+        android:name="com.foa.pos.BlankFragment"
         android:layout_height="match_parent"
         android:layout_weight="1"
         tools:layout="@android:layout/list_content" />

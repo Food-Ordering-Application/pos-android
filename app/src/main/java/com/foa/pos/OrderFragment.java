@@ -8,8 +8,10 @@ import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,6 +22,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -51,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OrderFragment extends Fragment {
+public class OrderFragment extends Fragment implements View.OnClickListener{
 
     private RelativeLayout menuWrapper;
     private RelativeLayout cartWrapper;
@@ -113,6 +117,7 @@ public class OrderFragment extends Fragment {
         menuGrid.setAdapter(menuadapter);
 
         initLayout();
+        root.setVisibility(View.VISIBLE);
 
         DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
@@ -130,6 +135,14 @@ public class OrderFragment extends Fragment {
         ct.setCategoryName("All");
         catList.add(0, ct);
         spinneradapter.set(catList);
+
+        //load categories for radio group
+
+        RadioGroup radioGroup = root.findViewById(R.id.categoryGroup);
+            addRadioButtons(radioGroup,catList);
+
+
+
 
         //DatabaseManager.getInstance().closeDatabase();
 
@@ -240,32 +253,45 @@ public class OrderFragment extends Fragment {
         return root;
     }
 
+    public void addRadioButtons(RadioGroup radioGroup, List<ProductCategory> categoryList) {
+        radioGroup.setOrientation(LinearLayout.HORIZONTAL);
+        //
+        for (int i = 0; i < categoryList.size(); i++) {
+            RadioButton rdbtn = new RadioButton(getActivity());
+            rdbtn.setId(View.generateViewId());
+            rdbtn.setText(categoryList.get(i).getCategoryName());
+            rdbtn.setOnClickListener(this);
+            rdbtn.setBackgroundResource(R.drawable.radio_button_selector);
+            rdbtn.setTextColor(R.drawable.radio_button_selector_text);
+            rdbtn.setPadding(50,30,50,30);
+            rdbtn.setGravity(Gravity.CENTER);
+            rdbtn.setButtonDrawable(android.R.color.transparent);
+            rdbtn.setElevation(4);
+            rdbtn.setMinWidth(150);
+            if (i==0) rdbtn.setChecked(true);
+
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams. WRAP_CONTENT ,
+                    LinearLayout.LayoutParams. WRAP_CONTENT ) ;
+            layoutParams.leftMargin = 20;
+            layoutParams.rightMargin = 20;
+            radioGroup.addView(rdbtn,layoutParams);
+        }
+    }
+
 
     int cartWidth = 0;
     private void initLayout() {
 
-        final int width = Helper.getDisplayWidth()-200 - 32;
-
-        cartWrapper.post(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(cartWrapper.getLayoutParams());
-                cartWidth = (width / 3);
-                param.width = cartWidth;
-                cartWrapper.setLayoutParams(param);
-            }
-        });
-
-        menuWrapper.post(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(menuWrapper.getLayoutParams());
-                param.width = (width / 3)*2;
-                menuWrapper.setLayoutParams(param);
-            }
-        });
+        final int width = Helper.getDisplayWidth()-140;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(cartWrapper.getLayoutParams());
+        cartWidth = (width / 3);
+        param.width = cartWidth;
+        cartWrapper.setLayoutParams(param);
+        LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(menuWrapper.getLayoutParams());
+        param2.width = (width / 3)*2;
+        menuWrapper.setLayoutParams(param2);
 
 
     }
@@ -618,4 +644,8 @@ public class OrderFragment extends Fragment {
     };
 
 
+    @Override
+    public void onClick(View v) {
+        Log.d("radioclick", " Name " + ((RadioButton)v).getText() +" Id is "+v.getId());
+    }
 }

@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_default"
-    android:padding="8dp">
+    android:visibility="visible">
 
     <RelativeLayout
         android:id="@+id/bgMenu"
-        android:layout_width="50dp"
+        android:layout_width="500dp"
         android:layout_height="match_parent">
 
         <RelativeLayout
@@ -41,10 +41,11 @@
 
             <EditText
                 android:id="@+id/editText1"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_alignTop="@+id/imageView2"
-                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="20dp"
                 android:layout_toRightOf="@+id/sparator"
                 android:background="@color/putih"
                 android:ems="10"
@@ -61,7 +62,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="20dp"
-
+                android:visibility="gone"
                 android:src="@drawable/ic_arrow_down" />
 
             <Spinner
@@ -71,21 +72,34 @@
                 android:layout_marginRight="5dp"
                 android:background="@null"
                 android:layout_alignTop="@+id/imageView2"
-                android:layout_toLeftOf="@+id/imageView3" />
+                android:layout_toLeftOf="@+id/imageView3"
+                android:visibility="gone"/>
 
         </RelativeLayout>
+        <RadioGroup
+            android:layout_below="@+id/relativeLayout3"
+            android:id="@+id/categoryGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+           >
+        </RadioGroup>
+
 
         <GridView
             android:id="@+id/gridView1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/relativeLayout3"
+            android:layout_below="@+id/categoryGroup"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:verticalSpacing="8dp"
             android:horizontalSpacing="8dp"
-            android:numColumns="5" >
+            android:numColumns="4" >
         </GridView>
 
         <ListView
@@ -105,7 +119,7 @@
         android:id="@+id/bgCart"
         android:layout_width="360dp"
         android:layout_height="match_parent"
-        android:layout_marginEnd="10dp">
+        android:layout_marginEnd="4dp">
 
 
         <RelativeLayout
@@ -422,24 +436,20 @@
             android:id="@+id/relativeLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/header_card"
+            android:background="@color/red"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvCartProductName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="11dp"
-                android:text="#325234 "
-                android:textSize="16dp"
-                android:textColor="@color/putih" />
-            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Chọn bàn"
-                android:textColor="#000000"
-                android:backgroundTint="@color/line_gray"/>
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:layout_marginTop="11dp"
+                android:textAlignment="center"
+                android:text="Giỏ hàng "
+                android:textSize="16dp"/>
+
         </LinearLayout>
     </RelativeLayout>
 

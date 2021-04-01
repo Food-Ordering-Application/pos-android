@@ -3,18 +3,32 @@ package com.foa.pos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
+import com.foa.pos.entity.ProductCategory;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.navigationrail.NavigationRailView;
 
-public class MainActivity extends AppCompatActivity implements  NavigationRailView.OnNavigationItemSelectedListener {
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements NavigationRailView.OnNavigationItemSelectedListener{
 	public static String SesID;
 	AppCompatActivity appCompatActivity = null;
 	
@@ -25,77 +39,9 @@ public class MainActivity extends AppCompatActivity implements  NavigationRailVi
 		appCompatActivity = this;
 		DatabaseManager.initializeInstance(new DatabaseHelper(this));
 
-		NavigationRailView navigationRailView = (NavigationRailView) findViewById(R.id.navigation_rail);
-		navigationRailView.setOnNavigationItemSelectedListener(this);
-
+		NavigationRailView navView = findViewById(R.id.nav_view);
+		navView.setOnNavigationItemSelectedListener(this);
 	}
-
-
-	@Override
-	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-		switch (item.getItemId()){
-			case R.id.navigation_dashboard:
-				Toast.makeText(this, "dashboard", Toast.LENGTH_SHORT).show();
-				 appCompatActivity.getSupportFragmentManager().beginTransaction()
-						.setReorderingAllowed(true)
-						.replace(R.id.content, DashboardFragment.class, null)
-						.commit();
-				return true;
-			case R.id.navigation_order:
-				appCompatActivity.getSupportFragmentManager().beginTransaction()
-						.setReorderingAllowed(true)
-						.replace(R.id.content, OrderFragment.class, null)
-						.commit();
-				Toast.makeText(this, "order", Toast.LENGTH_SHORT).show();
-				return true;
-			case R.id.navigation_delivery:
-
-				appCompatActivity.getSupportFragmentManager().beginTransaction()
-						.setReorderingAllowed(true)
-						.replace(R.id.content, DeliveryFragment.class, null)
-						.commit();
-				Toast.makeText(this, "delivery", Toast.LENGTH_SHORT).show();
-				return true;
-			case R.id.navigation_setting:
-
-				appCompatActivity.getSupportFragmentManager().beginTransaction()
-						.setReorderingAllowed(true)
-						.replace(R.id.content, SettingFragment.class, null)
-						.commit();
-				Toast.makeText(this, "setiing", Toast.LENGTH_SHORT).show();
-				return true;
-			default: return false;
-		}
-	}
-
-//	@Override
-//	public void onClick(View v) {
-//		// TODO Auto-generated method stub
-//
-//		Intent intent = null;
-//		switch ( v.getId()) {
-//		case R.id.btnMasterData:
-//			intent = new Intent(com.foa.pos.MainActivity.this, MasterListActivity.class);
-//			break;
-//		case R.id.btnQuickOrder:
-//			intent = new Intent(com.foa.pos.MainActivity.this, QuickOrderActivity.class);
-//			break;
-//		case R.id.btnSetting:
-//			intent = new Intent(com.foa.pos.MainActivity.this,SettingListActivity.class);
-//			break;
-//		case R.id.btnLogout:
-//			 logout();
-//			break;
-//		default:
-//			break;
-//		}
-//
-//		if(intent != null)
-//		{
-//			startActivity(intent);
-//			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//		}
-//	}
 	
 	private void logout()
 	{
@@ -122,5 +68,32 @@ public class MainActivity extends AppCompatActivity implements  NavigationRailVi
  
         alertDialog.show();
 
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+		Log.e("ITEMCLICK","CLICK");
+		switch (item.getItemId()) {
+			case R.id.navigation_delivery:
+				addFragment(new DeliveryFragment());
+				return true;
+			case R.id.navigation_manaorder:
+				addFragment(new BlankFragment());
+				return true;
+			case R.id.navigation_setting:
+				Log.e("ITEMCLICK","setting");
+				addFragment(new SettingFragment());
+			case R.id.navigation_order:
+				addFragment(new OrderFragment());
+			default:
+				return false;
+		}
+	}
+
+	private void addFragment (Fragment fragment){
+		appCompatActivity.getSupportFragmentManager().beginTransaction()
+				.setReorderingAllowed(true)
+				.replace(R.id.nav_host_fragment, fragment, null)
+				.commit();
 	}
 }
