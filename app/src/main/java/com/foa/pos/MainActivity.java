@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-		Log.e("ITEMCLICK","CLICK");
 		switch (item.getItemId()) {
 			case R.id.navigation_delivery:
 				addFragment(new DeliveryFragment());
@@ -81,10 +80,11 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 				addFragment(new BlankFragment());
 				return true;
 			case R.id.navigation_setting:
-				Log.e("ITEMCLICK","setting");
 				addFragment(new SettingFragment());
+				return true;
 			case R.id.navigation_order:
 				addFragment(new OrderFragment());
+				return true;
 			default:
 				return false;
 		}

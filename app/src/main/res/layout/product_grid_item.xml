@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/grid_container"
     android:orientation="vertical">
     <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp">
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="match_parent"
@@ -48,13 +53,13 @@
     <TextView
         android:id="@+id/tvCartProductName"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:padding="10dp"
+        android:layout_height="54dp"
        android:layout_marginLeft="8dp"
         android:layout_gravity="center"
       	android:layout_marginTop="5dp"
-        android:text="cabe"
-        android:textSize="16sp"
+        android:text="Tên món ăn"
+        android:textColor="@color/bg_dark"
+        android:textSize="18sp"
         android:textStyle="bold"/>
 
     <TextView
@@ -63,11 +68,10 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textColor="@color/red"
-        android:layout_margin="20dp"
-        android:textSize="24sp"
+        android:layout_margin="8dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:text="10.000 đồng" />
 
-    
-
 </LinearLayout>
+</androidx.cardview.widget.CardView>

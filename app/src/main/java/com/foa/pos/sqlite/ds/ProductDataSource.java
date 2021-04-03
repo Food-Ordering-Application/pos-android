@@ -12,6 +12,9 @@ import com.foa.pos.utils.Helper;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.foa.pos.sqlite.DbSchema.COL_PRODUCT_CATEGORY_CODE;
+import static com.foa.pos.sqlite.DbSchema.COL_PRODUCT_CATEGORY_NAME;
+
 public class ProductDataSource {
 	private SQLiteDatabase db;
 	public ProductDataSource(SQLiteDatabase db)
@@ -39,7 +42,7 @@ public class ProductDataSource {
 				item.setProductID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
 				item.setProductName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
 				item.setCategoryID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
-				item.setCategoryName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_NAME)));
+				item.setCategoryName(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_DESCRIPTION)));
 				item.setPrice(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
 				item.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_DISCOUNT)));
@@ -95,7 +98,7 @@ public class ProductDataSource {
 				item.setProductID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
 				item.setProductName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
 				item.setCategoryID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
-				item.setCategoryName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_NAME)));
+				item.setCategoryName(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_DESCRIPTION)));
 				item.setPrice(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
 				item.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_DISCOUNT)));
@@ -183,6 +186,23 @@ public class ProductDataSource {
 	//	values.put(DbSchema.COL_PRODUCT_SYCN_ON, Shared.dateformat.format(item.getSycnOn()));
 		
 		return db.update(DbSchema.TBL_PRODUCT, values, DbSchema.COL_PRODUCT_CODE+"= '"+lastCode+"' ", null);
+	}
+
+	public String getIdByName(String name) {
+
+		boolean has = false;
+		String selectQuery = " SELECT * FROM " + DbSchema.TBL_PRODUCT_CATEGORY  +
+				" Where lower(" + COL_PRODUCT_CATEGORY_NAME + ") = '"+name.toLowerCase()+"'";
+
+		Cursor c = db.rawQuery(selectQuery, null);
+		int x = c.getCount();
+		String y =name;
+		if(c.getCount() ==1){
+			c.moveToFirst();
+			return c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_CODE));
+
+		}
+		return "";
 	}
 	
 	public int delete(String code)

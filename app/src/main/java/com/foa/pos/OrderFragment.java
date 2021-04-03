@@ -140,7 +140,11 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
         RadioGroup radioGroup = root.findViewById(R.id.categoryGroup);
             addRadioButtons(radioGroup,catList);
-
+            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                    RadioButton item = root.findViewById(checkedId);
+                    String cateName = item.getText().toString();
+                    menuadapter.set(DS.getAll(txtKeyword.getText().toString(),DS.getIdByName(cateName)));
+            });
 
 
 
@@ -227,7 +231,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         TextView t7 =(TextView)root.findViewById(R.id.textView7);
         txtempty =(TextView)root.findViewById(R.id.textView9);
 
-        t1.setTypeface(Helper.OpenSansSemibold);
+        //t1.setTypeface(Helper.OpenSansBold);
         t2.setTypeface(Helper.OpenSansBold);
         t4.setTypeface(Helper.OpenSansBold);
         t6.setTypeface(Helper.OpenSansBold);
@@ -245,9 +249,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         btnCancelCheckout.setTypeface(Helper.OpenSansSemibold);
         btnPay.setTypeface(Helper.OpenSansSemibold);
         txtPayment.setTypeface(Helper.openSansLight);
-
-
-
         //----
 
         return root;
