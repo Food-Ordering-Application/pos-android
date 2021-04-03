@@ -1,6 +1,7 @@
 package com.foa.pos;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -36,6 +37,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.CategorySpinnerMenuAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
+import com.foa.pos.adapter.ProductListAdapter;
 import com.foa.pos.entity.Cart;
 import com.foa.pos.entity.Order;
 import com.foa.pos.entity.OrderDetails;
@@ -60,6 +62,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private RelativeLayout menuWrapper;
     private RelativeLayout cartWrapper;
     private GridView menuGrid;
+    private  ListView menuList;
     private ProductGridAdapter menuadapter;
     private CartListAdapter cartadapter;
     private ListView cartList;
@@ -77,6 +80,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private Button btnCancelCheckout;
     private Button btnPay;
     private ImageButton btnToggleList;
+
+    RadioGroup radioGroup;
 
     private Spinner spinnerCategory;
     private CategorySpinnerMenuAdapter spinneradapter;
@@ -112,9 +117,13 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         cartWrapper = (RelativeLayout)root.findViewById(R.id.bgCart);
 
         menuGrid = (GridView)root.findViewById(R.id.gridView1);
+        menuList = root.findViewById(R.id.listView2);
+
+
         menuadapter = new ProductGridAdapter(getActivity());
 
         menuGrid.setAdapter(menuadapter);
+        menuList.setAdapter(menuadapter);
 
         initLayout();
         root.setVisibility(View.VISIBLE);
@@ -138,7 +147,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
         //load categories for radio group
 
-        RadioGroup radioGroup = root.findViewById(R.id.categoryGroup);
+         radioGroup = root.findViewById(R.id.categoryGroup);
             addRadioButtons(radioGroup,catList);
             radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
                     RadioButton item = root.findViewById(checkedId);
@@ -168,6 +177,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         btnToggleList = (ImageButton)root.findViewById(R.id.imageView2);
 
         menuGrid.setOnItemClickListener(gridOnlick);
+        menuList.setOnItemClickListener(gridOnlick);
         //btnCancel.setOnClickListener(cancelOnlick);
         btnSave.setOnClickListener(saveOnlick);
         btnCancelCheckout.setOnClickListener(cancelCheckOutOnlick);
@@ -371,8 +381,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             // TODO Auto-generated method stub
-            ProductCategory cat =   (ProductCategory) spinnerCategory.getSelectedItem();
-            menuadapter.set(DS.getAll(txtKeyword.getText().toString(),cat.getCategoryID()));
+            //ProductCategory cat =   (ProductCategory) spinnerCategory.getSelectedItem();
+            RadioButton item = root.findViewById(radioGroup.getCheckedRadioButtonId());
+            String cateName = item.getText().toString();
+            menuadapter.set(DS.getAll(txtKeyword.getText().toString(),DS.getIdByName(cateName)));
         }
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -634,12 +646,20 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
             if(Helper.read(Constants.KEY_SETTING_MENU, Constants.VAL_DEFAULT_MENU).equals("GRID"))
             {
                 Helper.write(Constants.KEY_SETTING_MENU,"LIST");
-                btnToggleList.setImageResource(R.drawable.ic_grid_on_black_36dp);
+                btnToggleList.setImageResource(R.drawable.ic_listview);
+                menuadapter.setMenu("LIST");
+                menuGrid.setVisibility(View.GONE);
+                menuList.setVisibility(View.VISIBLE);
+
+
             }
             else
             {
                 Helper.write(Constants.KEY_SETTING_MENU,"GRID");
-                btnToggleList.setImageResource(R.drawable.ic_list_black_36dp);
+                btnToggleList.setImageResource(R.drawable.ic_gridview);
+                menuadapter.setMenu("GRID");
+                menuList.setVisibility(View.GONE);
+                menuGrid.setVisibility(View.VISIBLE);
             }
         }
     };

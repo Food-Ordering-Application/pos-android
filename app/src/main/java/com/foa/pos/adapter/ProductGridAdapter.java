@@ -129,7 +129,7 @@ public class ProductGridAdapter extends BaseAdapter {
             if(this.menu.equals("GRID"))
                 vi = inflater.inflate(R.layout.product_grid_item, null);
             else
-                vi = inflater.inflate(R.layout.product_grid_item, null);
+                vi = inflater.inflate(R.layout.product_grid_list_item, null);
 
             holder = new ViewHolder();
  

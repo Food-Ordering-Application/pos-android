@@ -3,33 +3,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp">
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_noimage_square"/>
+        android:layout_height="220dp">
+            <RelativeLayout
+                android:layout_above="@+id/tvCartProductName"
+                android:layout_width="match_parent"
+                android:layout_height="120dp">
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_noimage_square"/>
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="fitXY"
-            android:src="@drawable/shadow" />
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/shadow" />
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/tvCartProductName"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+               android:layout_marginLeft="8dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_above="@id/tvProductPrice"
+                android:text="Tên món ăn"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
 
-
+            <TextView
+                android:id="@+id/tvProductPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:textAlignment="center"
+                android:textColor="@color/red"
+                android:layout_margin="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="10.000 đồng" />
         <RelativeLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="match_parent"
@@ -47,31 +68,6 @@
                 android:src="@drawable/ic_grid_checked"
 
                 />
-
         </RelativeLayout>
     </RelativeLayout>
-    <TextView
-        android:id="@+id/tvCartProductName"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-       android:layout_marginLeft="8dp"
-        android:layout_gravity="center"
-      	android:layout_marginTop="5dp"
-        android:text="Tên món ăn"
-        android:textColor="@color/bg_dark"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/tvProductPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textColor="@color/red"
-        android:layout_margin="8dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:text="10.000 đồng" />
-
-</LinearLayout>
 </androidx.cardview.widget.CardView>
