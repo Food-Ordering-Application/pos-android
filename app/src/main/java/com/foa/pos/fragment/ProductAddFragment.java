@@ -129,7 +129,7 @@ public class ProductAddFragment extends Fragment {
 		
 		radioGroup = (RadioGroup)rootView.findViewById(R.id.radioGroup1);
 		
-		btnSave = (ImageButton)rootView.findViewById(R.id.imageButton1);
+		btnSave = (ImageButton)rootView.findViewById(R.id.btnPlusQuantityCartItem);
 		btnSave.setOnClickListener(saveOnclick);
 		
 		icon = (ImageView)rootView.findViewById(R.id.imageView1);

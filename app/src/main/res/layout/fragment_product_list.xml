@@ -24,7 +24,7 @@
 	</ListView>
 
 	<ImageButton
-	    android:id="@+id/imageButton1"
+	    android:id="@+id/btnPlusQuantityCartItem"
 	    android:layout_width="26dp"
 	    android:layout_height="26dp"
 	    android:layout_alignParentRight="true"

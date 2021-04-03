@@ -53,7 +53,7 @@ public class ProductListFragment extends Fragment implements OnClickListener {
 			title.setText(mItem.content);
 		}
 		
-		rootView.findViewById(R.id.imageButton1).setOnClickListener(this);;
+		rootView.findViewById(R.id.btnPlusQuantityCartItem).setOnClickListener(this);;
 		
 		return rootView;
 	}

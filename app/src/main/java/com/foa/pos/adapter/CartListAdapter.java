@@ -107,8 +107,8 @@ public class CartListAdapter extends BaseAdapter {
             holder.name = (TextView) vi.findViewById(R.id.tvCartProductName);
             holder.price = (TextView) vi.findViewById(R.id.tvProductPrice);
             holder.qty = (TextView) vi.findViewById(R.id.tvTotal);
-            holder.btnMinus = (ImageButton) vi.findViewById(R.id.imageButton2);
-            holder.btnPlus = (ImageButton)vi.findViewById(R.id.imageButton1);
+            holder.btnMinus = (ImageButton) vi.findViewById(R.id.btnSubQuantityCartItem);
+            holder.btnPlus = (ImageButton)vi.findViewById(R.id.btnPlusQuantityCartItem);
             
             vi.setTag(holder);
         } else {
@@ -119,7 +119,12 @@ public class CartListAdapter extends BaseAdapter {
         holder.name.setText(cart.getProductName());
         holder.price.setText(Helper.decimalformat.format(cart.getSubtotal()) +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
         holder.qty.setText(String.valueOf(cart.getQty()));
-        
+        if (cart.getQty()==1){
+            holder.btnMinus.setImageResource(R.drawable.ic_baseline_delete_24);
+        }else {
+            holder.btnMinus.setImageResource(R.drawable.ic_remove_circle);
+        }
+
         holder.name.setTypeface(Helper.OpenSansRegular);
         holder.price.setTypeface(Helper.OpenSansSemibold);
         holder.qty.setTypeface(Helper.OpenSansRegular);

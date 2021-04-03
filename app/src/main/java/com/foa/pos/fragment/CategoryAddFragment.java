@@ -69,7 +69,7 @@ public class CategoryAddFragment extends Fragment {
 		txtName = (EditText)rootView.findViewById(R.id.editText2);
 		txtName.setTypeface(Helper.OpenSansRegular);
 		
-		btnSave = (ImageButton)rootView.findViewById(R.id.imageButton1);
+		btnSave = (ImageButton)rootView.findViewById(R.id.btnPlusQuantityCartItem);
 		btnSave.setOnClickListener(saveOnclick);
 		
 		

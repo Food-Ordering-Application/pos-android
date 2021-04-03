@@ -1,7 +1,6 @@
 package com.foa.pos;
 
 import android.bluetooth.BluetoothDevice;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -12,7 +11,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -37,7 +35,6 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.CategorySpinnerMenuAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
-import com.foa.pos.adapter.ProductListAdapter;
 import com.foa.pos.entity.Cart;
 import com.foa.pos.entity.Order;
 import com.foa.pos.entity.OrderDetails;
@@ -68,7 +65,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private ListView cartList;
 
     private TextView txtTotal;
-    private TextView txtTotal2;
+    private TextView txtDiscount;
+    private TextView txtTotalPay;
+    private TextView txtTotalPay2;
     private EditText txtKeyword;
     private EditText txtPayment;
     private TextView txtChange;
@@ -83,7 +82,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
     RadioGroup radioGroup;
 
-    private Spinner spinnerCategory;
+    private Spinner spinnerDiscount;
+    //private Spinner spinnerCategory;
     private CategorySpinnerMenuAdapter spinneradapter;
 
     private ScrollView scroll;
@@ -133,9 +133,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         DS = new ProductDataSource(db);
         menuadapter.set(DS.getAll("",""));
 
-        spinnerCategory = (Spinner)root.findViewById(R.id.spinner1);
+
+        //spinnerCategory = (Spinner)root.findViewById(R.id.spinner1);
         spinneradapter = new CategorySpinnerMenuAdapter(getActivity());
-        spinnerCategory.setAdapter(spinneradapter);
+        //spinnerCategory.setAdapter(spinneradapter);
 
         ProductCategoryDataSource catds = new ProductCategoryDataSource(db);
         ArrayList<ProductCategory> catList = catds.getAll();
@@ -164,12 +165,13 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         cartList.setAdapter(cartadapter);
 
         txtTotal = (TextView)root.findViewById(R.id.tvTotal);
-        txtTotal2 = (TextView)root.findViewById(R.id.textView5);
+        txtTotalPay = (TextView)root.findViewById(R.id.tvTotalPay);
+        txtTotalPay2 = (TextView)root.findViewById(R.id.textView5);
         txtKeyword = (EditText)root.findViewById(R.id.editText1);
         txtPayment = (EditText)root.findViewById(R.id.editText2);
         txtChange = (TextView)root.findViewById(R.id.textView8);
 
-        btnCancel = (Button)root.findViewById(R.id.btnCancel);
+        btnCancel = (Button)root.findViewById(R.id.btnClearCart);
         btnSave = (Button)root.findViewById(R.id.btnSave);
         btnOrder = (Button)root.findViewById(R.id.btnOrder);
         btnCancelCheckout = (Button)root.findViewById(R.id.btnCancelCheckout);
@@ -178,7 +180,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
         menuGrid.setOnItemClickListener(gridOnlick);
         menuList.setOnItemClickListener(gridOnlick);
-        //btnCancel.setOnClickListener(cancelOnlick);
+        btnCancel.setOnClickListener(cancelOnlick);
         btnSave.setOnClickListener(saveOnlick);
         btnCancelCheckout.setOnClickListener(cancelCheckOutOnlick);
         btnPay.setOnClickListener(payOnlick);
@@ -188,7 +190,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         cartContainer = (RelativeLayout)root.findViewById(R.id.cartContainer);
         checkOutContainer = (RelativeLayout)root.findViewById(R.id.checkOutContainer);
 
-        spinnerCategory.setOnItemSelectedListener(spinnerCategoryOnChange);
+        //.setOnItemSelectedListener(spinnerCategoryOnChange);
 
 
         cartadapter.setCartListener(new CartListAdapter.CartListener() {
@@ -216,7 +218,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
                 total = mtotal;
                 txtTotal.setText(Helper.decimalformat.format(mtotal)+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
-                txtTotal2.setText(txtTotal.getText().toString());
+
+                txtTotalPay.setText(txtTotal.getText().toString());
+                txtTotalPay2.setText(txtTotal.getText().toString());
 
                 if(cartadapter.getCount() == 0)
                     txtempty.setVisibility(View.VISIBLE);
@@ -250,7 +254,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
         txtKeyword.setTypeface(Helper.openSansLightItalic);
         txtTotal.setTypeface(Helper.OpenSansBold);
-        txtTotal2.setTypeface(Helper.OpenSansBold);
+        txtTotalPay2.setTypeface(Helper.OpenSansBold);
         txtChange.setTypeface(Helper.OpenSansBold);
 
         //btnCancel.setTypeface(Helper.OpenSansSemibold);
@@ -346,35 +350,38 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         @Override
         public void onClick(View v) {
             // TODO Auto-generated method stub
-            if(cartadapter.getCount() != 0)
-            {
-                cartadapter.removeAll();
-                menuadapter.reset();
-            }
-            else
-            {
-                getActivity().finish();
-                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
+
+            cartadapter.removeAll();
+            menuadapter.reset();
+//            if(cartadapter.getCount() != 0)
+//            {
+//                cartadapter.removeAll();
+//                menuadapter.reset();
+//            }
+//            else
+//            {
+//                getActivity().finish();
+//                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//            }
         }
     };
 
-    private final AdapterView.OnItemSelectedListener spinnerCategoryOnChange = new AdapterView.OnItemSelectedListener() {
-
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view,
-                                   int position, long id) {
-            // TODO Auto-generated method stub
-            ProductCategory c = (ProductCategory) spinneradapter.getItem(position);
-            //menuadapter.setFilter(txtKeyword.getText().toString(), c.getCategoryID());
-            menuadapter.set(DS.getAll(txtKeyword.getText().toString(),c.getCategoryID()));
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-            // TODO Auto-generated method stub
-        }
-    };
+//    private final AdapterView.OnItemSelectedListener spinnerCategoryOnChange = new AdapterView.OnItemSelectedListener() {
+//
+//        @Override
+//        public void onItemSelected(AdapterView<?> parent, View view,
+//                                   int position, long id) {
+//            // TODO Auto-generated method stub
+//            ProductCategory c = (ProductCategory) spinneradapter.getItem(position);
+//            //menuadapter.setFilter(txtKeyword.getText().toString(), c.getCategoryID());
+//            menuadapter.set(DS.getAll(txtKeyword.getText().toString(),c.getCategoryID()));
+//        }
+//
+//        @Override
+//        public void onNothingSelected(AdapterView<?> parent) {
+//            // TODO Auto-generated method stub
+//        }
+//    };
 
     private TextWatcher keywordOnchange = new TextWatcher() {
 
@@ -494,7 +501,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
                 public void onFinish(String result) {
                     // TODO Auto-generated method stub
                     ClearForm();
-                    Toast.makeText(getActivity(),getString(R.string.transaction_succeed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Thanh toán thành công", Toast.LENGTH_SHORT).show();
                 }
             });
             con.show();
@@ -509,7 +516,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
             // TODO Auto-generated method stub
             if(cartadapter.getCount() == 0)
             {
-                Toast.makeText(getActivity(), getString(R.string.select_one), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Chọn ít nhất 1 chọn sản phẩm", Toast.LENGTH_SHORT).show();
                 return;
             }
             isCheckout = true;
@@ -635,7 +642,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         txtPayment.setText("");
         showCart();
         txtKeyword.setText("");
-        spinnerCategory.setSelection(0);
+        ((RadioButton)radioGroup.getChildAt(0)).setChecked(true);
+        //spinnerCategory.setSelection(0);
         menuadapter.unCheckAll();
         isCheckout = false;
     }

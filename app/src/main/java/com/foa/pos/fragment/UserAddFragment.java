@@ -86,7 +86,7 @@ public class UserAddFragment extends Fragment {
 		
 		radioGroup = (RadioGroup)rootView.findViewById(R.id.radioGroup1);
 		
-		btnSave = (ImageButton)rootView.findViewById(R.id.imageButton1);
+		btnSave = (ImageButton)rootView.findViewById(R.id.btnPlusQuantityCartItem);
 		btnSave.setOnClickListener(saveOnclick);
 		
 		populateField();
