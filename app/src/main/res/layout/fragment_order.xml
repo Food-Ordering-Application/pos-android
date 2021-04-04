@@ -10,7 +10,8 @@
     <RelativeLayout
         android:id="@+id/bgMenu"
         android:layout_width="500dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
         <RelativeLayout
             android:id="@+id/relativeLayout3"
             android:layout_width="match_parent"
@@ -173,7 +174,7 @@
                 android:id="@+id/listView1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/spnPromotionCard"
+                android:layout_above="@+id/paymentInfo"
                 android:layout_alignParentTop="true"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="4dp"
@@ -184,11 +185,11 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_marginTop="10dp"
-                android:id="@+id/spnPromotionCard"
+                android:id="@+id/paymentInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_above="@+id/relativeLayout4"
+                android:layout_above="@+id/summaryPay"
                 android:padding="2dp"
                 >
                 <LinearLayout
@@ -218,7 +219,7 @@
                 android:layout_above="@+id/relativeLayout2"
                 android:padding="2dp"
                 android:layout_marginStart="4dp"
-                android:id="@+id/relativeLayout4"
+                android:id="@+id/summaryPay"
                 android:elevation="4dp"
                 >
 

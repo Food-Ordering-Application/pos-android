@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 		setContentView(R.layout.activity_main);
 		appCompatActivity = this;
 		DatabaseManager.initializeInstance(new DatabaseHelper(this));
-
 		NavigationRailView navView = findViewById(R.id.nav_view);
 		navView.setOnNavigationItemSelectedListener(this);
+		navView.getMenu().findItem(R.id.navigation_manaorder).setChecked(true);
 	}
 	
 	private void logout()

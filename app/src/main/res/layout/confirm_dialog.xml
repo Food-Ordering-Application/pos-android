@@ -60,7 +60,7 @@
 
              </RelativeLayout>
              <RelativeLayout
-                 android:id="@+id/relativeLayout4"
+                 android:id="@+id/summaryPay"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
                  android:padding="5dp"

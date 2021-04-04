@@ -168,7 +168,7 @@
 
              </LinearLayout>
              <RelativeLayout
-                 android:id="@+id/relativeLayout4"
+                 android:id="@+id/summaryPay"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
                  android:padding="5dp"
@@ -212,7 +212,7 @@
                   android:layout_centerHorizontal="true"
                   android:animateLayoutChanges="true"
                  android:layout_marginTop="20dp"
-                 android:layout_above="@+id/relativeLayout4"
+                 android:layout_above="@+id/summaryPay"
                  android:layout_centerVertical="true" >
              </ListView>
 

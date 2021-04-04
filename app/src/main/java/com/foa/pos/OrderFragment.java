@@ -295,14 +295,11 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-
-    int cartWidth = 0;
     private void initLayout() {
 
         final int width = Helper.getDisplayWidth()-140;
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(cartWrapper.getLayoutParams());
-        cartWidth = (width / 3);
-        param.width = cartWidth;
+        param.width = (width / 3);
         cartWrapper.setLayoutParams(param);
         LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(menuWrapper.getLayoutParams());
         param2.width = (width / 3)*2;

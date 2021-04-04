@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primaryColor">#F2994A</color>
+    <color name="primaryColorOpacity">#FDEFBB8D</color>
     <color name="secondaryColor">#2F80ED</color>
     <color name="teritaryColor">#BDBDBD</color>
     <color name="purple_200">#FFBB86FC</color>
@@ -26,6 +27,18 @@
     <color name="blue">#3E8FC1</color>
     <color name="green">#7CAC42</color>
     <color name="red">#E74825</color>
+
+    <color name="bgBackSideColor">#f4f0ff</color>
+    <color name="bgTitleLeft">#594691</color>
+    <color name="bgTitleRight">#ffffff</color>
+    <color name="bgContentTop">#594691</color>
+    <color name="bgContent">#ffffff</color>
+    <color name="contentDividerLine">#e0e0e0</color>
+    <color name="contentBadgeTitle">#a9a9a9</color>
+    <color name="titleBadgeTitle">#adafb1</color>
+    <color name="titleBadgeText">#adafb1</color>
+    <color name="mainTextColor">#343d43</color>
+    <color name="btnRequest">#ffbf12</color>
 
 
 

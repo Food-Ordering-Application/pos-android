@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/nav_host_fragment"
-        android:name="com.foa.pos.BlankFragment"
+        android:name="com.foa.pos.OrdersFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
