@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements NavigationRailView.OnNavigationItemSelectedListener{
 	public static String SesID;
 	AppCompatActivity appCompatActivity = null;
-	
+	Fragment preFragment = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 				addFragment(new DeliveryFragment());
 				return true;
 			case R.id.navigation_manaorder:
-				addFragment(new BlankFragment());
+				addFragment(new OrdersFragment());
 				return true;
 			case R.id.navigation_setting:
 				addFragment(new SettingFragment());

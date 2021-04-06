@@ -1,15 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    tools:context=".DeliveryFragment">
+    android:orientation="vertical"
+    tools:context=".DeliveryFragment"
+    >
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RadioGroup
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-5dp"
+            >
+            <RadioButton
+                android:id="@+id/waitingAcceptRadioBuutton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Chờ xác nhận"
+                android:background="@drawable/radio_button_selector"
+                android:textColor="@drawable/radio_button_selector_text"
+                android:button="@android:color/transparent"
+                android:checked="true"
+                android:minWidth="170dp"
+                android:gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_alignParentBottom="true">
+            </RadioButton>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/circle_badge"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    />
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center"
+                    android:text="12"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="-5dp"
+            >
+            <RadioButton
+                android:id="@+id/inProcessRadioBuutton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Đang thực hiện "
+                android:background="@drawable/radio_button_selector"
+                android:textColor="@drawable/radio_button_selector_text"
+                android:button="@android:color/transparent"
+                android:minWidth="170dp"
+                android:gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_alignParentBottom="true">
+            </RadioButton>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/circle_badge"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    />
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:gravity="center"
+                    android:text="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="55dp"
+            >
+            <RadioButton
+                android:id="@+id/completedRadioBuutton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Đã hoàn thành"
+                android:background="@drawable/radio_button_selector"
+                android:textColor="@drawable/radio_button_selector_text"
+                android:button="@android:color/transparent"
+                android:minWidth="170dp"
+                android:gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_alignParentBottom="true">
+            </RadioButton>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="55dp"
+            >
+            <RadioButton
+                android:id="@+id/denyAcceptRadioBuutton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Đã Huỷ"
+                android:background="@drawable/radio_button_selector"
+                android:textColor="@drawable/radio_button_selector_text"
+                android:button="@android:color/transparent"
+                android:minWidth="170dp"
+                android:gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_alignParentBottom="true">
+            </RadioButton>
+
+        </RelativeLayout>
+
+    </RadioGroup>
+    <GridView
+        android:id="@+id/deliveryGridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:numColumns="3"/>
 
-</FrameLayout>
+</LinearLayout>

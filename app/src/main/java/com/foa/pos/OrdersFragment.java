@@ -13,11 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.foa.pos.adapter.FoldingCellListAdapter;
+import com.foa.pos.adapter.OrdersGridViewAdapter;
 import com.foa.pos.entity.Item;
 import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 public class OrdersFragment extends Fragment {
     View root;
@@ -31,6 +32,8 @@ public class OrdersFragment extends Fragment {
         theGridView = root.findViewById(R.id.mainGridView);
         ordersLayout =root.findViewById(R.id.bgOrders);
         detailLayout = root.findViewById(R.id.bgOrderDetail);
+
+        Helper.initialize(getActivity().getBaseContext());
         // prepare elements to display
         final ArrayList<Item> items = Item.getTestingList();
 
@@ -38,19 +41,16 @@ public class OrdersFragment extends Fragment {
         items.get(0).setRequestBtnClickListener(v -> Toast.makeText(getActivity(), "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show());
 
         // create custom adapter that holds elements and their state (we need hold a id's of unfolded elements for reusable elements)
-        final FoldingCellListAdapter adapter = new FoldingCellListAdapter(getActivity(), items);
+        final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), items);
 
         // set elements to adapter
         theGridView.setAdapter(adapter);
 
         // set on click event listener to list view
-        theGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT);
-               initSplitLayout();
-
-            }
+        theGridView.setOnItemClickListener((parent, view, position, id) -> {
+            Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT).show();
+            initSplitLayout();
+            view.setBackgroundResource(R.color.primaryColorOpacity);
         });
         return root;
     }
@@ -65,7 +65,6 @@ public class OrdersFragment extends Fragment {
         param2.width = (width / 3);
         detailLayout.setLayoutParams(param2);
         detailLayout.setVisibility(View.VISIBLE);
-
-
+        theGridView.setNumColumns(2);
     }
 }
