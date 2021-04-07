@@ -1,9 +1,11 @@
 package com.foa.pos;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,15 +51,26 @@ public class OrdersFragment extends Fragment {
         // set on click event listener to list view
         theGridView.setOnItemClickListener((parent, view, position, id) -> {
             Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT).show();
-            initSplitLayout();
-            view.setBackgroundResource(R.color.primaryColorOpacity);
+//
+//            Item item = (Item)parent.getItemAtPosition(position);
+//            if(!item.isSelected()){
+//                view.findViewById(R.id.rightPart).setBackgroundResource(R.color.primaryColorOpacity);
+//                item.setSelected(true);
+//            }else{
+//                view.findViewById(R.id.rightPart).setBackgroundResource(R.color.white);
+//                item.setSelected(false);
+//            }
+
+            initSplitLayout(parent);
+            theGridView.setNumColumns(2);
+            view.setSelected(true);
         });
         return root;
     }
 
-    private void initSplitLayout() {
-
+    private void initSplitLayout(View view) {
         final int width = Helper.getDisplayWidth()-140;
+        view.setSelected(true);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ordersLayout.getLayoutParams());
         param.width = (width / 3)*2;
         ordersLayout.setLayoutParams(param);
@@ -65,6 +78,6 @@ public class OrdersFragment extends Fragment {
         param2.width = (width / 3);
         detailLayout.setLayoutParams(param2);
         detailLayout.setVisibility(View.VISIBLE);
-        theGridView.setNumColumns(2);
+        view.setSelected(true);
     }
 }

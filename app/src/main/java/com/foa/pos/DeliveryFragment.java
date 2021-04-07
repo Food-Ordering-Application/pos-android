@@ -8,45 +8,63 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.foa.pos.adapter.OrdersGridViewAdapter;
 import com.foa.pos.entity.Item;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class DeliveryFragment extends Fragment {
     View root;
     GridView theGridView;
     LinearLayout ordersLayout;
     RelativeLayout detailLayout;
+    RadioButton waitingAcceptRB;
+    RadioButton inProcessRB;
+    RadioButton completedRB;
+    RadioButton denyRadioButton;
+    List<RadioButton> radioButtonList;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         root =  inflater.inflate(R.layout.fragment_delivery, container, false);
-        theGridView = root.findViewById(R.id.deliveryGridView);
-        //ordersLayout =root.findViewById(R.id.bgOrders);
-        //detailLayout = root.findViewById(R.id.bgOrderDetail);
-        // prepare elements to display
+        init();
+        setGroupButtonListenter();
         final ArrayList<Item> items = Item.getTestingList();
-
-        // create custom adapter that holds elements and their state (we need hold a id's of unfolded elements for reusable elements)
         final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), items);
-
-        // set elements to adapter
         theGridView.setAdapter(adapter);
-
-        // set on click event listener to list view
-        theGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT);
-            }
-        });
+        theGridView.setOnItemClickListener((adapterView, view, pos, l) -> Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT));
         return root;
+    }
+
+    private void  init(){
+        theGridView = root.findViewById(R.id.deliveryGridView);
+        waitingAcceptRB = root.findViewById(R.id.waitingAcceptRadioBuutton);
+        inProcessRB = root.findViewById(R.id.inProcessRadioBuutton);
+        completedRB = root.findViewById(R.id.completedRadioBuutton);
+        denyRadioButton = root.findViewById(R.id.denyAcceptRadioBuutton);
+        radioButtonList = Arrays.asList(waitingAcceptRB,inProcessRB,completedRB,denyRadioButton);
+    }
+
+    private  void setGroupButtonListenter(){
+        for (int i = 0; i < radioButtonList.size(); i++) {
+            radioButtonList.get(i).setOnClickListener(v -> {
+                for (int j = 0; j < radioButtonList.size(); j++) {
+                    if(v.getId()!=radioButtonList.get(j).getId()){
+                        radioButtonList.get(j).setChecked(false);
+                    }
+                }
+            });
+        }
     }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.foa.pos.R;
 import com.foa.pos.entity.Item;
@@ -22,12 +23,28 @@ import java.util.List;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class OrdersGridViewAdapter extends ArrayAdapter<Item> {
-
-    private HashSet<Integer> unfoldedIndexes = new HashSet<>();
-    private View.OnClickListener defaultRequestBtnClickListener;
+    List<Item> items;
 
     public OrdersGridViewAdapter(Context context, List<Item> objects) {
         super(context, 0, objects);
+        this.items = objects;
+    }
+
+    @Override
+    public int getCount() {
+        return items.size();
+    }
+
+    @Nullable
+    @Override
+    public Item getItem(int position) {
+        return items.get(position);
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).getID();
     }
 
     @NonNull
@@ -68,34 +85,7 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Item> {
         viewHolder.toAddress.setText(item.getToAddress());
         viewHolder.requestsCount.setText(String.valueOf(item.getRequestsCount()));
         viewHolder.pledgePrice.setText(item.getPledgePrice());
-//        viewHolder.orderCard.setOnClickListener(v -> {
-//                      viewHolder.rightPart.setBackgroundResource(R.color.primaryColorOpacity);
-//        });
         return ordersView;
-    }
-
-    // simple methods for register cell state changes
-    public void registerToggle(int position) {
-        if (unfoldedIndexes.contains(position))
-            registerFold(position);
-        else
-            registerUnfold(position);
-    }
-
-    public void registerFold(int position) {
-        unfoldedIndexes.remove(position);
-    }
-
-    public void registerUnfold(int position) {
-        unfoldedIndexes.add(position);
-    }
-
-    public View.OnClickListener getDefaultRequestBtnClickListener() {
-        return defaultRequestBtnClickListener;
-    }
-
-    public void setDefaultRequestBtnClickListener(View.OnClickListener defaultRequestBtnClickListener) {
-        this.defaultRequestBtnClickListener = defaultRequestBtnClickListener;
     }
 
     // View lookup cache
