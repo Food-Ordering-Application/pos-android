@@ -151,8 +151,7 @@ public class ProductGridAdapter extends BaseAdapter {
 
         if(selected.contains(product.getProductID()))
         	 holder.selectedWrapper.setVisibility(View.VISIBLE);
-        
-        holder.name.setTypeface(Helper.OpenSansRegular);
+
         holder.price.setTypeface(Helper.OpenSansBold);
         
         if(product.getImage() != null)

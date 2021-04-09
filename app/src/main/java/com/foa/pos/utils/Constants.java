@@ -8,7 +8,7 @@ public class Constants {
 	public static String KEY_SETTING_STORE_PHONE = "store_phone";
 	public static String KEY_SETTING_STORE_WEB = "store_web";
 	//public static String KEY_SETTING_STORE_THANKS = "store_thx";
-	
+
 	public static String KEY_SETTING_BRANCH_ID = "branch_id";
 	public static String KEY_SETTING_CASHIER_ID = "cashier_id";
 	public static String KEY_SETTING_CASHIER_SN = "cashier_sn";
@@ -21,7 +21,7 @@ public class Constants {
 	public static String KEY_SETTING_MENU = "current_menu";
 	public static String VAL_DEFAULT_MENU = "GRID";
 
-	public static String VAL_DEFAULT_CURRENCY_SYMBOL = "đồng";
+	public static String VAL_DEFAULT_CURRENCY_SYMBOL = "đ";
 	
 	public static String VAL_DEFAULT_STORE_NAME = "Nasi Uduk Mpo Encuk";
 	public static String VAL_DEFAULT_STORE_ADDRESS = "JL. GANDUL PLN GANDUL,CINERE \nDEPOK 16512";

@@ -27,6 +27,8 @@ public class OrdersFragment extends Fragment {
     GridView theGridView;
     LinearLayout ordersLayout;
     RelativeLayout detailLayout;
+    long itemSelectedId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,42 +41,32 @@ public class OrdersFragment extends Fragment {
         // prepare elements to display
         final ArrayList<Item> items = Item.getTestingList();
 
-        // add custom btn handler to first list item
-        items.get(0).setRequestBtnClickListener(v -> Toast.makeText(getActivity(), "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show());
-
-        // create custom adapter that holds elements and their state (we need hold a id's of unfolded elements for reusable elements)
         final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), items);
 
         // set elements to adapter
         theGridView.setAdapter(adapter);
 
         // set on click event listener to list view
+
         theGridView.setOnItemClickListener((parent, view, position, id) -> {
             Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT).show();
-//
-//            Item item = (Item)parent.getItemAtPosition(position);
-//            if(!item.isSelected()){
-//                view.findViewById(R.id.rightPart).setBackgroundResource(R.color.primaryColorOpacity);
-//                item.setSelected(true);
-//            }else{
-//                view.findViewById(R.id.rightPart).setBackgroundResource(R.color.white);
-//                item.setSelected(false);
-//            }
-
+            theGridView.setNumColumns(3);
+            Log.e("view id",view+"");
             initSplitLayout(parent);
-            theGridView.setNumColumns(2);
             view.setSelected(true);
         });
+
+
         return root;
     }
 
     private void initSplitLayout(View view) {
         final int width = Helper.getDisplayWidth()-140;
         view.setSelected(true);
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ordersLayout.getLayoutParams());
+        ViewGroup.LayoutParams param = ordersLayout.getLayoutParams();
         param.width = (width / 3)*2;
         ordersLayout.setLayoutParams(param);
-        LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(detailLayout.getLayoutParams());
+        ViewGroup.LayoutParams param2 = detailLayout.getLayoutParams();
         param2.width = (width / 3);
         detailLayout.setLayoutParams(param2);
         detailLayout.setVisibility(View.VISIBLE);

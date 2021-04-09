@@ -21,13 +21,16 @@ import com.ramotion.foldingcell.FoldingCell;
 import java.util.HashSet;
 import java.util.List;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
 public class OrdersGridViewAdapter extends ArrayAdapter<Item> {
     List<Item> items;
+    private LayoutInflater layoutInflater;
+    private Context context;
 
     public OrdersGridViewAdapter(Context context, List<Item> objects) {
         super(context, 0, objects);
         this.items = objects;
+        this.context = context;
+        this.layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -50,55 +53,8 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Item> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        // get item for selected view
-        Item item = getItem(position);
-        // if ordersView is exists - reuse it, if not - create the new one from resource
-        LinearLayout ordersView = (LinearLayout) convertView;
-        ViewHolder viewHolder;
-        if (ordersView == null) {
-            viewHolder = new ViewHolder();
-            LayoutInflater vi = LayoutInflater.from(getContext());
-            ordersView = (LinearLayout) vi.inflate(R.layout.order_item_card, parent, false);
-            // binding view parts to view holder
-            viewHolder.price = ordersView.findViewById(R.id.title_price);
-            viewHolder.time = ordersView.findViewById(R.id.title_time_label);
-            viewHolder.date = ordersView.findViewById(R.id.title_date_label);
-            viewHolder.fromAddress = ordersView.findViewById(R.id.title_from_address);
-            viewHolder.toAddress = ordersView.findViewById(R.id.title_to_address);
-            viewHolder.requestsCount = ordersView.findViewById(R.id.title_requests_count);
-            viewHolder.pledgePrice = ordersView.findViewById(R.id.title_pledge);
-            viewHolder.rightPart = ordersView.findViewById(R.id.rightPart);
-            viewHolder.orderCard = ordersView.findViewById(R.id.orderscard);
-            ordersView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) ordersView.getTag();
-        }
-
-        if (null == item)
-            return ordersView;
-
-        // bind data from selected element to view through view holder
-        viewHolder.price.setText(item.getPrice());
-        viewHolder.time.setText(item.getTime());
-        viewHolder.date.setText(item.getDate());
-        viewHolder.fromAddress.setText(item.getFromAddress());
-        viewHolder.toAddress.setText(item.getToAddress());
-        viewHolder.requestsCount.setText(String.valueOf(item.getRequestsCount()));
-        viewHolder.pledgePrice.setText(item.getPledgePrice());
-        return ordersView;
+        convertView = layoutInflater.inflate(R.layout.card_item_bill, null);
+        return convertView;
     }
 
-    // View lookup cache
-    private static class ViewHolder {
-        LinearLayout orderCard;
-        RelativeLayout rightPart;
-        TextView price;
-        TextView contentRequestBtn;
-        TextView pledgePrice;
-        TextView fromAddress;
-        TextView toAddress;
-        TextView requestsCount;
-        TextView date;
-        TextView time;
-    }
 }

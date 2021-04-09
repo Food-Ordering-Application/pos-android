@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.foa.pos.adapter.DeliveryGridViewAdapter;
 import com.foa.pos.adapter.OrdersGridViewAdapter;
 import com.foa.pos.entity.Item;
 
@@ -41,7 +42,7 @@ public class DeliveryFragment extends Fragment {
         init();
         setGroupButtonListenter();
         final ArrayList<Item> items = Item.getTestingList();
-        final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), items);
+        final DeliveryGridViewAdapter adapter = new DeliveryGridViewAdapter(getActivity(), items);
         theGridView.setAdapter(adapter);
         theGridView.setOnItemClickListener((adapterView, view, pos, l) -> Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT));
         return root;

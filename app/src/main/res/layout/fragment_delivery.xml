@@ -126,6 +126,9 @@
         android:id="@+id/deliveryGridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="3"/>
+        android:numColumns="4"
+        android:clipToPadding="false"
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"/>
 
 </LinearLayout>
