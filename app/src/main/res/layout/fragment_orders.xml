@@ -8,9 +8,75 @@
     <LinearLayout
         android:id="@+id/bgOrders"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/relativeLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/textbox_large" >
+
+            <ImageButton
+                android:id="@+id/imageView2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="13dp"
+                android:background="@drawable/icon_state"
+                android:src="@drawable/ic_gridview"
+                />
+
+            <View
+                android:id="@+id/sparator"
+                android:layout_width="0.5dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="13dp"
+                android:layout_toRightOf="@+id/imageView2"
+                android:background="@color/line_gray" />
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignTop="@+id/imageView2"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="20dp"
+                android:layout_toRightOf="@+id/sparator"
+                android:background="@color/putih"
+                android:ems="10"
+                android:hint="Tìm kiếm hoá đơn"
+                android:textColor="@color/text_gray"
+                android:textSize="15dp" >
+            </EditText>
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_arrow_down" />
+
+            <!--            <Spinner-->
+            <!--                android:id="@+id/spinner1"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="30dp"-->
+            <!--                android:layout_marginEnd="5dp"-->
+            <!--                android:background="@null"-->
+            <!--                android:layout_alignTop="@+id/imageView2"-->
+            <!--                android:layout_toLeftOf="@+id/imageView3"-->
+            <!--                android:visibility="gone"/>-->
+
+        </RelativeLayout>
         <GridView
-            android:id="@+id/mainGridView"
+            android:id="@+id/orderGridView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipChildren="false"
@@ -38,18 +104,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primaryColor"
-            android:orientation="vertical"
-            android:gravity="center">
-
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="10dp"
+            >
             <TextView
-                android:id="@+id/tvCartProductName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="11dp"
-                android:text="Chi tiết đơn hàng #12BXCSKM"
-                android:padding="4dp"
-                android:textAlignment="center"
+                android:text="Chi tiết đơn hàng: #"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+            <TextView
+                android:id="@+id/tvOderId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
                 android:textColor="@color/white"
                 android:textSize="16dp" />
 
@@ -69,7 +138,7 @@
             android:paddingBottom="2dp"
             >
             <ListView
-                android:id="@+id/listView1"
+                android:id="@+id/listOrderDetails"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/paymentInfo"
@@ -223,7 +292,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="14dp"
                             android:textColor="@color/item"
-                            android:text="Tiền nhận" />
+                            android:text="Nhận" />
 
                         <TextView
                             android:id="@+id/tvReceiveMoney"
@@ -242,7 +311,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="14dp"
                             android:textColor="@color/item"
-                            android:text="Tiền thừa" />
+                            android:text="Trả lại" />
 
                         <TextView
                             android:id="@+id/tvChange"
@@ -264,7 +333,7 @@
                 <Button
                     android:padding="0dp"
                     android:layout_margin="0dp"
-                    android:id="@+id/btnClearCart"
+                    android:id="@+id/btnCancelDetatil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/teritaryColor"

@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 		NavigationRailView navView = findViewById(R.id.nav_view);
 		navView.setOnNavigationItemSelectedListener(this);
 		navView.getMenu().findItem(R.id.navigation_manaorder).setChecked(true);
+		addFragment(new OrderFragment());
 	}
 	
 	private void logout()

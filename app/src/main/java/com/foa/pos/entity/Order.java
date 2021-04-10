@@ -160,7 +160,7 @@ public class Order{
 	}
 
 	public String getStringCreatedOn(){
-		DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+		DateFormat dateFormat = new SimpleDateFormat("hh:mm-MM/yy");
 		return  dateFormat.format(createdOn);
 	}
 }
