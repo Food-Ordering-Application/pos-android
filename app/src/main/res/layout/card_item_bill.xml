@@ -3,8 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp">
-    <LinearLayout android:layout_width="match_parent"
+    android:layout_margin="20dp" >
+    <LinearLayout
+        android:id="@+id/cardOrder"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/card_product"
@@ -19,6 +21,7 @@
                 android:layout_weight="1"
                 >
                 <TextView
+                    android:id="@+id/orderId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/card_delivery_status"
@@ -30,6 +33,7 @@
                     android:gravity="center"/>
             </LinearLayout>
             <TextView
+                android:id="@+id/orderTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20:00"
@@ -51,9 +55,10 @@
                     android:text="Món"
                     android:gravity="start"/>
                 <TextView
+                    android:id="@+id/orderQty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="2"
+                    android:text="0"
                     android:textStyle="bold"
                     android:gravity="start"/>
             </LinearLayout>
@@ -68,6 +73,7 @@
                     android:text="Tổng tiền"
                     android:gravity="end"/>
                 <TextView
+                    android:id="@+id/orderAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="300.000đ"
@@ -77,6 +83,7 @@
             </LinearLayout>
         </LinearLayout>
         <TextView
+            android:id="@+id/orderStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Thanh toán: Tiền mặt"

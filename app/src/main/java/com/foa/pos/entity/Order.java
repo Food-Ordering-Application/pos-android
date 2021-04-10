@@ -1,7 +1,10 @@
 package com.foa.pos.entity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Order{
 	private String orderID;
@@ -14,13 +17,14 @@ public class Order{
 	private double amount;
 	private String userID;
 	private String branchID;
-    private String status;
+    private boolean status;
 	private int hasAudit;
     private String tableID;
 
 	private String userName;
 	private String tableName;
 	private String branchName;
+	private boolean isSelected;
 
 	private ArrayList<OrderDetails> orderDetails;
 	public String getOrderID() {
@@ -98,11 +102,11 @@ public class Order{
 		this.orderID = orderID;
 	}
 
-	public String getStatus() {
-		return status;
+	public boolean getStatus() {
+		return true;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 
@@ -136,5 +140,27 @@ public class Order{
 
 	public void setHasAudit(int hasAudit) {
 		this.hasAudit = hasAudit;
+	}
+
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean selected) {
+		isSelected = selected;
+	}
+
+	public int getSumQuantity(){
+		int sumQty = 0;
+		List<OrderDetails> orderDetails = getOrderDetails();
+		for ( OrderDetails item:orderDetails) {
+			sumQty+= item.getQty();
+		}
+		return sumQty;
+	}
+
+	public String getStringCreatedOn(){
+		DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+		return  dateFormat.format(createdOn);
 	}
 }

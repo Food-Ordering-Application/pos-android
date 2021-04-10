@@ -94,7 +94,7 @@ public interface DbSchema {
 	String INSERT_TBL_USER = " INSERT INTO " + TBL_USER + " VALUES('"+ Helper.getUserID() +"','demo','"+ Helper.getMD5("demo") +"',1,'2016-09-16 01:01:01','"+ Helper.read(Constants.KEY_SETTING_CASHIER_ID,"") +"');" ;
 	
 	String TBL_ORDER = "product_order";
-	String COL_ORDER_CODE = " order_id";
+	String COL_ORDER_CODE = "order_id";
 	String COL_ORDER_ORDERED_ON = "ordered_on";
 	String COL_ORDER_UPDATED_ON = "updated_on";
 	String COL_ORDER_SYCN_ON = "sycn_on";
@@ -104,6 +104,7 @@ public interface DbSchema {
 	String COL_ORDER_AMOUNT = "amount";
 	String COL_ORDER_USER_ID = "user_id";
 	String COL_ORDER_BRANCH_ID = "branch_id";
+	String COL_SUM_QTY = "sum_quantity";
 	
 	String CREATE_TBL_ORDER = "CREATE TABLE "
 			+ TBL_ORDER

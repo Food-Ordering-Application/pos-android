@@ -1,5 +1,6 @@
 package com.foa.pos;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.opengl.Visibility;
 import android.os.Bundle;
 
@@ -17,9 +18,15 @@ import android.widget.Toast;
 
 import com.foa.pos.adapter.OrdersGridViewAdapter;
 import com.foa.pos.entity.Item;
+import com.foa.pos.entity.Order;
+import com.foa.pos.sqlite.DatabaseHelper;
+import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.sqlite.ds.OrderDataSource;
+import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.Inflater;
 
 public class OrdersFragment extends Fragment {
@@ -28,6 +35,8 @@ public class OrdersFragment extends Fragment {
     LinearLayout ordersLayout;
     RelativeLayout detailLayout;
     long itemSelectedId;
+
+    OrderDataSource DS;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,31 +47,20 @@ public class OrdersFragment extends Fragment {
         detailLayout = root.findViewById(R.id.bgOrderDetail);
 
         Helper.initialize(getActivity().getBaseContext());
-        // prepare elements to display
-        final ArrayList<Item> items = Item.getTestingList();
-
-        final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), items);
-
+        DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
+        SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
+        DS = new OrderDataSource(db);
+        final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), DS.getAll());
         // set elements to adapter
         theGridView.setAdapter(adapter);
-
-        // set on click event listener to list view
-
         theGridView.setOnItemClickListener((parent, view, position, id) -> {
-            Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT).show();
-            theGridView.setNumColumns(3);
-            Log.e("view id",view+"");
-            initSplitLayout(parent);
-            view.setSelected(true);
+            Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
         });
-
-
         return root;
     }
 
-    private void initSplitLayout(View view) {
+    private void enableSplitLayout() {
         final int width = Helper.getDisplayWidth()-140;
-        view.setSelected(true);
         ViewGroup.LayoutParams param = ordersLayout.getLayoutParams();
         param.width = (width / 3)*2;
         ordersLayout.setLayoutParams(param);
@@ -70,6 +68,6 @@ public class OrdersFragment extends Fragment {
         param2.width = (width / 3);
         detailLayout.setLayoutParams(param2);
         detailLayout.setVisibility(View.VISIBLE);
-        view.setSelected(true);
     }
+
 }

@@ -3,6 +3,7 @@ package com.foa.pos.sqlite.ds;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.foa.pos.entity.Order;
 import com.foa.pos.entity.OrderDetails;
@@ -92,11 +93,12 @@ public class OrderDataSource {
 	public ArrayList<Order> getAll(ArrayList<HashMap<String, String>> filter, String orderby, String limit, String offset) {
 		 
 		ArrayList<Order> items = new ArrayList<Order>();
-		
+		//Cursor c = db.rawQuery("DROP TABLE "+DbSchema.TBL_ORDER , null);
 		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_ORDER;
-	
+
 		Cursor c = db.rawQuery(selectQuery, null);
 		if (c.moveToFirst()) {
+			String x  = c.getColumnName(0);
 			do {
 				Order item = new Order();
 				item.setOrderID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
@@ -105,7 +107,8 @@ public class OrderDataSource {
 				item.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
 				item.setBranchID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_BRANCH_ID)));
 				item.setUserID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_USER_ID)));
-				item.setUserName(c.getString(c.getColumnIndex(DbSchema.COL_USER_NAME)));
+				//item.setUserName(c.getString(c.getColumnIndex(DbSchema.COL_USER_NAME)));
+				item.setSelected(false);
 				
 				try {  
 				    item.setCreatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
@@ -115,32 +118,33 @@ public class OrderDataSource {
 				}
 				
 				
-				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_PRODUCT_NAME+",c."+DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
+				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_PRODUCT_NAME+",c."+DbSchema.COL_PRODUCT_CATEGORY_NAME+" as "+ DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME
+						+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT +  " p ON p." +  DbSchema.COL_PRODUCT_CODE + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT_CATEGORY +  " c ON c." +  DbSchema.COL_PRODUCT_CATEGORY_CODE + " = p." + DbSchema.COL_PRODUCT_CATEGORY_CODE +
 											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+item.getOrderID()+"'";
 				Cursor cDetail = db.rawQuery(selectQueryDetail, null);
 				
 				ArrayList<OrderDetails> details = new ArrayList<OrderDetails>();
+//				for (int i = 0; i < cDetail.getColumnCount(); i++) {
+//					Log.e("database",cDetail.getColumnName(i));
+//				}
 				if (cDetail.moveToFirst()) {
 					do {
-						
 						OrderDetails  order = new OrderDetails();
-						order.setDetailID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
-						order.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-						order.setOrderID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
-						order.setProductID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
-						order.setCategoryName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME)));
-						order.setQty(c.getInt(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
-						order.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
-						order.setPrice(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
-						
+						order.setDetailID(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
+						order.setName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
+						order.setOrderID(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
+						order.setProductID(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
+						order.setCategoryName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME)));
+						order.setQty(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
+						order.setDiscount(cDetail.getDouble(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
+						order.setPrice(cDetail.getDouble(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
 						details.add(order);
 					} while (cDetail.moveToNext());
 				}
 				
-				 item.setOrderDetails(details);
-				
+				item.setOrderDetails(details);
 				items.add(item);
 			} while (c.moveToNext());
 		}
