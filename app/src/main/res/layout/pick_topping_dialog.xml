@@ -1,138 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="500dp"
-    android:layout_height="300dp"
-    android:background="@android:color/transparent" >
-   <RelativeLayout
-         android:id="@+id/bgCart"
-         android:layout_width="match_parent"
-         android:layout_height="match_parent" >
-       <RelativeLayout
-           android:id="@+id/relativeLayout1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_alignParentTop="true"
-           android:background="@color/primaryColor" >
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content">
 
-           <TextView
-               android:id="@+id/tvCartProductName"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_centerHorizontal="true"
-               android:text="Xác nhận hoá đơn #123123"
-               android:padding="5dp"
-               android:textStyle="bold"
-               android:textColor="@color/putih" />
-       </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_edge"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvCartProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@color/primaryColor"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textSize="22sp"
+            android:text="Chon mon an kem"
+            android:textColor="@color/putih"
+            android:textStyle="bold" />
 
-       <RelativeLayout
-           android:id="@+id/cartContainer"
-           android:layout_width="match_parent"
-           android:layout_height="0dp"
-           android:layout_alignParentBottom="true"
-           android:layout_below="@+id/relativeLayout1"
-           android:background="@drawable/body_cart">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/controlLayout"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-           <LinearLayout
-               android:id="@+id/controlLayout"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_alignParentBottom="true"
-               android:padding="10dp"
-               android:weightSum="2">
+            <ImageView
+                android:id="@+id/toppingProductImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/bg1" />
 
-               <Button
-                   android:id="@+id/btnDoneTopping"
-                   android:layout_width="wrap_content"
-                   android:layout_height="50dp"
-                   android:layout_alignParentTop="true"
-                   android:layout_alignParentRight="true"
-                   android:layout_marginRight="10dp"
-                   android:layout_weight="1"
-                   android:paddingLeft="16dp"
-                   android:paddingTop="10dp"
-                   android:paddingRight="16dp"
-                   android:paddingBottom="10dp"
-                   android:text="Xong"
-                   android:textAllCaps="true"
-                   android:textSize="12sp" />
+            <TextView
+                android:id="@+id/toppingProductName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Ten mon an"
+                android:textStyle="bold" />
 
-               <Button
-                   android:id="@+id/btnCancel"
-                   android:layout_width="wrap_content"
-                   android:layout_height="50dp"
-                   android:layout_alignParentTop="true"
-                   android:layout_marginRight="8dp"
-                   android:layout_toLeftOf="@+id/btnOrder"
-                   android:layout_weight="1"
-                   android:backgroundTint="@color/secondaryColor"
-                   android:paddingLeft="16dp"
-                   android:paddingTop="10dp"
-                   android:paddingRight="16dp"
-                   android:paddingBottom="10dp"
-                   android:text="Huỷ"
-                   android:textSize="12sp" />
+            <ListView
+                android:id="@+id/toppingListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:horizontalSpacing="10dp"
+                android:verticalSpacing="10dp" />
+        </LinearLayout>
 
-           </LinearLayout>
+        <LinearLayout
+            android:id="@+id/controlLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp"
+            android:weightSum="2">
 
-           <RelativeLayout
-               android:id="@+id/summaryPay"
-               android:layout_width="match_parent"
-               android:layout_height="0dp"
-               android:layout_alignParentBottom="true"
-               android:layout_above="@+id/relativeLayout2"
-               android:layout_marginLeft="16dp"
-               android:padding="5dp">
+            <Button
+                android:id="@+id/btnDoneTopping"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp"
+                android:text="Xong"
+                android:textAllCaps="true"
+                android:textSize="16sp" />
 
-           </RelativeLayout>
-           <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:gravity="center"
-               android:layout_alignParentTop="true"
-               android:layout_above="@+id/controlLayout">
-               <GridLayout
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:columnCount="2"
-                   android:layout_gravity="center"
-                   >
-                   <CheckBox
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Topping name 1"
-                       android:layout_margin="15dp"/>
-                   <CheckBox
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Topping name 2"
-                       android:layout_margin="15dp"/>
-                   <CheckBox
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Topping name 3"
-                       android:layout_margin="15dp"/>
-                   <CheckBox
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Topping name 4"
-                       android:layout_margin="15dp"/>
-               </GridLayout>
-           </LinearLayout>
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@+id/btnOrder"
+                android:layout_weight="1"
+                android:backgroundTint="@color/secondaryColor"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp"
+                android:text="Huỷ"
+                android:textSize="16sp" />
 
-       </RelativeLayout>
+        </LinearLayout>
 
-       <ImageView
-                 android:id="@+id/imageView1"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_alignParentBottom="true"
-                 android:layout_marginTop="-5dp"
-                 android:layout_marginLeft="3dp"
-                 android:layout_marginRight="3dp"
-                 android:background="@drawable/footer_cart" />
-         
-
-    </RelativeLayout>
-
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginRight="3dp"
+            android:background="@drawable/footer_cart" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

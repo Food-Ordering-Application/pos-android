@@ -25,23 +25,17 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private Context context;
 	private Button btnOk;
 	private Button btnCancel;
-	//private EditText txtdesc;
-	
 	private ConfirmListener listener;
-	
 	private LoadingDialog loading;
-	private BluetoothService mService;
+
 	public CustomConfirm(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
 		this.context = context;
 	}
-	public CustomConfirm(Context context, Order order, BluetoothService mService) {
+	public CustomConfirm(Context context, Order order) {
 		super(context);
-		// TODO Auto-generated constructor stub
 		this.context = context;
 		this.order = order;
-		this.mService = mService;
 	}
 	
 	@Override

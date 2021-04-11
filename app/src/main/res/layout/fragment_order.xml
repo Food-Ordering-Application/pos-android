@@ -82,8 +82,9 @@
         <GridView
             android:id="@+id/gridView1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_below="@+id/categoryGroup"
+            android:layout_above="@+id/promotionListTitle"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -91,7 +92,6 @@
             android:horizontalSpacing="8dp"
             android:numColumns="4" >
         </GridView>
-
         <ListView
             android:visibility="gone"
             android:id="@+id/listView2"
@@ -101,6 +101,21 @@
             android:layout_marginRight="8dp"
             android:layout_below="@+id/categoryGroup" >
         </ListView>
+        <TextView
+            android:id="@+id/promotionListTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giam gia"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_above="@id/promotionRecyclerView"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/promotionRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            />
 
     </RelativeLayout>
 

@@ -60,6 +60,6 @@ public class OrderDelivery {
     }
 
     public static OrderDelivery getDeliverySample(String orderId){
-        return new OrderDelivery(orderId, User.getSampleUser(), DeliveryStatus.WAITING,"300 Lý Thường Kiệt, Q. Tân Bình, TPHCM", Helper.getMinuteChange(new Date(),5));
+        return new OrderDelivery(orderId, User.getSampleUser(), DeliveryStatus.WAITING,"300 Lý Thường Kiệt, Q. Tân Bình, TPHCM", Helper.plusMinutes(new Date(),5));
     }
 }

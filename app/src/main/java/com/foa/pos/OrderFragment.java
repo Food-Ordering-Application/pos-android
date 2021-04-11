@@ -1,14 +1,13 @@
 package com.foa.pos;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,7 +16,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -42,11 +40,13 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.CategorySpinnerMenuAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
+import com.foa.pos.adapter.PromotionListAdapter;
 import com.foa.pos.entity.Cart;
 import com.foa.pos.entity.Order;
 import com.foa.pos.entity.OrderDetails;
 import com.foa.pos.entity.Product;
 import com.foa.pos.entity.ProductCategory;
+import com.foa.pos.entity.Promotion;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
@@ -54,8 +54,8 @@ import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.widget.CustomConfirm;
+import com.foa.pos.widget.PickToppingDialog;
 import com.nineoldandroids.animation.Animator;
-import com.zj.btsdk.BluetoothService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,8 +86,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     private Button btnCancelCheckout;
     private Button btnPay;
     private ImageButton btnToggleList;
+    private RecyclerView promotionsRecyclerView;
 
-    RadioGroup radioGroup;
+    private RadioGroup radioGroup;
 
     private Spinner spinnerDiscount;
     //private Spinner spinnerCategory;
@@ -102,7 +103,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     private boolean isCheckout = false;
     private Double total = 0.0;
 
-    private BluetoothService mService = null;
     private BluetoothDevice con_dev = null;
     private ProductDataSource DS;
     
@@ -210,6 +210,14 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         checkOutContainer = (RelativeLayout)root.findViewById(R.id.checkOutContainer);
 
         //.setOnItemSelectedListener(spinnerCategoryOnChange);
+        //promotion
+        promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        promotionsRecyclerView.setLayoutManager(layoutManager);
+        PromotionListAdapter adapter = new PromotionListAdapter(getActivity(),Promotion.getPromotionListSample());
+        promotionsRecyclerView.setAdapter(adapter);
+
 
 
         cartadapter.setCartListener(new CartListAdapter.CartListener() {
@@ -342,28 +350,32 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
             if(!isCheckout)
             {
-
                 Product product = (Product) menuadapter.getItem(position);
-                menuadapter.setSelection(product.getProductID());
+                PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(),product);
+                pickToppingDialog.setPickToppingistener(result -> {
+                    menuadapter.setSelection(product.getProductID());
+                    if(menuadapter.isSelected(product.getProductID()))
+                    {
+                        Cart cart = new Cart();
+                        cart.setProductID(product.getProductID());
+                        cart.setProductName(product.getProductName());
+                        cart.setPrice(product.getPrice());
+                        cart.setDiscount(product.getDiscount());
+                        cart.setQty(1);
 
-                if(menuadapter.isSelected(product.getProductID()))
-                {
-                    Cart cart = new Cart();
-                    cart.setProductID(product.getProductID());
-                    cart.setProductName(product.getProductName());
-                    cart.setPrice(product.getPrice());
-                    cart.setDiscount(product.getDiscount());
-                    cart.setQty(1);
-
-                    double discount = cart.getPrice() * (product.getDiscount()/100);
-                    double subtotal = cart.getPrice() - discount;
-                    cart.setSubtotal(subtotal);
-                    cartadapter.add(cart);
-                }
-                else
-                {
+                        double discount = cart.getPrice() * (product.getDiscount()/100);
+                        double subtotal = cart.getPrice() - discount;
+                        cart.setSubtotal(subtotal);
+                        cartadapter.add(cart);
+                    }
+                });
+                if(!menuadapter.isSelected(product.getProductID())) {
+                    pickToppingDialog.show();
+                }else{
+                    menuadapter.setSelection(product.getProductID());
                     cartadapter.removeByID(product.getProductID());
                 }
+
             }
         }
     };
@@ -480,11 +492,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             order.setAmount(sub + tax);
 
 
-            CustomConfirm con = new CustomConfirm(getActivity(),order,mService);
+            CustomConfirm con = new CustomConfirm(getActivity(),order);
             con.setConfirmListener(new CustomConfirm.ConfirmListener() {
                 @Override
                 public void onFinish(String result) {
-                    // TODO Auto-generated method stub
                     ClearForm();
                     Toast.makeText(getActivity(),"Thanh toán thành công", Toast.LENGTH_SHORT).show();
                 }

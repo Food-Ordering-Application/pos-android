@@ -47,7 +47,7 @@ public final class Helper
 	public static Typeface openSansLight;
 	public static String SERVER_URL = "";
 	
-	public static SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 	public static SimpleDateFormat dateformatID = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	public static SimpleDateFormat dateformatStruk = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 	public static DecimalFormat decimalformat = new DecimalFormat("#,###.#");
@@ -221,10 +221,16 @@ public final class Helper
 	    return String.format("%1$" + n + "s", s);
 	}
 
-	public static Date getMinuteChange(Date date, int minute) {
+	public static Date plusMinutes(Date date, int minute) {
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(date);
 		cal.add(Calendar.MINUTE, minute);
+		return cal.getTime();
+	}
+	public static Date plusDays(Date date, int day) {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, day);
 		return cal.getTime();
 	}
 
