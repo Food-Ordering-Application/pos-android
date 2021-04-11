@@ -1,9 +1,12 @@
 package com.foa.pos;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,7 +47,43 @@ public class LoginActivity extends Activity implements OnClickListener {
 		btnLogin.setTypeface(Helper.OpenSansSemibold);
 		
 		loading = new LoadingDialog(this);
-		
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
+					checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+					checkSelfPermission(Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+					checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+					checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+				requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN},1001);
+			}
+		}
+	}
+
+	private void goNext()
+	{
+		Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		finish();
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+		boolean allgranted = true;
+		for (int i = 0; i < grantResults.length; i++)
+		{
+			if(PackageManager.PERMISSION_GRANTED != grantResults[i])
+			{
+				allgranted = false;
+			}
+		}
+		if(!allgranted)
+		{
+			Toast.makeText(LoginActivity.this,"All permission are required", Toast.LENGTH_LONG).show();
+			finish();
+		}
 	}
 	
 	@Override

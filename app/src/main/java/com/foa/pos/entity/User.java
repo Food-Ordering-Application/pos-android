@@ -9,7 +9,19 @@ public class User {
 	private Date lastLogin;
 	private String level;
 	private String cashierID;
-	
+
+	public User() {
+	}
+
+	public User(String userID, String userName, String password, Date lastLogin, String level, String cashierID) {
+		this.userID = userID;
+		this.userName = userName;
+		this.password = password;
+		this.lastLogin = lastLogin;
+		this.level = level;
+		this.cashierID = cashierID;
+	}
+
 	public String getUserID() {
 		return userID;
 	}
@@ -45,5 +57,9 @@ public class User {
 	}
 	public void setCashierID(String cashierID) {
 		this.cashierID = cashierID;
+	}
+
+	public static User getSampleUser(){
+		return new User("1","Ng Van Xe","123",new Date(),"1","1");
 	}
 }

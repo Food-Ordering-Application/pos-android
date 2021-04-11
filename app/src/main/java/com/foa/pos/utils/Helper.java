@@ -1,5 +1,6 @@
 package com.foa.pos.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
@@ -8,9 +9,18 @@ import android.graphics.Typeface;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.foa.pos.R;
+import com.foa.pos.adapter.OrderDetailListAdapter;
+import com.foa.pos.entity.Order;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -19,6 +29,10 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 public final class Helper
@@ -207,7 +221,66 @@ public final class Helper
 	    return String.format("%1$" + n + "s", s);
 	}
 
-	
+	public static Date getMinuteChange(Date date, int minute) {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		cal.add(Calendar.MINUTE, minute);
+		return cal.getTime();
+	}
+
+	public static void enableSplitLayout(LinearLayout leftLayout, RelativeLayout rightLayout, GridView theGridView) {
+		final int width = Helper.getDisplayWidth()-140;
+		ViewGroup.LayoutParams param = leftLayout.getLayoutParams();
+		param.width = (width / 3)*2;
+		leftLayout.setLayoutParams(param);
+		ViewGroup.LayoutParams param2 = rightLayout.getLayoutParams();
+		param2.width = (width / 3);
+		rightLayout.setLayoutParams(param2);
+		rightLayout.setVisibility(View.VISIBLE);
+		theGridView.setNumColumns(3);
+	}
+
+	public static void disableSplitLayout(LinearLayout leftLayout, RelativeLayout rightLayout, GridView theGridView) {
+		final int width = Helper.getDisplayWidth()-140;
+		ViewGroup.LayoutParams param = leftLayout.getLayoutParams();
+		param.width = ViewGroup.LayoutParams.MATCH_PARENT;
+		leftLayout.setLayoutParams(param);
+		rightLayout.setVisibility(View.GONE);
+		theGridView.setNumColumns(5);
+	}
+
+	public static void loadOrderDetail(Order order, RelativeLayout detailLayout, Context context){
+		((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(String.valueOf(order.getAmount()));
+		((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(String.valueOf(order.getAmount()));
+		((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getOrderID().substring(0,6)));
+		((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(String.valueOf(order.getAmount()));
+		if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){
+			((TextView)detailLayout.findViewById(R.id.tvChange)).setText(String.valueOf(0));
+		}
+		OrderDetailListAdapter adapter = new OrderDetailListAdapter((Activity) context);
+		adapter.set(order.getOrderDetails());
+		ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
+		detailsListView.setAdapter(adapter);
+	}
+
+	public static void clearSelectedItem(List<Order> orders){
+		for (int i = 0; i < orders.size(); i++) {
+			if(orders.get(i).isSelected()){
+				orders.get(i).setSelected(false);
+				return;
+			}
+		}
+	}
+
+	public static boolean checkHasSelectedItem(List<Order> orders,Order item){
+		for (int i = 0; i < orders.size(); i++) {
+			if(item.getOrderID()!= orders.get(i).getOrderID() && orders.get(i).isSelected()){
+				orders.get(i).setSelected(false);
+				return true; //has item selected
+			}
+		}
+		return false;// no item selected;
+	}
 	
 }
 

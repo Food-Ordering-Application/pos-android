@@ -25,7 +25,7 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private Context context;
 	private Button btnOk;
 	private Button btnCancel;
-	private EditText txtdesc;
+	//private EditText txtdesc;
 	
 	private ConfirmListener listener;
 	
@@ -54,12 +54,12 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 		
 		btnOk = (Button)findViewById(R.id.btnOrder);
 		btnCancel = (Button)findViewById(R.id.btnCancel);
-		txtdesc = (EditText)findViewById(R.id.editText1);
+		//txtdesc = (EditText)findViewById(R.id.editText1);
 		
 		btnOk.setTypeface(Helper.OpenSansBold);
 		btnCancel.setTypeface(Helper.OpenSansBold);
 		
-		txtdesc.setTypeface(Helper.openSansLightItalic);
+		//txtdesc.setTypeface(Helper.openSansLightItalic);
 		
 		TextView t1 =(TextView)findViewById(R.id.tvCartProductName);
 		TextView t2 =(TextView)findViewById(R.id.tvProductPrice);
@@ -94,10 +94,10 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private void save()
 	{
 		SaveAsync s = new SaveAsync();
-		s.execute(txtdesc.getText().toString());
+		s.execute();
 	}
 	
-	public class SaveAsync extends AsyncTask<String, String, String>
+	public class SaveAsync extends AsyncTask<Void, String, String>
 	{
 		
 		@Override
@@ -108,7 +108,7 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 		}
 		
 		@Override
-		protected String doInBackground(String... params) {
+		protected String doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 		
 			String result = "0";
@@ -117,7 +117,6 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 				DatabaseManager.initializeInstance(new DatabaseHelper(context));
 				SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 				OrderDataSource DS = new OrderDataSource(db);
-				order.setDescription(params[0]);
 				
 				DS.insert(order);
 				DatabaseManager.getInstance().closeDatabase();

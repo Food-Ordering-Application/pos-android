@@ -16,29 +16,29 @@
         android:layout_marginLeft="16dp"
         android:text="title"
         android:textColor="@color/item"
-        android:textSize="16dp" />
+        android:textSize="17sp" />
 
     <TextView
-        android:id="@+id/tvProductPrice"
+        android:id="@+id/tvTopping"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvCartProductName"
         android:layout_below="@+id/tvCartProductName"
-        android:textColor="@color/green"
-        android:textSize="16dp"
-        android:text="Body" />
-
+        android:textColor="@color/text_gray"
+        android:textSize="12sp"
+        android:text="Topping name" />
     <ImageButton
-        android:id="@+id/btnPlusQuantityCartItem"
+        android:id="@+id/btnSubQuantityCartItem"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/tvTotal"
         android:background="@null"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_add_circle_24" />
+        android:src="@drawable/ic_remove_circle" />
+
+
 
     <TextView
         android:id="@+id/tvTotal"
@@ -46,20 +46,31 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/btnPlusQuantityCartItem"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
         android:textSize="20sp"
         android:text="2" />
-    
-     <ImageButton
-        android:id="@+id/btnSubQuantityCartItem"
+
+    <ImageButton
+        android:id="@+id/btnPlusQuantityCartItem"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:layout_toLeftOf="@+id/tvProductPrice"
         android:layout_centerVertical="true"
-         android:layout_toLeftOf="@+id/tvTotal"
+        android:layout_marginRight="8dp"
         android:background="@null"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_remove_circle" />
+        android:src="@drawable/ic_add_circle_24" />
+    <TextView
+        android:id="@+id/tvProductPrice"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:gravity="end"
+        android:textSize="16sp"
+        android:text="100.000đ" />
     
 </RelativeLayout>

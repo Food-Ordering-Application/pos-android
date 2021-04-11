@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -24,7 +23,7 @@ import com.foa.pos.utils.Helper;
 import java.util.List;
 
 public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
-    List<Order> items;
+    List<Order> orders;
     private LayoutInflater layoutInflater;
     private Context context;
     LinearLayout ordersLayout;
@@ -34,27 +33,27 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
 
     public OrdersGridViewAdapter(Context context, List<Order> objects) {
         super(context, 0, objects);
-        this.items = objects;
+        this.orders = objects;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return items.size();
+        return orders.size();
     }
 
     @Nullable
     @Override
     public Order getItem(int position) {
-        return items.get(position);
+        return orders.get(position);
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
-         ordersLayout = ((Activity) context).findViewById(R.id.bgOrders);
+        ordersLayout = ((Activity) context).findViewById(R.id.bgOrders);
         detailLayout = ((Activity) context).findViewById(R.id.bgOrderDetail);
         theGridView = ((Activity) context).findViewById(R.id.orderGridView);
 
@@ -120,9 +119,9 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
         TextView orderStatus;
     }
     private boolean checkHasSelectedItem(Order item){
-        for (int i = 0; i < items.size(); i++) {
-            if(item.getOrderID()!= items.get(i).getOrderID() && items.get(i).isSelected()){
-                items.get(i).setSelected(false);
+        for (int i = 0; i < orders.size(); i++) {
+            if(item.getOrderID()!= orders.get(i).getOrderID() && orders.get(i).isSelected()){
+                orders.get(i).setSelected(false);
                 return true; //has item selected
             }
         }
@@ -163,9 +162,9 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
     }
 
     private void clearSelectedItem(){
-        for (int i = 0; i < items.size(); i++) {
-            if(items.get(i).isSelected()){
-                items.get(i).setSelected(false);
+        for (int i = 0; i < orders.size(); i++) {
+            if(orders.get(i).isSelected()){
+                orders.get(i).setSelected(false);
                 return;
             }
         }

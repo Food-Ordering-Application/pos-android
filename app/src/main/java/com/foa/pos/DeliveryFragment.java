@@ -1,5 +1,6 @@
 package com.foa.pos;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,9 @@ import android.widget.Toast;
 import com.foa.pos.adapter.DeliveryGridViewAdapter;
 import com.foa.pos.adapter.OrdersGridViewAdapter;
 import com.foa.pos.entity.Item;
+import com.foa.pos.sqlite.DatabaseHelper;
+import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.sqlite.ds.OrderDataSource;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -35,14 +39,20 @@ public class DeliveryFragment extends Fragment {
     RadioButton completedRB;
     RadioButton denyRadioButton;
     List<RadioButton> radioButtonList;
+    OrderDataSource DS;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         root =  inflater.inflate(R.layout.fragment_delivery, container, false);
         init();
         setGroupButtonListenter();
-        final ArrayList<Item> items = Item.getTestingList();
-        final DeliveryGridViewAdapter adapter = new DeliveryGridViewAdapter(getActivity(), items);
+        //get data
+        DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
+        SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
+        DS = new OrderDataSource(db);
+        //set adapter
+        final DeliveryGridViewAdapter adapter = new DeliveryGridViewAdapter(getActivity(), DS.getAll());
         theGridView.setAdapter(adapter);
         theGridView.setOnItemClickListener((adapterView, view, pos, l) -> Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT));
         return root;

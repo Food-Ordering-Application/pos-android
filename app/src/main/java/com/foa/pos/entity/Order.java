@@ -20,10 +20,10 @@ public class Order{
     private boolean status;
 	private int hasAudit;
     private String tableID;
-
 	private String userName;
 	private String tableName;
 	private String branchName;
+	private OrderDelivery orderDelivery;
 	private boolean isSelected;
 
 	private ArrayList<OrderDetails> orderDetails;
@@ -90,7 +90,15 @@ public class Order{
 	public void setOrderDetails(ArrayList<OrderDetails> orderDetails) {
 		this.orderDetails = orderDetails;
 	}
-	
+
+	public OrderDelivery getOrderDelivery() {
+		return orderDelivery;
+	}
+
+	public void setOrderDelivery(OrderDelivery orderDelivery) {
+		this.orderDelivery = orderDelivery;
+	}
+
 	public String getUserName() {
 		return userName;
 	}

@@ -20,45 +20,47 @@
              
              android:layout_marginTop="-20dp" >
 
-             <RelativeLayout
+             <LinearLayout
                  android:id="@+id/relativeLayout2"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
                  android:padding="10dp"
+                 android:weightSum="2"
                  android:layout_alignParentBottom="true" >
 
                  <Button
                      android:id="@+id/btnOrder"
+                     android:layout_weight="1"
                      android:layout_width="wrap_content"
-                     android:layout_height="40dp"
+                     android:layout_height="50dp"
                      android:layout_alignParentRight="true"
                      android:layout_alignParentTop="true"
-                     android:textSize="14dp"
+                     android:textSize="12sp"
                      android:layout_marginRight="10dp"
                       android:paddingTop="10dp"
                      android:paddingBottom="10dp"
                      android:paddingLeft="16dp"
                       android:paddingRight="16dp"
                      android:textAllCaps="true"
-                     android:background="@drawable/btn_transparent"
-                     android:text="@string/ok" />
+                     android:text="Chấp nhận" />
                  
                  <Button
                      android:id="@+id/btnCancel"
+                     android:layout_weight="1"
                      android:layout_width="wrap_content"
-                     android:layout_height="40dp"
+                     android:layout_height="50dp"
                      android:layout_alignParentTop="true"
-                     android:textSize="14dp"
+                     android:textSize="12sp"
                       android:paddingTop="10dp"
                      android:paddingBottom="10dp"
                      android:paddingLeft="16dp"
                       android:paddingRight="16dp"
+                     android:backgroundTint="@color/secondaryColor"
                      android:layout_toLeftOf="@+id/btnOrder"
                      android:layout_marginRight="8dp"
-                     android:background="@drawable/btn_transparent"
-                     android:text="@string/cancel_order" />
+                     android:text="Huỷ" />
 
-             </RelativeLayout>
+             </LinearLayout>
              <RelativeLayout
                  android:id="@+id/summaryPay"
                  android:layout_width="match_parent"
@@ -74,32 +76,12 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                   android:layout_alignParentTop="true"
+                  android:layout_above="@+id/relativeLayout2"
                  android:layout_centerHorizontal="true"
                  android:layout_marginTop="30dp"
+                  android:gravity="center_vertical"
                  android:textSize="18dp"
-                 android:text="@string/sure" />
-              
-             <EditText
-                 android:id="@+id/editText1"
-                 android:layout_width="match_parent"
-                 android:layout_height="45dp"
-                android:layout_below="@+id/tvProductPrice"
-                 android:layout_marginTop="10dp"
-                 android:ems="10"
-                 android:hint="@string/enter_description"
-                 android:layout_above="@+id/relativeLayout2"
-                 android:layout_marginLeft="8dp"
-                 android:layout_marginRight="12dp"
-                 android:gravity="center"
-                 android:paddingLeft="10dp"
-                 android:paddingRight="10dp"
-                 android:background="@drawable/rounded_bg"
-                 android:textStyle="italic"
-                 android:inputType="textMultiLine" >
-
-             </EditText>
-
-            
+                 android:text="Xác nhận thanh toán 180.000đ\n Nhận: 200.000đ \n Trả lại 20.000 đ " />
 
          </RelativeLayout>
            <ImageView
@@ -118,15 +100,16 @@
              android:layout_height="wrap_content"
              android:layout_alignParentTop="true"
              android:layout_centerHorizontal="true"
-             android:background="@drawable/header_card" >
+             android:background="@color/primaryColor" >
 
              <TextView
                  android:id="@+id/tvCartProductName"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:layout_centerHorizontal="true"
-                 android:layout_marginTop="11dp"
-                 android:text="@string/confirmation"
+                 android:text="Xác nhận hoá đơn #123123"
+                 android:padding="5dp"
+                 android:textStyle="bold"
                  android:textColor="@color/putih" />
          </RelativeLayout>
      </RelativeLayout>

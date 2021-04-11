@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <item
+        android:id="@+id/clear_cart"
+        android:title="Xoá giỏ hàng"/>
+
+    <item
+        android:id="@+id/exit"
+        android:title="Thoát" />
+    <item name="android:textColorSecondary">@android:color/white</item>
+</menu>

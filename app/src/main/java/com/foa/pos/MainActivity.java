@@ -42,13 +42,11 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 		DatabaseManager.initializeInstance(new DatabaseHelper(this));
 		NavigationRailView navView = findViewById(R.id.nav_view);
 		navView.setOnNavigationItemSelectedListener(this);
-		navView.getMenu().findItem(R.id.navigation_manaorder).setChecked(true);
 		addFragment(new OrderFragment());
 	}
 	
 	private void logout()
 	{
-		
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(com.foa.pos.MainActivity.this);
         alertDialog.setTitle(getString(R.string.confirmation));
         alertDialog.setMessage(getString(R.string.logout_confirmation));

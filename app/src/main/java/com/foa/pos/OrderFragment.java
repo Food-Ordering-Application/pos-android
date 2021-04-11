@@ -1,9 +1,13 @@
 package com.foa.pos;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -11,6 +15,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -54,7 +61,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OrderFragment extends Fragment implements View.OnClickListener{
+public class OrderFragment extends Fragment implements View.OnClickListener {
 
     private RelativeLayout menuWrapper;
     private RelativeLayout cartWrapper;
@@ -102,7 +109,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setHasOptionsMenu(true);
     }
     View root;
 
@@ -112,13 +119,25 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         root =  inflater.inflate(R.layout.fragment_order, container, false);
         // Inflate the layout for this fragment
         Helper.initialize(getActivity().getBaseContext());
+        Toolbar cartToolbar = root.findViewById(R.id.cartToolBar);
+        cartToolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()){
+                case R.id.clear_cart:
+                    cartadapter.removeAll();
+                    menuadapter.reset();
+                    return true;
+                case R.id.exit:
+                    Toast.makeText(getActivity(), "Exit clicked", Toast.LENGTH_SHORT).show();
+                    return true;
+            }
+            return false;
+        });
 
         menuWrapper = (RelativeLayout)root.findViewById(R.id.bgMenu);
         cartWrapper = (RelativeLayout)root.findViewById(R.id.bgCart);
 
         menuGrid = (GridView)root.findViewById(R.id.gridView1);
         menuList = root.findViewById(R.id.listView2);
-
 
         menuadapter = new ProductGridAdapter(getActivity());
 
@@ -171,7 +190,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         txtPayment = (EditText)root.findViewById(R.id.editText2);
         txtChange = (TextView)root.findViewById(R.id.textView8);
 
-        btnCancel = (Button)root.findViewById(R.id.btnClearCart);
+        //btnCancel = (Button)root.findViewById(R.id.btnClearCart);
         btnSave = (Button)root.findViewById(R.id.btnSave);
         btnOrder = (Button)root.findViewById(R.id.btnOrder);
         btnCancelCheckout = (Button)root.findViewById(R.id.btnCancelCheckout);
@@ -180,7 +199,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
         menuGrid.setOnItemClickListener(gridOnlick);
         menuList.setOnItemClickListener(gridOnlick);
-        btnCancel.setOnClickListener(cancelOnlick);
+        //btnCancel.setOnClickListener(cancelOnlick);
         btnSave.setOnClickListener(saveOnlick);
         btnCancelCheckout.setOnClickListener(cancelCheckOutOnlick);
         btnPay.setOnClickListener(payOnlick);
@@ -268,6 +287,12 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         return root;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     public void addRadioButtons(RadioGroup radioGroup, List<ProductCategory> categoryList) {
         radioGroup.setOrientation(LinearLayout.HORIZONTAL);
         //
@@ -343,43 +368,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         }
     };
 
-    private final View.OnClickListener cancelOnlick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // TODO Auto-generated method stub
-
-            cartadapter.removeAll();
-            menuadapter.reset();
-//            if(cartadapter.getCount() != 0)
-//            {
-//                cartadapter.removeAll();
-//                menuadapter.reset();
-//            }
-//            else
-//            {
-//                getActivity().finish();
-//                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//            }
-        }
-    };
-
-//    private final AdapterView.OnItemSelectedListener spinnerCategoryOnChange = new AdapterView.OnItemSelectedListener() {
-//
-//        @Override
-//        public void onItemSelected(AdapterView<?> parent, View view,
-//                                   int position, long id) {
-//            // TODO Auto-generated method stub
-//            ProductCategory c = (ProductCategory) spinneradapter.getItem(position);
-//            //menuadapter.setFilter(txtKeyword.getText().toString(), c.getCategoryID());
-//            menuadapter.set(DS.getAll(txtKeyword.getText().toString(),c.getCategoryID()));
-//        }
-//
-//        @Override
-//        public void onNothingSelected(AdapterView<?> parent) {
-//            // TODO Auto-generated method stub
-//        }
-//    };
-
     private TextWatcher keywordOnchange = new TextWatcher() {
 
         @Override
@@ -448,7 +436,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
             // TODO Auto-generated method stub
             if(txtPayment.getText().toString().equals(""))
             {
-                Toast.makeText(getActivity(), getString(R.string.enter_payment), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Nhập số tiền", Toast.LENGTH_SHORT).show();
                 return;
             }
 
