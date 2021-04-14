@@ -83,15 +83,15 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
             v.setSelected(true);
             if (order.isSelected()){
                 order.setSelected(false);
-                disableSplitLayout();
+                Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
             }else {
                 Activity a = ((Activity) context);
                 Log.e("a",""+a);
                 order.setSelected(true);
-                if(!checkHasSelectedItem(order)){//disable another item
-                    enableSplitLayout();
+                if(!Helper.checkHasSelectedItem(orders,order)){//disable another item
+                    Helper.enableSplitLayout(ordersLayout,detailLayout,theGridView);
                 }
-                loadOrderDetail(order);
+                Helper.loadOrderDetail(order,detailLayout,context);
             }
             notifyDataSetChanged();
         });
@@ -104,8 +104,8 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
         holder.orderStatus.setText(order.getStatus()?"Đã thanh toán": "Chưa thanh toán");
 
         (detailLayout.findViewById(R.id.btnCancelDetatil)).setOnClickListener(v -> {
-            disableSplitLayout();
-            clearSelectedItem();
+            Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
+            Helper.clearSelectedItem(orders);
         });
         return convertView;
     }
@@ -118,56 +118,4 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
         TextView orderAmount;
         TextView orderStatus;
     }
-    private boolean checkHasSelectedItem(Order item){
-        for (int i = 0; i < orders.size(); i++) {
-            if(item.getOrderID()!= orders.get(i).getOrderID() && orders.get(i).isSelected()){
-                orders.get(i).setSelected(false);
-                return true; //has item selected
-            }
-        }
-        return false;// no item selected;
-    }
-
-    private void enableSplitLayout() {
-        final int width = Helper.getDisplayWidth()-140;
-        ViewGroup.LayoutParams param = ordersLayout.getLayoutParams();
-        param.width = (width / 3)*2;
-        ordersLayout.setLayoutParams(param);
-        ViewGroup.LayoutParams param2 = detailLayout.getLayoutParams();
-        param2.width = (width / 3);
-        detailLayout.setLayoutParams(param2);
-        detailLayout.setVisibility(View.VISIBLE);
-        theGridView.setNumColumns(3);
-    }
-
-    private void disableSplitLayout() {
-        final int width = Helper.getDisplayWidth()-140;
-        ViewGroup.LayoutParams param = ordersLayout.getLayoutParams();
-        param.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        ordersLayout.setLayoutParams(param);
-        detailLayout.setVisibility(View.GONE);
-        theGridView.setNumColumns(5);
-    }
-
-    private void loadOrderDetail(Order order){
-        ((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(String.valueOf(order.getAmount()));
-        ((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(String.valueOf(order.getAmount()));
-        ((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getOrderID().substring(0,6)));
-        ((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(String.valueOf(order.getAmount()));
-        ((TextView)detailLayout.findViewById(R.id.tvChange)).setText(String.valueOf(0));
-        OrderDetailListAdapter adapter = new OrderDetailListAdapter((Activity) context);
-        adapter.set(order.getOrderDetails());
-        orderDetailsListView = detailLayout.findViewById(R.id.listOrderDetails);
-        orderDetailsListView.setAdapter(adapter);
-    }
-
-    private void clearSelectedItem(){
-        for (int i = 0; i < orders.size(); i++) {
-            if(orders.get(i).isSelected()){
-                orders.get(i).setSelected(false);
-                return;
-            }
-        }
-    }
-
 }

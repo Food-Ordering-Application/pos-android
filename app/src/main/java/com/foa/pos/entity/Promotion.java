@@ -15,8 +15,9 @@ public class Promotion {
     private String desc;
     private int minOrderValue;
     private int rest;
+    private boolean isSelected;
 
-    public Promotion(String promotionId, String code, Date exp, int type, float value, String desc, int minOrderValue, int rest) {
+    public Promotion(String promotionId, String code, Date exp, int type, float value, String desc, int minOrderValue, int rest, boolean isSelected) {
         this.promotionId = promotionId;
         this.code = code;
         this.exp = exp;
@@ -25,6 +26,7 @@ public class Promotion {
         this.desc = desc;
         this.minOrderValue = minOrderValue;
         this.rest=rest;
+        this.isSelected =isSelected;
     }
 
     public String getPromotionId() {
@@ -91,11 +93,22 @@ public class Promotion {
         this.rest = rest;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
     public static List<Promotion> getPromotionListSample(){
         List<Promotion> list = new ArrayList<>();
-        list.add(new Promotion("1","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100));
-        list.add(new Promotion("2","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100));
-        list.add(new Promotion("3","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100));
+        list.add(new Promotion("1","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100,false));
+        list.add(new Promotion("2","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100,false));
+        list.add(new Promotion("3","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100,false));
+        list.add(new Promotion("4","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100,false));
+        list.add(new Promotion("5","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100,false));
+        list.add(new Promotion("6","NEW20A12", Helper.plusDays(new Date(),10),1,10,"Giam 10% don hang tren 100k",100000,100,false));
         return list;
     }
 }

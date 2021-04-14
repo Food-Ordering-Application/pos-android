@@ -2,6 +2,7 @@ package com.foa.pos.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.foa.pos.R;
+import com.foa.pos.entity.Order;
 import com.foa.pos.entity.Promotion;
 import com.foa.pos.entity.Topping;
 
@@ -24,6 +26,7 @@ public class PromotionListAdapter extends RecyclerView.Adapter<PromotionListAdap
     private List<Promotion> dtList;
     private Activity context;
     private LayoutInflater inflater;
+    private OnItemClickListener onItemClickListener;
 
 
     public PromotionListAdapter(Activity context, List<Promotion> data) {
@@ -46,8 +49,26 @@ public class PromotionListAdapter extends RecyclerView.Adapter<PromotionListAdap
         holder.promotionExp.setText(promotion.getExp());
         holder.promotionRest.setText(String.valueOf(promotion.getRest()));
         holder.promotionDesc.setText(promotion.getDesc());
+
+        if(promotion.isSelected()){
+            holder.cardPromotion.setSelected(true);
+        }else{
+            holder.cardPromotion.setSelected(false);
+        }
+
         holder.setItemClickListener((view, position1, isLongClick) -> {
             view.setSelected(true);
+            if (promotion.isSelected()){
+                promotion.setSelected(false);
+                onItemClickListener.onRemove(promotion);
+            }else {
+                promotion.setSelected(true);
+                if (onItemClickListener!=null){
+                    onItemClickListener.onPick(promotion);
+                }
+            }
+            checkHasSelectedItem(promotion);
+            notifyDataSetChanged();
         });
         holder.itemView.setTag(promotion);
     }
@@ -58,7 +79,7 @@ public class PromotionListAdapter extends RecyclerView.Adapter<PromotionListAdap
         return dtList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         LinearLayout cardPromotion;
         TextView promotionCode;
         TextView promotionExp;
@@ -87,9 +108,28 @@ public class PromotionListAdapter extends RecyclerView.Adapter<PromotionListAdap
         }
     }
 
+    private boolean checkHasSelectedItem(Promotion item){
+        for (int i = 0; i < dtList.size(); i++) {
+            if(item.getPromotionId()!= dtList.get(i).getPromotionId() && dtList.get(i).isSelected()){
+                dtList.get(i).setSelected(false);
+                return true; //has item selected
+            }
+        }
+        return false;// no item selected;
+    }
+
 
 
     public interface ItemClickListener  {
         void onClick(View view, int position,boolean isLongClick);
+    }
+
+    public void setItemClickListener(OnItemClickListener itemClickListener){
+        this.onItemClickListener = itemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onPick(Promotion item);
+        void onRemove(Promotion item);
     }
 }

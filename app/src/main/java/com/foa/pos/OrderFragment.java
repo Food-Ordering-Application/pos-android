@@ -215,10 +215,20 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         promotionsRecyclerView.setLayoutManager(layoutManager);
-        PromotionListAdapter adapter = new PromotionListAdapter(getActivity(),Promotion.getPromotionListSample());
-        promotionsRecyclerView.setAdapter(adapter);
+        PromotionListAdapter promotionAdapter = new PromotionListAdapter(getActivity(),Promotion.getPromotionListSample());
+        promotionsRecyclerView.setAdapter(promotionAdapter);
 
+        promotionAdapter.setItemClickListener(new PromotionListAdapter.OnItemClickListener() {
+            @Override
+            public void onPick(Promotion item) {
+                Toast.makeText(getActivity(), "Choose promotion", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onRemove(Promotion item) {
+                Toast.makeText(getActivity(), "Remove promotion", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         cartadapter.setCartListener(new CartListAdapter.CartListener() {
 
