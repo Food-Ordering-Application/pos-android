@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -33,16 +34,33 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements NavigationRailView.OnNavigationItemSelectedListener{
 	public static String SesID;
 	AppCompatActivity appCompatActivity = null;
-	Fragment preFragment = null;
+	private AppBarConfiguration mAppBarConfiguration;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		appCompatActivity = this;
 		DatabaseManager.initializeInstance(new DatabaseHelper(this));
-		NavigationRailView navView = findViewById(R.id.nav_view);
-		navView.setOnNavigationItemSelectedListener(this);
+		DrawerLayout drawer = findViewById(R.id.drawer_layout);
+		NavigationView navigationView = findViewById(R.id.nav_view);
+
+		mAppBarConfiguration = new AppBarConfiguration.Builder(
+				R.id.navigation_order, R.id.navigation_delivery, R.id.navigation_manaorder,R.id.navigation_setting)
+				.setDrawerLayout(drawer)
+				.build();
+		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+		NavigationUI.setupWithNavController(navigationView, navController);
+
 		addFragment(new OrderFragment());
+	}
+
+	@Override
+	public boolean onSupportNavigateUp() {
+		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+				|| super.onSupportNavigateUp();
 	}
 	
 	private void logout()
