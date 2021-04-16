@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -61,8 +62,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OrderFragment extends Fragment implements View.OnClickListener {
-
+public class OrderFragment extends Fragment implements View.OnClickListener, Toolbar.OnMenuItemClickListener {
+    private  View root;
     private RelativeLayout menuWrapper;
     private RelativeLayout cartWrapper;
     private GridView menuGrid;
@@ -111,7 +112,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-    View root;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,19 +120,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         root =  inflater.inflate(R.layout.fragment_order, container, false);
         // Inflate the layout for this fragment
         Helper.initialize(getActivity().getBaseContext());
-        Toolbar cartToolbar = root.findViewById(R.id.cartToolBar);
-        cartToolbar.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()){
-                case R.id.clear_cart:
-                    cartadapter.removeAll();
-                    menuadapter.reset();
-                    return true;
-                case R.id.exit:
-                    Toast.makeText(getActivity(), "Exit clicked", Toast.LENGTH_SHORT).show();
-                    return true;
-            }
-            return false;
-        });
+
+        Toolbar toolbar= (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.right_layout_menu);
+        toolbar.setOnMenuItemClickListener(this);
 
         menuWrapper = (RelativeLayout)root.findViewById(R.id.bgMenu);
         cartWrapper = (RelativeLayout)root.findViewById(R.id.bgCart);
@@ -306,9 +298,17 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
-        super.onCreateOptionsMenu(menu, inflater);
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.clear_cart:
+                cartadapter.removeAll();
+                menuadapter.reset();
+                return true;
+            case R.id.exit:
+                Toast.makeText(getActivity(), "Exit clicked", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return false;
     }
 
     public void addRadioButtons(RadioGroup radioGroup, List<ProductCategory> categoryList) {
@@ -340,7 +340,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
     private void initLayout() {
 
-        final int width = Helper.getDisplayWidth()-140;
+        final int width = Helper.getDisplayWidth();
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(cartWrapper.getLayoutParams());
         param.width = (width / 3);
         cartWrapper.setLayoutParams(param);
@@ -683,4 +683,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         Log.d("radioclick", " Name " + ((RadioButton)v).getText() +" Id is "+v.getId());
     }
+
+
 }

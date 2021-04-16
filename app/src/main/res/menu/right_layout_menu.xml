@@ -9,5 +9,5 @@
     <item
         android:id="@+id/exit"
         android:title="Thoát" />
-    <item name="android:textColorSecondary">@android:color/white</item>
+
 </menu>

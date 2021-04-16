@@ -235,7 +235,7 @@ public final class Helper
 	}
 
 	public static void enableSplitLayout(LinearLayout leftLayout, RelativeLayout rightLayout, GridView theGridView) {
-		final int width = Helper.getDisplayWidth()-140;
+		final int width = Helper.getDisplayWidth();
 		ViewGroup.LayoutParams param = leftLayout.getLayoutParams();
 		param.width = (width / 3)*2;
 		leftLayout.setLayoutParams(param);
@@ -247,7 +247,6 @@ public final class Helper
 	}
 
 	public static void disableSplitLayout(LinearLayout leftLayout, RelativeLayout rightLayout, GridView theGridView) {
-		final int width = Helper.getDisplayWidth()-140;
 		ViewGroup.LayoutParams param = leftLayout.getLayoutParams();
 		param.width = ViewGroup.LayoutParams.MATCH_PARENT;
 		leftLayout.setLayoutParams(param);

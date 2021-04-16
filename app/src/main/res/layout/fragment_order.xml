@@ -105,7 +105,7 @@
             android:id="@+id/promotionListTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Giam gia"
+            android:text="Giảm giá"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_above="@id/promotionRecyclerView"/>
@@ -125,38 +125,12 @@
         android:layout_height="match_parent"
         >
             <!--title cart-->
-
-        <LinearLayout
-            android:id="@+id/relativeLayout1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryColor"
-            android:orientation="vertical"
-            android:gravity="center">
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/cartToolBar"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@color/primaryColor"
-                app:menu="@menu/right_layout_menu"
-                >
-                <TextView
-                    android:id="@+id/tvCartProductName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="Giỏ hàng "
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="16dp" />
-            </androidx.appcompat.widget.Toolbar>
-        </LinearLayout>
         <!--body cart-->
         <RelativeLayout
             android:id="@+id/cartContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/relativeLayout1"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/body_cart"
             android:layout_above="@+id/imageView1"

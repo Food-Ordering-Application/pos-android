@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_order"
+            android:icon="@drawable/ic_nav_food"
+            android:title="Đặt món" />
 
-    <item
-        android:id="@+id/navigation_order"
-        android:title="Đặt món"
-        android:icon="@drawable/ic_nav_food"/>
+        <item
+            android:id="@+id/navigation_delivery"
+            android:icon="@drawable/ic_nav_delivery"
+            android:title="Giao hàng" />
 
-
-    <item
-        android:id="@+id/navigation_delivery"
-        android:icon="@drawable/ic_nav_delivery"
-        android:title="Giao hàng" />
-
-    <item
-        android:id="@+id/navigation_manaorder"
-        android:icon="@drawable/ic_nav_mana_order"
-        android:title="Đơn hàng" />
-    <item
-        android:id="@+id/navigation_setting"
-        android:icon="@drawable/ic_nav_settings"
-        android:title="Cài đặt" />
+        <item
+            android:id="@+id/navigation_manaorder"
+            android:icon="@drawable/ic_nav_mana_order"
+            android:title="Đơn hàng" />
+        <item
+            android:id="@+id/navigation_setting"
+            android:icon="@drawable/ic_nav_settings"
+            android:title="Cài đặt" />
+    </group>
 </menu>

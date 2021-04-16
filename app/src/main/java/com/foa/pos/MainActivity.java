@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -31,7 +32,7 @@ import com.google.android.material.navigationrail.NavigationRailView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements NavigationRailView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity {
 	public static String SesID;
 	AppCompatActivity appCompatActivity = null;
 	private AppBarConfiguration mAppBarConfiguration;
@@ -40,20 +41,23 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		appCompatActivity = this;
+
+		Toolbar toolbar = findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
 		DatabaseManager.initializeInstance(new DatabaseHelper(this));
+
 		DrawerLayout drawer = findViewById(R.id.drawer_layout);
 		NavigationView navigationView = findViewById(R.id.nav_view);
 
 		mAppBarConfiguration = new AppBarConfiguration.Builder(
 				R.id.navigation_order, R.id.navigation_delivery, R.id.navigation_manaorder,R.id.navigation_setting)
-				.setDrawerLayout(drawer)
+				.setOpenableLayout(drawer)
 				.build();
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);
-
-		addFragment(new OrderFragment());
+		navigationView.bringToFront();
 	}
 
 	@Override
@@ -61,6 +65,12 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
 				|| super.onSupportNavigateUp();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.right_layout_menu, menu);
+		return true;
 	}
 	
 	private void logout()
@@ -89,30 +99,4 @@ public class MainActivity extends AppCompatActivity implements NavigationRailVie
 
 	}
 
-	@Override
-	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.navigation_delivery:
-				addFragment(new DeliveryFragment());
-				return true;
-			case R.id.navigation_manaorder:
-				addFragment(new OrdersFragment());
-				return true;
-			case R.id.navigation_setting:
-				addFragment(new SettingFragment());
-				return true;
-			case R.id.navigation_order:
-				addFragment(new OrderFragment());
-				return true;
-			default:
-				return false;
-		}
-	}
-
-	private void addFragment (Fragment fragment){
-		appCompatActivity.getSupportFragmentManager().beginTransaction()
-				.setReorderingAllowed(true)
-				.replace(R.id.nav_host_fragment, fragment, null)
-				.commit();
-	}
 }
