@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.login.LoginResponse;
+import com.foa.pos.network.response.LoginResponse;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.widget.LoadingDialog;

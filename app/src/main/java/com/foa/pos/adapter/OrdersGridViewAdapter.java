@@ -28,7 +28,7 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
     private Context context;
     LinearLayout ordersLayout;
     RelativeLayout detailLayout;
-    GridView theGridView;
+    ListView theGridView;
     ListView orderDetailsListView;
 
     public OrdersGridViewAdapter(Context context, List<Order> objects) {
@@ -79,22 +79,22 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
         }else{
             holder.cardItem.setSelected(false);
         }
-        holder.cardItem.setOnClickListener(v -> {
-            v.setSelected(true);
-            if (order.isSelected()){
-                order.setSelected(false);
-                Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
-            }else {
-                Activity a = ((Activity) context);
-                Log.e("a",""+a);
-                order.setSelected(true);
-                if(!Helper.checkHasSelectedItem(orders,order)){//disable another item
-                    Helper.enableSplitLayout(ordersLayout,detailLayout,theGridView);
-                }
-                Helper.loadOrderDetail(order,detailLayout,context);
-            }
-            notifyDataSetChanged();
-        });
+//        holder.cardItem.setOnClickListener(v -> {
+//            v.setSelected(true);
+//            if (order.isSelected()){
+//                order.setSelected(false);
+//                Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
+//            }else {
+//                Activity a = ((Activity) context);
+//                Log.e("a",""+a);
+//                order.setSelected(true);
+//                if(!Helper.checkHasSelectedItem(orders,order)){//disable another item
+//                    //Helper.enableSplitLayout(ordersLayout,detailLayout,theGridView);
+//                }
+//                Helper.loadOrderDetail(order,detailLayout,context);
+//            }
+//            notifyDataSetChanged();
+//        });
 
         //set data
         holder.orderId.setText(order.getOrderID().substring(0,6));
@@ -103,10 +103,10 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
         holder.orderAmount.setText(String.valueOf(order.getAmount()));
         holder.orderStatus.setText(order.getStatus()?"Đã thanh toán": "Chưa thanh toán");
 
-        (detailLayout.findViewById(R.id.btnCancelDetatil)).setOnClickListener(v -> {
-            Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
-            Helper.clearSelectedItem(orders);
-        });
+//        (detailLayout.findViewById(R.id.btnCancelDetatil)).setOnClickListener(v -> {
+//            Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
+//            Helper.clearSelectedItem(orders);
+//        });
         return convertView;
     }
 

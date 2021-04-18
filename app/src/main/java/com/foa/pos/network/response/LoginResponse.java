@@ -1,4 +1,4 @@
-package com.foa.pos.network.login;
+package com.foa.pos.network.response;
 
 import com.foa.pos.entity.User;
 import com.google.gson.annotations.SerializedName;

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -21,7 +22,7 @@ import com.foa.pos.utils.Helper;
 
 public class OrdersFragment extends Fragment {
     View root;
-    GridView theGridView;
+    ListView theListView;
     LinearLayout ordersLayout;
     RelativeLayout detailLayout;
     long itemSelectedId;
@@ -32,7 +33,7 @@ public class OrdersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         root=  inflater.inflate(R.layout.fragment_orders, container, false);
-        theGridView = root.findViewById(R.id.orderGridView);
+        theListView = root.findViewById(R.id.orderGridView);
         ordersLayout =root.findViewById(R.id.bgOrders);
         detailLayout = root.findViewById(R.id.bgOrderDetail);
 
@@ -42,8 +43,8 @@ public class OrdersFragment extends Fragment {
         DS = new OrderDataSource(db);
         final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), DS.getAll());
         // set elements to adapter
-        theGridView.setAdapter(adapter);
-        theGridView.setOnItemClickListener((parent, view, position, id) -> {
+        theListView.setAdapter(adapter);
+        theListView.setOnItemClickListener((parent, view, position, id) -> {
             Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
         });
         return root;

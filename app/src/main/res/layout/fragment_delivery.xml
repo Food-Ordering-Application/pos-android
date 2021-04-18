@@ -406,18 +406,29 @@
             <!-- payment button-->
             <LinearLayout
                 android:id="@+id/relativeLayout2"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true">
                 <Button
                     android:padding="0dp"
                     android:layout_margin="0dp"
-                    android:id="@+id/btnCancelDetatil"
+                    android:layout_weight="1"
+                    android:id="@+id/btnAcceptOrder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/teritaryColor"
-                    android:text="Thoát"
+                    android:backgroundTint="@color/primaryColor"
+                    android:text="Chấp nhận"
+                    />
+                <Button
+                    android:padding="0dp"
+                    android:layout_margin="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/btnDenyOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/secondaryColor"
+                    android:text="Từ chối"
                     />
             </LinearLayout>
 

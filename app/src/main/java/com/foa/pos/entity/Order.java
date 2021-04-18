@@ -168,7 +168,7 @@ public class Order{
 	}
 
 	public String getStringCreatedOn(){
-		DateFormat dateFormat = new SimpleDateFormat("hh:mm-MM/yy");
+		DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss - dd/MM/yy");
 		return  dateFormat.format(createdOn);
 	}
 }
