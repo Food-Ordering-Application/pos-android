@@ -35,7 +35,7 @@ public class UserDataSource {
 		if (c.moveToFirst()) {
 			do {
 			
-				item.setUserID(c.getString(c.getColumnIndex(DbSchema.COL_USER_CODE)));
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_USER_CODE)));
 				item.setUserName(c.getString(c.getColumnIndex(DbSchema.COL_USER_NAME)));
 				item.setCashierID(c.getString(c.getColumnIndex(DbSchema.COL_USER_CASHIER_ID)));
 				item.setLevel(c.getString(c.getColumnIndex(DbSchema.COL_USER_LEVEL)));
@@ -62,7 +62,7 @@ public class UserDataSource {
 		if (c.moveToFirst()) {
 			do {
 				User item = new User();
-				item.setUserID(c.getString(c.getColumnIndex(DbSchema.COL_USER_CODE)));
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_USER_CODE)));
 				item.setUserName(c.getString(c.getColumnIndex(DbSchema.COL_USER_NAME)));
 				item.setCashierID(c.getString(c.getColumnIndex(DbSchema.COL_USER_CASHIER_ID)));
 				item.setLevel(c.getString(c.getColumnIndex(DbSchema.COL_USER_LEVEL)));
@@ -82,7 +82,7 @@ public class UserDataSource {
 	public long insert(User item)
 	{
 		ContentValues values = new ContentValues();
-		values.put(DbSchema.COL_USER_CODE, item.getUserID());
+		values.put(DbSchema.COL_USER_CODE, item.getId());
 		values.put(DbSchema.COL_USER_NAME, item.getUserName());
 		values.put(DbSchema.COL_USER_CASHIER_ID, item.getCashierID());
 		values.put(DbSchema.COL_USER_PASSWORD, Helper.getMD5(item.getPassword()));
@@ -94,8 +94,8 @@ public class UserDataSource {
 	public long update(User item, String lastCode)
 	{
 		ContentValues values = new ContentValues();
-		if(item.getUserID() != null)
-			values.put(DbSchema.COL_USER_CODE, item.getUserID());
+		if(item.getId() != null)
+			values.put(DbSchema.COL_USER_CODE, item.getId());
 		
 		if(item.getUserName() != null)
 			values.put(DbSchema.COL_USER_NAME, item.getUserName());
@@ -141,7 +141,7 @@ public class UserDataSource {
 		if (c.moveToFirst()) {
 			do {
 			
-				item.setUserID(c.getString(c.getColumnIndex(DbSchema.COL_USER_CODE)));
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_USER_CODE)));
 				item.setUserName(c.getString(c.getColumnIndex(DbSchema.COL_USER_NAME)));
 				item.setCashierID(c.getString(c.getColumnIndex(DbSchema.COL_USER_CASHIER_ID)));
 				item.setLevel(c.getString(c.getColumnIndex(DbSchema.COL_USER_LEVEL)));
@@ -154,11 +154,11 @@ public class UserDataSource {
 			} while (c.moveToNext());
 		}
 		
-		if(item.getUserID() != null)
+		if(item.getId() != null)
 		{
 			ContentValues values = new ContentValues();
 			values.put(DbSchema.COL_USER_LAST_LOGIN, Helper.dateformat.format(new Date()));
-			 db.update(DbSchema.TBL_USER, values, DbSchema.COL_USER_CODE+"= '"+item.getUserID()+"' ", null);
+			 db.update(DbSchema.TBL_USER, values, DbSchema.COL_USER_CODE+"= '"+item.getId()+"' ", null);
 		}
 		
 		

@@ -43,6 +43,7 @@ public class Constants {
 	public static final int REQUEST_CONNECT_DEVICE = 1; 
 	public static final int REQUEST_ENABLE_BT = 2;
 
-	
-	
+	public static final int STATUS_CODE_SUCCESS = 200;
+	public static final int STATUS_CODE_UNAUTHORIZED = 401;
+	public static final int STATUS_CODE_NOT_FOUND = 404;
 }

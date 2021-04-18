@@ -152,7 +152,7 @@ public class UserAddFragment extends Fragment {
 	        
 			User data = new User();
 			
-			data.setUserID(isEdit ? lastCode : Helper.getUserID());
+			data.setId(isEdit ? lastCode : Helper.getUserID());
 			data.setUserName(name);
 			
 			if(!isEdit)

@@ -124,7 +124,7 @@ public class UserListAdapter extends BaseAdapter {
 				// TODO Auto-generated method stub
 				Fragment fragment  = new UserAddFragment();
 				Bundle arguments = new Bundle();
-				arguments.putString(Constants.ARG_USER_ID, user.getUserID());
+				arguments.putString(Constants.ARG_USER_ID, user.getId());
 				
 				if(itemID != null)
 					arguments.putString(Constants.ARG_ITEM_ID, itemID);
@@ -148,7 +148,7 @@ public class UserListAdapter extends BaseAdapter {
 				builder.setMessage(R.string.delete_message).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 		               @Override
 		               public void onClick(DialogInterface dialog, int id) {
-		            	    if(user.getUserID().equals(com.foa.pos.MainActivity.SesID))
+		            	    if(user.getId().equals(com.foa.pos.MainActivity.SesID))
 		            	    {
 		            	    	Toast.makeText(context, context.getString(R.string.data_being_used), Toast.LENGTH_SHORT).show();
 		            	    }
@@ -157,9 +157,9 @@ public class UserListAdapter extends BaseAdapter {
 		            	    	
 		            	    	SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 		            	    	UserDataSource ds = new UserDataSource(db);
-		            	    	if(!ds.cekAvailable(user.getUserID()))
+		            	    	if(!ds.cekAvailable(user.getId()))
 		            	    	{
-		            	    		ds.delete(user.getUserID());
+		            	    		ds.delete(user.getId());
 				        	        dtList.remove(position);
 				        	        notifyDataSetChanged();
 				        	      

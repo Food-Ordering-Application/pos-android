@@ -1,10 +1,14 @@
 package com.foa.pos.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 public class User {
-	private String userID;
+	private String id;
+	@SerializedName("phoneNumber")
 	private String userName;
+	@SerializedName("password")
 	private String password;
 	private Date lastLogin;
 	private String level;
@@ -13,8 +17,8 @@ public class User {
 	public User() {
 	}
 
-	public User(String userID, String userName, String password, Date lastLogin, String level, String cashierID) {
-		this.userID = userID;
+	public User(String id, String userName, String password, Date lastLogin, String level, String cashierID) {
+		this.id = id;
 		this.userName = userName;
 		this.password = password;
 		this.lastLogin = lastLogin;
@@ -22,11 +26,11 @@ public class User {
 		this.cashierID = cashierID;
 	}
 
-	public String getUserID() {
-		return userID;
+	public String getId() {
+		return id;
 	}
-	public void setUserID(String userID) {
-		this.userID = userID;
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getUserName() {
 		return userName;
