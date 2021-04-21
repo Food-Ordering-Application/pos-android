@@ -73,7 +73,7 @@ public class ProductListFragment extends Fragment implements OnClickListener {
 		Bundle arguments = new Bundle();
 		arguments.putString(Constants.ARG_ITEM_ID, mItem.id);
 		fragment.setArguments(arguments);
-		getFragmentManager().beginTransaction()
+		getActivity().getSupportFragmentManager().beginTransaction()
 		.addToBackStack("add")
 		.replace(R.id.master_detail_container, fragment).commit();
 	}

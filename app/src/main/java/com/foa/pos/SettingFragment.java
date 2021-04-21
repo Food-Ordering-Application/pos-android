@@ -18,7 +18,6 @@ import com.foa.pos.utils.Constants;
 
 public class SettingFragment extends Fragment implements SettingControlFragment.Callbacks {
 
-	private boolean mTwoPane;
 	private  View root;
 	@Nullable
 	@Override
@@ -43,9 +42,9 @@ public class SettingFragment extends Fragment implements SettingControlFragment.
 	
 	private void setScreen(String id)
 	{
-		while (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0){
-		    getActivity().getSupportFragmentManager().popBackStackImmediate();
-		}
+//		while (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0){
+//		    getActivity().getSupportFragmentManager().popBackStackImmediate();
+//		}
 		
 		Bundle arguments = new Bundle();
 		arguments.putString(Constants.ARG_ITEM_ID, id);

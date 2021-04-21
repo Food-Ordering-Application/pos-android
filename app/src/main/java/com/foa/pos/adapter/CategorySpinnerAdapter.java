@@ -97,6 +97,8 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         
         final ProductCategory category = (ProductCategory) getItem(position);
 
+        holder.title.setText( category.getCategoryName());
+
         return vi;
     }
 

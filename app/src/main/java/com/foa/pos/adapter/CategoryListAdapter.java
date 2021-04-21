@@ -27,138 +27,131 @@ import com.foa.pos.utils.Helper;
 import java.util.List;
 
 public class CategoryListAdapter extends BaseAdapter {
- 
+
     private List<ProductCategory> dtList;
     private FragmentActivity context;
     private LayoutInflater inflater;
     private String itemID;
+
     public CategoryListAdapter(FragmentActivity context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-    
+
     public CategoryListAdapter(FragmentActivity context, List<ProductCategory> data) {
-     
+
         this.context = context;
         this.dtList = data;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-    
+
     public CategoryListAdapter(FragmentActivity context, String itemid) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.itemID = itemid;
     }
-    
- 
+
+
     private class ViewHolder {
         TextView title;
         ImageButton edit;
-	    ImageButton delete;
+        ImageButton delete;
     }
- 
+
     public int getCount() {
         return dtList.size();
     }
-    
+
     public void set(List<ProductCategory> list) {
-    	dtList = list;
+        dtList = list;
         notifyDataSetChanged();
     }
-    
+
     public void remove(ProductCategory user) {
-    	dtList.remove(user);
+        dtList.remove(user);
         notifyDataSetChanged();
     }
-    
+
     public void add(ProductCategory user) {
-    	dtList.add(user);
+        dtList.add(user);
         notifyDataSetChanged();
     }
-    
+
     public void insert(ProductCategory user, int index) {
-    	dtList.add(index, user);
+        dtList.add(index, user);
         notifyDataSetChanged();
     }
- 
+
     public Object getItem(int position) {
         return dtList.get(position);
     }
- 
+
     public long getItemId(int position) {
         return 0;
     }
- 
+
     public View getView(final int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         ViewHolder holder;
-        
+
         if (convertView == null) {
-        	vi = inflater.inflate(R.layout.category_list_item, null);
+            vi = inflater.inflate(R.layout.category_list_item, null);
             holder = new ViewHolder();
- 
-            holder.title = (TextView) vi.findViewById(R.id.tvCartProductName);
-            holder.edit = (ImageButton)vi.findViewById(R.id.imageView2);
-            holder.delete = (ImageButton)vi.findViewById(R.id.imageView1);
-            
+
+            holder.title = vi.findViewById(R.id.tvCartProductName);
+            holder.edit = vi.findViewById(R.id.imageView2);
+            holder.delete = vi.findViewById(R.id.imageView1);
+
             vi.setTag(holder);
         } else {
-        	 holder=(ViewHolder)vi.getTag();
+            holder = (ViewHolder) vi.getTag();
         }
-        
+
         final ProductCategory category = (ProductCategory) getItem(position);
-        
-        holder.edit.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Fragment fragment  = new Fragment();
-				Bundle arguments = new Bundle();
-				arguments.putString(Constants.ARG_CATEGORY_ID, category.getCategoryID());
-				
-				if(itemID != null)
-					arguments.putString(Constants.ARG_ITEM_ID, itemID);
-				
-				
-				fragment.setArguments(arguments);
-				context.getSupportFragmentManager().beginTransaction()
-				.addToBackStack("add")
-				.replace(R.id.master_detail_container, fragment).commit();
-			}
-		});
-        
-        holder.delete.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-				
-				AlertDialog.Builder builder = new AlertDialog.Builder(context);
-				builder.setMessage(R.string.delete_message).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-		               @Override
-		               public void onClick(DialogInterface dialog, int id) {
-		            		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-		        	        ProductCategoryDataSource ds = new ProductCategoryDataSource(db);
-		        	        if(!ds.cekAvailable(category.getCategoryID()))
-	            	    	{
-		        	        	 ds.delete(category.getCategoryID());
-			        	        dtList.remove(position);
-			        	        notifyDataSetChanged();
-	            	    	}
-	            	    	else
-	            	    	{
-	            	    		Toast.makeText(context, context.getString(R.string.data_being_used), Toast.LENGTH_SHORT).show();
-	            	    	}
-		        	       
-		        	        DatabaseManager.getInstance().closeDatabase();
-		               }
-		           }).setNegativeButton(R.string.cancel, null);
-				
-				builder.show();
-				
-			}
-		});
+
+        holder.title.setText(category.getCategoryName());
+
+        holder.edit.setOnClickListener(v -> {
+            // TODO Auto-generated method stub
+            Fragment fragment = new Fragment();
+            Bundle arguments = new Bundle();
+            arguments.putString(Constants.ARG_CATEGORY_ID, category.getCategoryID());
+
+            if (itemID != null)
+                arguments.putString(Constants.ARG_ITEM_ID, itemID);
+
+
+            fragment.setArguments(arguments);
+            context.getSupportFragmentManager().beginTransaction()
+                    .addToBackStack("add")
+                    .replace(R.id.master_detail_container, fragment).commit();
+        });
+
+        holder.delete.setOnClickListener(v -> {
+            // TODO Auto-generated method stub
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(R.string.delete_message).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
+                    ProductCategoryDataSource ds = new ProductCategoryDataSource(db);
+                    if (!ds.cekAvailable(category.getCategoryID())) {
+                        ds.delete(category.getCategoryID());
+                        dtList.remove(position);
+                        notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.data_being_used), Toast.LENGTH_SHORT).show();
+                    }
+
+                    DatabaseManager.getInstance().closeDatabase();
+                }
+            }).setNegativeButton(R.string.cancel, null);
+
+            builder.show();
+
+        });
         return vi;
     }
 }
