@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Cart;
+import com.foa.pos.model.Cart;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 
@@ -64,7 +64,7 @@ public class CartListAdapter extends BaseAdapter {
     
     public void removeByID(String code) {
     	for (int i = 0; i < dtList.size(); i++) {
-			if(dtList.get(i).getProductID().equals(code))
+			if(dtList.get(i).getMenuItemId().equals(code))
 				dtList.remove(i);
 		};
         notifyDataSetChanged();
@@ -116,20 +116,16 @@ public class CartListAdapter extends BaseAdapter {
         }
         
         final Cart cart = (Cart) getItem(position);
-        holder.name.setText(cart.getProductName());
-        holder.price.setText(Helper.decimalformat.format(cart.getSubtotal()) +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
-        holder.qty.setText(String.valueOf(cart.getQty()));
-        if (cart.getQty()==1){
+        holder.name.setText(cart.getMenuItemName());
+        holder.price.setText(Helper.decimalformat.format(cart.getSubTotal()) +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
+        holder.qty.setText(String.valueOf(cart.getQuantity()));
+        if (cart.getQuantity()==1){
             holder.btnMinus.setImageResource(R.drawable.ic_baseline_delete_24);
         }else {
             holder.btnMinus.setImageResource(R.drawable.ic_remove_circle);
         }
 
-        holder.name.setTypeface(Helper.OpenSansRegular);
-        holder.price.setTypeface(Helper.OpenSansSemibold);
-        holder.qty.setTypeface(Helper.OpenSansRegular);
-        
-        if(cart.getQty() <= 0)
+        if(cart.getQuantity() <= 0)
         {
         	holder.btnMinus.setEnabled(false);
         }
@@ -139,18 +135,18 @@ public class CartListAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				
-				cart.setQty(cart.getQty() - 1);
+				cart.setQuantity(cart.getQuantity() - 1);
 				
-				double discount =  (cart.getPrice()*cart.getQty()) * (cart.getDiscount()/100);
-				double subtotal = (cart.getPrice()*cart.getQty()) - discount;
-				cart.setSubtotal(subtotal);
+				long discount =  (cart.getPrice()*cart.getQuantity()) * (cart.getDiscount()/100);
+				long subtotal = (cart.getPrice()*cart.getQuantity()) - discount;
+				cart.setSubTotal(subtotal);
 				dtList.set(position, cart);
 				
-				if(cart.getQty() <= 0)
+				if(cart.getQuantity() <= 0)
 		        {
 					dtList.remove(position);
 					if(listener != null)
-						listener.onRemove(cart.getProductID());
+						listener.onRemove(cart.getMenuItemId());
 						
 		        }
 				notifyDataSetChanged();
@@ -161,11 +157,11 @@ public class CartListAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				cart.setQty(cart.getQty() + 1);
+				cart.setQuantity(cart.getQuantity() + 1);
 			
-				double discount = (cart.getPrice()*cart.getQty()) * (cart.getDiscount()/100);
-				double subtotal = (cart.getPrice()*cart.getQty()) - discount;
-				cart.setSubtotal(subtotal);
+				long discount = (cart.getPrice()*cart.getQuantity()) * (cart.getDiscount()/100);
+				long subtotal = (cart.getPrice()*cart.getQuantity()) - discount;
+				cart.setSubTotal(subtotal);
 				
 				dtList.set(position, cart);
 				notifyDataSetChanged();

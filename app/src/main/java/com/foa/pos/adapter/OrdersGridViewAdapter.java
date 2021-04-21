@@ -2,12 +2,10 @@ package com.foa.pos.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -17,8 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Order;
-import com.foa.pos.utils.Helper;
+import com.foa.pos.model.Order;
 
 import java.util.List;
 
@@ -64,12 +61,17 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
             holder.cardItem = convertView.findViewById(R.id.cardOrder);
             holder.orderId = convertView.findViewById(R.id.orderId);
             holder.orderTime = convertView.findViewById(R.id.orderTime);
-            holder.orderQty = convertView.findViewById(R.id.orderQty);
             holder.orderAmount = convertView.findViewById(R.id.orderAmount);
             holder.orderStatus = convertView.findViewById(R.id.orderStatus);
             convertView.setTag(holder);
         }else {
             holder = (ViewHolder) convertView.getTag();
+        }
+
+        if(position%2==0){
+            holder.cardItem.setBackgroundResource(R.color.item_transparan);
+        }else{
+            holder.cardItem.setBackgroundResource(R.color.white);
         }
 
         //Set item listener to change border
@@ -97,16 +99,11 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
 //        });
 
         //set data
-        holder.orderId.setText(order.getOrderID().substring(0,6));
-        holder.orderTime.setText(order.getStringCreatedOn());
-        holder.orderQty.setText(String.valueOf(order.getSumQuantity()));
-        holder.orderAmount.setText(String.valueOf(order.getAmount()));
-        holder.orderStatus.setText(order.getStatus()?"Đã thanh toán": "Chưa thanh toán");
+        holder.orderId.setText(order.getId().substring(0,6));
+        holder.orderTime.setText(order.getStringCreatedAt());
+        holder.orderAmount.setText(String.valueOf(order.getGrandTotal()));
+        holder.orderStatus.setText("Tiền mặt");
 
-//        (detailLayout.findViewById(R.id.btnCancelDetatil)).setOnClickListener(v -> {
-//            Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
-//            Helper.clearSelectedItem(orders);
-//        });
         return convertView;
     }
 
@@ -114,7 +111,6 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
         LinearLayout cardItem;
         TextView orderId;
         TextView orderTime;
-        TextView orderQty;
         TextView orderAmount;
         TextView orderStatus;
     }

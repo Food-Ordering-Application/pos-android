@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Product;
+import com.foa.pos.model.MenuItem;
 import com.foa.pos.fragment.ProductAddFragment;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.ProductDataSource;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class ProductListAdapter extends BaseAdapter {
  
-    private List<Product> dtList;
+    private List<MenuItem> dtList;
     private FragmentActivity context;
     private LayoutInflater inflater;
     private String itemID;
@@ -38,7 +38,7 @@ public class ProductListAdapter extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
-    public ProductListAdapter(FragmentActivity context, List<Product> data) {
+    public ProductListAdapter(FragmentActivity context, List<MenuItem> data) {
      
         this.context = context;
         this.dtList = data;
@@ -63,22 +63,22 @@ public class ProductListAdapter extends BaseAdapter {
         return dtList.size();
     }
     
-    public void set(List<Product> list) {
+    public void set(List<MenuItem> list) {
     	dtList = list;
         notifyDataSetChanged();
     }
     
-    public void remove(Product user) {
+    public void remove(MenuItem user) {
     	dtList.remove(user);
         notifyDataSetChanged();
     }
     
-    public void add(Product user) {
+    public void add(MenuItem user) {
     	dtList.add(user);
         notifyDataSetChanged();
     }
     
-    public void insert(Product user, int index) {
+    public void insert(MenuItem user, int index) {
     	dtList.add(index, user);
         notifyDataSetChanged();
     }
@@ -109,8 +109,8 @@ public class ProductListAdapter extends BaseAdapter {
         	 holder=(ViewHolder)vi.getTag();
         }
         
-        final Product product = (Product) getItem(position);
-        holder.title.setText(product.getProductName());
+        final MenuItem product = (MenuItem) getItem(position);
+        holder.title.setText(product.getName());
         holder.body.setText(Helper.decimalformat.format(product.getPrice()));
         
         holder.edit.setOnClickListener(new OnClickListener() {
@@ -119,7 +119,7 @@ public class ProductListAdapter extends BaseAdapter {
 				// TODO Auto-generated method stub
 				Fragment fragment  = new ProductAddFragment();
 				Bundle arguments = new Bundle();
-				arguments.putString(Constants.ARG_PRODUCT_ID, product.getProductID());
+				arguments.putString(Constants.ARG_PRODUCT_ID, product.getId());
 				
 				if(itemID != null)
 					arguments.putString(Constants.ARG_ITEM_ID, itemID);
@@ -145,10 +145,10 @@ public class ProductListAdapter extends BaseAdapter {
 		               public void onClick(DialogInterface dialog, int id) {
 		            		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 		        	        ProductDataSource ds = new ProductDataSource(db);
-		        	        if(!ds.cekAvailable(product.getProductID()))
+		        	        if(!ds.cekAvailable(product.getId()))
 	            	    	{
 		        	        	  
-			        	        ds.delete(product.getCategoryID());
+			        	        ds.delete(product.getCategoryId());
 			        	        dtList.remove(position);
 			        	        notifyDataSetChanged();
 			        	      

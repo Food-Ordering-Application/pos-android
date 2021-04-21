@@ -47,10 +47,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 		txtusername = (EditText) findViewById(R.id.txtUserName);
 		txtpassword = (EditText) findViewById(R.id.txtPassword);
 
-		txtusername.setTypeface(Helper.OpenSansRegular);
-		txtpassword.setTypeface(Helper.OpenSansRegular);
-		btnLogin.setTypeface(Helper.OpenSansSemibold);
-
 		loading = new LoadingDialog(this);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

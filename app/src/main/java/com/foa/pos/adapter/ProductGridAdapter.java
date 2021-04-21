@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Product;
+import com.foa.pos.model.MenuItem;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ProductGridAdapter extends BaseAdapter {
  
-    private List<Product> dtList = new ArrayList<Product>();
+    private List<MenuItem> dtList = new ArrayList<MenuItem>();
     private List<String> selected = new ArrayList<>();
 
     private Activity context;
@@ -40,7 +40,7 @@ public class ProductGridAdapter extends BaseAdapter {
         this.menu = menu;
     }
     
-    public ProductGridAdapter(Activity context, List<Product> data) {
+    public ProductGridAdapter(Activity context, List<MenuItem> data) {
         this.context = context;
         this.dtList = data;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -83,12 +83,12 @@ public class ProductGridAdapter extends BaseAdapter {
     }
     
 
-    public void set(List<Product> list) {
+    public void set(List<MenuItem> list) {
     	dtList = list;
     	this.notifyDataSetChanged();
     }
     
-    public void remove(Product user) {
+    public void remove(MenuItem user) {
         dtList.remove(user);
         this.notifyDataSetChanged();
     }
@@ -104,12 +104,12 @@ public class ProductGridAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
     
-    public void add(Product product) {
+    public void add(MenuItem product) {
     	dtList.add(product);
         this.notifyDataSetChanged();
     }
     
-    public void insert(Product product,int index) {
+    public void insert(MenuItem product, int index) {
         dtList.add(index, product);
     }
  
@@ -143,16 +143,15 @@ public class ProductGridAdapter extends BaseAdapter {
         	 holder=(ViewHolder)vi.getTag();
         }
         
-        final Product product = (Product) getItem(position);
+        final MenuItem product = (MenuItem) getItem(position);
         holder.name.setText(product.getCategoryName());
         holder.price.setText(Helper.decimalformat.format(product.getPrice()) +" " +Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL,Constants.VAL_DEFAULT_CURRENCY_SYMBOL) );
         
         holder.selectedWrapper.setVisibility(View.GONE);
 
-        if(selected.contains(product.getProductID()))
+        if(selected.contains(product.getId()))
         	 holder.selectedWrapper.setVisibility(View.VISIBLE);
 
-        holder.price.setTypeface(Helper.OpenSansBold);
         
         if(product.getImage() != null)
     	{

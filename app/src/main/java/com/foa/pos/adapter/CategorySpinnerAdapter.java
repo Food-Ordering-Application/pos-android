@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.ProductCategory;
+import com.foa.pos.model.ProductCategory;
 import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
@@ -96,9 +96,7 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         }
         
         final ProductCategory category = (ProductCategory) getItem(position);
-        holder.title.setText(category.getCategoryName());
-        holder.title.setTypeface(Helper.OpenSansRegular);
-        
+
         return vi;
     }
 
@@ -121,8 +119,7 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         
         final ProductCategory category = (ProductCategory) getItem(position);
         holder.title.setText(category.getCategoryName());
-        holder.title.setTypeface(Helper.OpenSansRegular);
-        
+
         return vi;
 	}
     

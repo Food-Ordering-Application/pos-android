@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.OrderDetails;
+import com.foa.pos.model.OrderItem;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 
@@ -20,7 +19,7 @@ import java.util.List;
 
 public class OrderDetailListAdapter extends BaseAdapter {
  
-    private List<OrderDetails> dtList = new ArrayList<OrderDetails>();
+    private List<OrderItem> dtList = new ArrayList<OrderItem>();
     private Activity context;
     private LayoutInflater inflater;
     //private CartListener listener;
@@ -29,7 +28,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
-    public OrderDetailListAdapter(Activity context, List<OrderDetails> data) {
+    public OrderDetailListAdapter(Activity context, List<OrderItem> data) {
      
         this.context = context;
         this.dtList = data;
@@ -48,34 +47,34 @@ public class OrderDetailListAdapter extends BaseAdapter {
         return dtList.size();
     }
     
-    public void set(List<OrderDetails> list) {
+    public void set(List<OrderItem> list) {
     	dtList = list;
         notifyDataSetChanged();
     }
     
-    public void remove(OrderDetails user) {
+    public void remove(OrderItem user) {
     	dtList.remove(user);
         notifyDataSetChanged();
     }
     public void removeAll() {
-    	dtList = new ArrayList<OrderDetails>();
+    	dtList = new ArrayList<OrderItem>();
         notifyDataSetChanged();
     }
     
     public void removeByID(String code) {
     	for (int i = 0; i < dtList.size(); i++) {
-			if(dtList.get(i).getProductID().equals(code))
+			if(dtList.get(i).getMenuItemId().equals(code))
 				dtList.remove(i);
 		};
         notifyDataSetChanged();
     }
     
-    public void add(OrderDetails user) {
+    public void add(OrderItem user) {
     	dtList.add(user);
         notifyDataSetChanged();
     }
     
-    public void insert(OrderDetails user,int index) {
+    public void insert(OrderItem user, int index) {
     	dtList.add(index, user);
         notifyDataSetChanged();
     }
@@ -115,18 +114,12 @@ public class OrderDetailListAdapter extends BaseAdapter {
         	 holder=(ViewHolder)vi.getTag();
         }
         
-        final OrderDetails orderDetails = (OrderDetails) getItem(position);
-        holder.name.setText(orderDetails.getProductName());
-        holder.price.setText(Helper.decimalformat.format(orderDetails.getPrice()*orderDetails.getQty())
+        final OrderItem orderItem = (OrderItem) getItem(position);
+        holder.name.setText(orderItem.getMenuItemName());
+        holder.price.setText(Helper.decimalformat.format(orderItem.getPrice()* orderItem.getQuantity())
                 +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
-//        if (orderDetails.getQty()==1){
-//            holder.btnMinus.setImageResource(R.drawable.ic_baseline_delete_24);
-//        }else {
-//            holder.btnMinus.setImageResource(R.drawable.ic_remove_circle);
-//        }
 
-        
-        if(orderDetails.getQty() <= 0)
+        if(orderItem.getQuantity() <= 0)
         {
         	holder.btnMinus.setEnabled(false);
         }

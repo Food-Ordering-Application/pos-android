@@ -10,10 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Cart;
-import com.foa.pos.entity.Topping;
+import com.foa.pos.model.Topping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ToppingListAdapter  extends BaseAdapter {

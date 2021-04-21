@@ -14,11 +14,10 @@ import androidx.fragment.app.Fragment;
 import com.foa.pos.R;
 import com.foa.pos.adapter.ProductListAdapter;
 import com.foa.pos.dummy.MasterContent;
-import com.foa.pos.entity.Product;
+import com.foa.pos.model.MenuItem;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.utils.Constants;
-import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
 
@@ -26,7 +25,7 @@ public class ProductListFragment extends Fragment implements OnClickListener {
 	private MasterContent.DummyItem mItem;
 	private ListView lv;
 	private ProductListAdapter adapter;
-	private ArrayList<Product> dtlist;
+	private ArrayList<MenuItem> dtlist;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,7 +47,6 @@ public class ProductListFragment extends Fragment implements OnClickListener {
 		lv.setAdapter(adapter);
 				
 		TextView title = (TextView)rootView.findViewById(R.id.item_detail);
-		title.setTypeface(Helper.OpenSansSemibold);
 		if (mItem != null) {
 			title.setText(mItem.content);
 		}

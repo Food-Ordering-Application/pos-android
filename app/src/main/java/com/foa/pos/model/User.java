@@ -1,4 +1,4 @@
-package com.foa.pos.entity;
+package com.foa.pos.model;
 
 import com.google.gson.annotations.SerializedName;
 

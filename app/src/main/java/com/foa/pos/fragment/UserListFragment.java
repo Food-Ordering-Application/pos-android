@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.foa.pos.R;
 import com.foa.pos.adapter.UserListAdapter;
 import com.foa.pos.dummy.MasterContent;
-import com.foa.pos.entity.User;
+import com.foa.pos.model.User;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.UserDataSource;
 import com.foa.pos.utils.Constants;
@@ -48,7 +48,6 @@ public class UserListFragment extends Fragment implements OnClickListener {
 		lv.setAdapter(adapter);
 				
 		TextView title = (TextView)rootView.findViewById(R.id.item_detail);
-		title.setTypeface(Helper.OpenSansSemibold);
 		if (mItem != null) {
 			title.setText(mItem.content);
 		}

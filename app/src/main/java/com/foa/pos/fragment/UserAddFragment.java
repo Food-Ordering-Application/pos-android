@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.foa.pos.R;
 import com.foa.pos.dummy.MasterContent;
-import com.foa.pos.entity.User;
+import com.foa.pos.model.User;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.UserDataSource;
 import com.foa.pos.utils.Constants;
@@ -64,26 +64,13 @@ public class UserAddFragment extends Fragment {
 			title.setText(mItem.content);
 		}
 		
-		subtitle.setTypeface(Helper.OpenSansSemibold);
-		chev.setTypeface(Helper.OpenSansSemibold);
-		title.setTypeface(Helper.OpenSansSemibold);
-		
-		t1.setTypeface(Helper.OpenSansRegular);
-		t2.setTypeface(Helper.OpenSansRegular);
-		t3.setTypeface(Helper.OpenSansRegular);
-		
 		txtName = (EditText)rootView.findViewById(R.id.editText2);
-		txtName.setTypeface(Helper.OpenSansRegular);
-		
+
 		txtPassword = (EditText)rootView.findViewById(R.id.editText1);
-		txtPassword.setTypeface(Helper.OpenSansRegular);
-		
+
 		radio1 = (RadioButton)rootView.findViewById(R.id.radio0);
 		radio2 = (RadioButton)rootView.findViewById(R.id.radio1);
-		
-		radio1.setTypeface(Helper.OpenSansRegular);
-		radio2.setTypeface(Helper.OpenSansRegular);
-		
+
 		radioGroup = (RadioGroup)rootView.findViewById(R.id.radioGroup1);
 		
 		btnSave = (ImageButton)rootView.findViewById(R.id.btnPlusQuantityCartItem);

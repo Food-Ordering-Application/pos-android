@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Setting;
+import com.foa.pos.model.Setting;
 
 import java.util.List;
 

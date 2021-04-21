@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,10 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Order;
+import com.foa.pos.model.Order;
 import com.foa.pos.utils.Helper;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -101,18 +99,18 @@ public class DeliveryGridViewAdapter extends ArrayAdapter<Order> {
         });
 
         //set data
-        holder.orderId.setText(order.getOrderID().substring(0,6));
+        holder.orderId.setText(order.getId().substring(0,6));
         //holder.timeLeft.setText(order.getOrderDelivery().getAcceptanceDeadline().toString());
         holder.orderQty.setText(String.valueOf(order.getSumQuantity()));
-        holder.orderAmount.setText(String.valueOf(order.getAmount()));
+        holder.orderAmount.setText(String.valueOf(order.getGrandTotal()));
         holder.deliveryStatus.setText("Chờ xác nhận");
         holder.deliveryDistance.setText(String.valueOf( Math.abs(new Random().nextInt()%7+0.2)));
-        holder.paymentStatus.setText(order.getStatus()?"Đã thanh toán": "Chưa thanh toán");
+        holder.paymentStatus.setText("Tiền mặt");
 
-        (detailLayout.findViewById(R.id.btnCancelDetatil)).setOnClickListener(v -> {
-            Helper.disableSplitLayout(deliveriesLayout,detailLayout,theGridView);
-            Helper.clearSelectedItem(orders);
-        });
+//        (detailLayout.findViewById(R.id.btnCancelDetatil)).setOnClickListener(v -> {
+//            Helper.disableSplitLayout(deliveriesLayout,detailLayout,theGridView);
+//            Helper.clearSelectedItem(orders);
+//        });
 
         return convertView;
     }

@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="20dp" >
+    android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/cardOrder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="40dp"
+        android:gravity="center_vertical">
         <TextView
             android:id="@+id/orderId"
             android:layout_weight="1"
+            android:gravity="start"
+            android:paddingStart="5dp"
+            style="@style/TalbleRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            />
-        <TextView
-            android:id="@+id/orderQty"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            />
+            tools:ignore="RtlSymmetry" />
         <TextView
             android:id="@+id/orderAmount"
             android:layout_weight="1"
+            android:gravity="center"
+            style="@style/TalbleRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             />
         <TextView
             android:id="@+id/orderStatus"
             android:layout_weight="1"
+            android:gravity="center"
+            style="@style/TalbleRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
         <TextView
             android:text="Tại quán"
             android:layout_weight="1"
+            android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
@@ -41,12 +44,18 @@
             android:id="@+id/orderCashier"
             android:text="D. Viet Hoang"
             android:layout_weight="1"
+            android:gravity="center"
+            style="@style/TalbleRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             />
         <TextView
+            android:id="@+id/orderTime"
             android:text="Thời gian tạo"
             android:layout_weight="1"
+            android:gravity="end"
+            android:paddingEnd="5dp"
+            style="@style/TalbleRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             />

@@ -47,5 +47,12 @@
         <item name="android:textSize">12dp</item>
     </style>
 
+    <style name="TalbleTitle">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TalbleRow">
+        <item name="android:textSize">16dp</item>
+    </style>
 
 </resources>

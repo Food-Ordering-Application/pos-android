@@ -3,30 +3,21 @@ package com.foa.pos.widget;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.foa.pos.R;
 import com.foa.pos.adapter.ToppingListAdapter;
-import com.foa.pos.entity.Order;
-import com.foa.pos.entity.Product;
-import com.foa.pos.entity.Topping;
-import com.foa.pos.sqlite.DatabaseHelper;
-import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.OrderDataSource;
-import com.foa.pos.utils.Helper;
-import com.zj.btsdk.BluetoothService;
+import com.foa.pos.model.MenuItem;
+import com.foa.pos.model.Topping;
 
 public class PickToppingDialog extends Dialog implements View.OnClickListener{
-	private Product product;
+	private MenuItem product;
 	private Context context;
 	private Button btnOk;
 	private Button btnCancel;
@@ -38,7 +29,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		super(context);
 		this.context = context;
 	}
-	public PickToppingDialog(Context context, Product product) {
+	public PickToppingDialog(Context context, MenuItem product) {
 		super(context);
 		this.context = context;
 		this.product = product;
@@ -70,10 +61,6 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		btnOk.setEnabled(false);
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
-		
-		btnOk.setTypeface(Helper.OpenSansSemibold);
-		btnCancel.setTypeface(Helper.OpenSansSemibold);
-		
 	}
 	
 	@Override

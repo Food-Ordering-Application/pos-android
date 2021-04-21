@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
-import com.foa.pos.entity.Product;
+import com.foa.pos.model.MenuItem;
 import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
 
@@ -27,9 +27,9 @@ public class ProductDataSource {
 		return db.delete(DbSchema.TBL_PRODUCT,null,null);
 	}
 	
-	public Product get(String code) {
+	public MenuItem get(String code) {
 		 
-		Product item = new Product();
+		MenuItem item = new MenuItem();
 		 
 		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_PRODUCT  +
 						       " Where " + DbSchema.COL_PRODUCT_CODE + " = '"+code+"'";
@@ -39,18 +39,18 @@ public class ProductDataSource {
 		if (c.moveToFirst()) {
 			do {
 			
-				item.setProductID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
-				item.setProductName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-				item.setCategoryID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
+				item.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
+				item.setCategoryId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
 				item.setCategoryName(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_DESCRIPTION)));
-				item.setPrice(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
-				item.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_DISCOUNT)));
-				item.setCreateBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CREATED_BY)));
+				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
+				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_DISCOUNT)));
+				item.setCreatedBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CREATED_BY)));
 				item.setUpdatedBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_UPDATED_BY)));
-				item.setMerchantID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_MERCHANT_ID)));
+				item.setMerchantId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_MERCHANT_ID)));
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_STATUS)));
-				item.setRefID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_REF_ID)));
+				item.setCreatedBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_REF_ID)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_IMAGE)));
 				try {  
 				    item.setCreatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CREATED_ON))));
@@ -65,17 +65,17 @@ public class ProductDataSource {
 	}
 	
 	
-	public ArrayList<Product> getAll() {
+	public ArrayList<MenuItem> getAll() {
 		return getAll(true,null,null);
 	}
 
-	public ArrayList<Product> getAll(String keyword, String categoryid) {
+	public ArrayList<MenuItem> getAll(String keyword, String categoryid) {
 		return getAll(false,keyword,categoryid);
 	}
 	
-	public ArrayList<Product> getAll(boolean isAll, String keyword, String categoryid) {
+	public ArrayList<MenuItem> getAll(boolean isAll, String keyword, String categoryid) {
 		 
-		ArrayList<Product> items = new ArrayList<Product>();
+		ArrayList<MenuItem> items = new ArrayList<MenuItem>();
 
 		ArrayList<String> where = new ArrayList<String>();
 
@@ -94,19 +94,19 @@ public class ProductDataSource {
 		Cursor c = db.rawQuery(selectQuery, null);
 		if (c.moveToFirst()) {
 			do {
-				Product item = new Product();
-				item.setProductID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
-				item.setProductName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-				item.setCategoryID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
+				MenuItem item = new MenuItem();
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
+				item.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
+				item.setCategoryId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
 				item.setCategoryName(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_DESCRIPTION)));
-				item.setPrice(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
-				item.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_DISCOUNT)));
-				item.setCreateBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CREATED_BY)));
+				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
+				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_DISCOUNT)));
+				item.setCreatedBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CREATED_BY)));
 				item.setUpdatedBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_UPDATED_BY)));
-				item.setMerchantID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_MERCHANT_ID)));
+				item.setMerchantId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_MERCHANT_ID)));
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_STATUS)));
-				item.setRefID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_REF_ID)));
+				item.setCreatedBy(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_REF_ID)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_IMAGE)));
 				try {  
 				    item.setCreatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CREATED_ON))));
@@ -122,20 +122,20 @@ public class ProductDataSource {
 		return items;
 	}
 	
-	public long insert(Product item)
+	public long insert(MenuItem item)
 	{
 		ContentValues values = new ContentValues();
-		values.put(DbSchema.COL_PRODUCT_CODE, item.getProductID());
-		values.put(DbSchema.COL_PRODUCT_NAME, item.getProductName());
-		values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getCategoryID());
+		values.put(DbSchema.COL_PRODUCT_CODE, item.getId());
+		values.put(DbSchema.COL_PRODUCT_NAME, item.getName());
+		values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getCategoryId());
 		values.put(DbSchema.COL_PRODUCT_DESCRIPTION, item.getDescription());
 		values.put(DbSchema.COL_PRODUCT_PRICE, item.getPrice());
 		values.put(DbSchema.COL_PRODUCT_DISCOUNT,item.getDiscount());
 		values.put(DbSchema.COL_PRODUCT_CREATED_BY, "Device");
 		values.put(DbSchema.COL_PRODUCT_UPDATED_BY, "Device");
-		values.put(DbSchema.COL_PRODUCT_MERCHANT_ID, item.getMerchantID());
+		values.put(DbSchema.COL_PRODUCT_MERCHANT_ID, item.getMerchantId());
 		values.put(DbSchema.COL_PRODUCT_STATUS, item.getStatus());
-		values.put(DbSchema.COL_PRODUCT_REF_ID, item.getRefID());
+		values.put(DbSchema.COL_PRODUCT_REF_ID, item.getCreatedBy());
 		values.put(DbSchema.COL_PRODUCT_IMAGE, item.getImage());
 		values.put(DbSchema.COL_PRODUCT_CREATED_ON,  Helper.dateformat.format(new Date()));
 		values.put(DbSchema.COL_PRODUCT_UPDATED_ON,  Helper.dateformat.format(new Date()));
@@ -144,17 +144,17 @@ public class ProductDataSource {
 		return db.insert(DbSchema.TBL_PRODUCT, null, values);
 	}
 	
-	public long update(Product item, String lastCode)
+	public long update(MenuItem item, String lastCode)
 	{
 		ContentValues values = new ContentValues();
-		if(item.getProductID() != null)
-			values.put(DbSchema.COL_PRODUCT_CODE, item.getProductID());
+		if(item.getId() != null)
+			values.put(DbSchema.COL_PRODUCT_CODE, item.getId());
 		
-		if(item.getProductName() != null)
-			values.put(DbSchema.COL_PRODUCT_NAME, item.getProductName());
+		if(item.getName() != null)
+			values.put(DbSchema.COL_PRODUCT_NAME, item.getName());
 		
-		if(item.getCategoryID() != null)
-			values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getCategoryID());
+		if(item.getCategoryId() != null)
+			values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getCategoryId());
 		
 		if(item.getDescription() != null)
 			values.put(DbSchema.COL_PRODUCT_DESCRIPTION, item.getDescription());
@@ -171,11 +171,11 @@ public class ProductDataSource {
 		if(item.getImage() != null)
 			values.put(DbSchema.COL_PRODUCT_IMAGE, item.getImage());
 		
-		if(item.getRefID() != null)
-			values.put(DbSchema.COL_PRODUCT_REF_ID, item.getRefID());
+		if(item.getCreatedBy() != null)
+			values.put(DbSchema.COL_PRODUCT_REF_ID, item.getCreatedBy());
 		
-		if(item.getMerchantID() != null)
-			values.put(DbSchema.COL_PRODUCT_MERCHANT_ID, item.getMerchantID());
+		if(item.getMerchantId() != null)
+			values.put(DbSchema.COL_PRODUCT_MERCHANT_ID, item.getMerchantId());
 		
 		
 		values.put(DbSchema.COL_PRODUCT_PRICE, item.getPrice());

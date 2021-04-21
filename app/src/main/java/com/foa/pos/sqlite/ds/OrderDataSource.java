@@ -3,10 +3,9 @@ package com.foa.pos.sqlite.ds;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import com.foa.pos.entity.Order;
-import com.foa.pos.entity.OrderDetails;
+import com.foa.pos.model.Order;
+import com.foa.pos.model.OrderItem;
 import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
 
@@ -25,31 +24,30 @@ public class OrderDataSource {
 		return db.delete(DbSchema.TBL_ORDER,null,null);
 	}
 	
-	public Order get(String code) {
+	public Order get(String id) {
 		 
-		Order item = new Order();
+		Order order = new Order();
 		 
 		String selectQuery = 	" SELECT  o.*,u."+DbSchema.COL_USER_NAME+"  FROM " + DbSchema.TBL_ORDER   + " o " +
 								" LEFT JOIN " +  DbSchema.TBL_USER +  " u ON u." +  DbSchema.COL_USER_CODE + " = o." + DbSchema.COL_ORDER_USER_ID +
-								" Where " +DbSchema.COL_ORDER_CODE + " = '"+code+"'";
+								" Where " +DbSchema.COL_ORDER_CODE + " = '"+id+"'";
 		
 		Cursor c = db.rawQuery(selectQuery, null);
 	
 		if (c.moveToFirst()) {
 			do {
 			
-				item.setOrderID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
-				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				item.setAmount(c.getDouble(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
-				item.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				item.setBranchID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_BRANCH_ID)));
-				item.setUserID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_USER_ID)));
-				item.setUserName(c.getString(c.getColumnIndex(DbSchema.COL_USER_NAME)));
+				order.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
+				order.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
+				order.setGrandTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
+				order.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
+				order.setRestaurantId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_BRANCH_ID)));
+				order.setCustomerId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_USER_ID)));
 				
 				try {  
-				    item.setCreatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
-				    item.setUpdatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
-				    item.setSycnOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYCN_ON))));
+				    order.setCreatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
+				    order.setUpdatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
+				    order.setSycnAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYCN_ON))));
 				} catch (Exception e) {
 				}
 				
@@ -57,32 +55,31 @@ public class OrderDataSource {
 				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_PRODUCT_NAME+",c."+DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT +  " p ON p." +  DbSchema.COL_PRODUCT_CODE + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT_CATEGORY +  " c ON c." +  DbSchema.COL_PRODUCT_CATEGORY_CODE + " = p." + DbSchema.COL_PRODUCT_CATEGORY_CODE +
-											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+code+"'";
+											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+id+"'";
 				Cursor cDetail = db.rawQuery(selectQueryDetail, null);
 				
-				ArrayList<OrderDetails> details = new ArrayList<OrderDetails>();
+				ArrayList<OrderItem> details = new ArrayList<OrderItem>();
 				if (cDetail.moveToFirst()) {
 					do {
 						
-						OrderDetails  order = new OrderDetails();
-						order.setDetailID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
-						order.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-						order.setOrderID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
-						order.setProductID(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
-						order.setCategoryName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME)));
-						order.setQty(c.getInt(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
-						order.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
-						order.setPrice(c.getDouble(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
+						OrderItem orderItem = new OrderItem();
+						orderItem.setId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
+						orderItem.setMenuItemName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
+						orderItem.setOrderId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
+						orderItem.setMenuItemId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
+						orderItem.setQuantity(c.getInt(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
+						orderItem.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
+						orderItem.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
 						
-						details.add(order);
+						details.add(orderItem);
 					} while (cDetail.moveToNext());
 				}
 				
-				 item.setOrderDetails(details);
+				 order.setOrderItems(details);
 			
 			} while (c.moveToNext());
 		}
-		return item;
+		return order;
 	}
 	
 	
@@ -101,19 +98,18 @@ public class OrderDataSource {
 			String x  = c.getColumnName(0);
 			do {
 				Order item = new Order();
-				item.setOrderID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
-				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				item.setAmount(c.getDouble(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
-				item.setDiscount(c.getDouble(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				item.setBranchID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_BRANCH_ID)));
-				item.setUserID(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_USER_ID)));
-				//item.setUserName(c.getString(c.getColumnIndex(DbSchema.COL_USER_NAME)));
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
+				item.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
+				item.setGrandTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
+				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_DISCOUNT)));
+				item.setRestaurantId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_BRANCH_ID)));
+				item.setCustomerId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_USER_ID)));
 				item.setSelected(false);
 				
 				try {  
-				    item.setCreatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
-				    item.setUpdatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
-				    item.setSycnOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYCN_ON))));
+				    item.setCreatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
+				    item.setUpdatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
+				    item.setSycnAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYCN_ON))));
 				} catch (Exception e) {
 				}
 				
@@ -122,29 +118,25 @@ public class OrderDataSource {
 						+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT +  " p ON p." +  DbSchema.COL_PRODUCT_CODE + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT_CATEGORY +  " c ON c." +  DbSchema.COL_PRODUCT_CATEGORY_CODE + " = p." + DbSchema.COL_PRODUCT_CATEGORY_CODE +
-											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+item.getOrderID()+"'";
+											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+item.getId()+"'";
 				Cursor cDetail = db.rawQuery(selectQueryDetail, null);
 				
-				ArrayList<OrderDetails> details = new ArrayList<OrderDetails>();
-//				for (int i = 0; i < cDetail.getColumnCount(); i++) {
-//					Log.e("database",cDetail.getColumnName(i));
-//				}
+				ArrayList<OrderItem> details = new ArrayList<>();
 				if (cDetail.moveToFirst()) {
 					do {
-						OrderDetails  order = new OrderDetails();
-						order.setDetailID(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
-						order.setName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-						order.setOrderID(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
-						order.setProductID(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
-						order.setCategoryName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME)));
-						order.setQty(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
-						order.setDiscount(cDetail.getDouble(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
-						order.setPrice(cDetail.getDouble(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
-						details.add(order);
+						OrderItem orderItem = new OrderItem();
+						orderItem.setId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
+						orderItem.setMenuItemName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
+						orderItem.setOrderId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
+						orderItem.setMenuItemId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
+						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
+						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
+						orderItem.setPrice(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
+						details.add(orderItem);
 					} while (cDetail.moveToNext());
 				}
 				
-				item.setOrderDetails(details);
+				item.setOrderItems(details);
 				items.add(item);
 			} while (c.moveToNext());
 		}
@@ -155,25 +147,24 @@ public class OrderDataSource {
 	public long insert(Order item)
 	{
 		ContentValues values = new ContentValues();
-		values.put(DbSchema.COL_ORDER_CODE, item.getOrderID());
-		values.put(DbSchema.COL_ORDER_DESCRIPTION, item.getDescription());
-		values.put(DbSchema.COL_ORDER_TAX, item.getTax());
-		values.put(DbSchema.COL_ORDER_AMOUNT, item.getAmount());
+		values.put(DbSchema.COL_ORDER_CODE, item.getId());
+		values.put(DbSchema.COL_ORDER_DESCRIPTION, item.getNote());
+		values.put(DbSchema.COL_ORDER_AMOUNT, item.getGrandTotal());
 		values.put(DbSchema.COL_ORDER_DISCOUNT,item.getDiscount());
-		values.put(DbSchema.COL_ORDER_BRANCH_ID, item.getBranchID());
-		values.put(DbSchema.COL_ORDER_USER_ID, item.getUserID());
-		values.put(DbSchema.COL_ORDER_ORDERED_ON,  Helper.dateformat.format(item.getCreatedOn()));
-		values.put(DbSchema.COL_ORDER_UPDATED_ON,  Helper.dateformat.format(item.getUpdatedOn()));
+		values.put(DbSchema.COL_ORDER_BRANCH_ID, item.getRestaurantId());
+		values.put(DbSchema.COL_ORDER_USER_ID, item.getCustomerId());
+		values.put(DbSchema.COL_ORDER_ORDERED_ON,  Helper.dateformat.format(item.getCreatedAt()));
+		values.put(DbSchema.COL_ORDER_UPDATED_ON,  Helper.dateformat.format(item.getUpdatedAt()));
 	//	values.put(DbSchema.COL_ORDER_SYCN_ON, Shared.dateformat.format(item.getSycnOn()));
 		db.insert(DbSchema.TBL_ORDER, null, values);
 		
-		for (OrderDetails detail : item.getOrderDetails()) {
+		for (OrderItem detail : item.getOrderItems()) {
 			ContentValues valuesDetails = new ContentValues();
-			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE, detail.getDetailID());
-			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE, detail.getOrderID());
-			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE, detail.getProductID());
+			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE, detail.getId());
+			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE, detail.getOrderId());
+			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE, detail.getMenuItemId());
 			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE, detail.getPrice());
-			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY,detail.getQty());
+			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY,detail.getQuantity());
 			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT, detail.getDiscount());
 			db.insert(DbSchema.TBL_PRODUCT_ORDER_DETAIL, null, valuesDetails);
 		}

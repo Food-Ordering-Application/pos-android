@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.graphics.Typeface;
 import android.os.Environment;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,7 @@ import android.widget.TextView;
 
 import com.foa.pos.R;
 import com.foa.pos.adapter.OrderDetailListAdapter;
-import com.foa.pos.entity.Order;
+import com.foa.pos.model.Order;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -39,19 +37,12 @@ public final class Helper
 {
 	private static ContextWrapper instance;
 	private static SharedPreferences pref;
-	public static Typeface OpenSansSemibold;
-	public static Typeface OpenSansBold;
-	public static Typeface OpenSansRegular;
-	public static Typeface openSansRegularItalic;
-	public static Typeface openSansLightItalic;
-	public static Typeface openSansLight;
-	public static String SERVER_URL = "";
+	public static String SERVER_URL = "http://10.0.2.2:8000";
 	
 	public static SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 	public static SimpleDateFormat dateformatID = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	public static SimpleDateFormat dateformatStruk = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-	public static DecimalFormat decimalformat = new DecimalFormat("#,###.#");
-	public static DecimalFormat decimalformat2 = new DecimalFormat("###.#");
+
+	public static DecimalFormat decimalformat = new DecimalFormat("#.###");
 	public static void initialize(Context base)
 	{
 		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.GERMAN);
@@ -59,12 +50,6 @@ public final class Helper
 		
 		instance = new ContextWrapper(base);
 		pref = instance.getSharedPreferences("com.foa.pos", Context.MODE_PRIVATE);
-		OpenSansSemibold = Typeface.createFromAsset(instance.getAssets(),"fonts/OpenSans-Semibold.ttf");
-		OpenSansBold = Typeface.createFromAsset(instance.getAssets(),"fonts/OpenSans-Bold.ttf");
-		OpenSansRegular = Typeface.createFromAsset(instance.getAssets(),"fonts/OpenSans-Regular.ttf");
-		openSansRegularItalic = Typeface.createFromAsset(instance.getAssets(),"fonts/OpenSans-Italic.ttf");
-		openSansLightItalic = Typeface.createFromAsset(instance.getAssets(),"fonts/OpenSans-LightItalic.ttf");
-		openSansLight = Typeface.createFromAsset(instance.getAssets(),"fonts/OpenSans-Light.ttf");
 	}
 	public static void write(String key, String value)
 	{
@@ -150,14 +135,6 @@ public final class Helper
             throw new RuntimeException(e);
         }
     }
-	
-	public static boolean isMediaMounted()
-    {
-        String storageState = Environment.getExternalStorageState();
-        return storageState.equals(Environment.MEDIA_MOUNTED);
-    }
-	 
-	
 	 
 	public static String getAppDir()
 	{
@@ -173,29 +150,8 @@ public final class Helper
        return 512f / w;
     }
 	
-	public static int getDisplayHeight()
-	{
-		
-		 WindowManager wm = (WindowManager) instance.getSystemService(Context.WINDOW_SERVICE);
-		 Display display = wm.getDefaultDisplay();
-		 final int version = android.os.Build.VERSION.SDK_INT;
-		 
-		 if (version >= 13)
-		 {
-		     Point size = new Point();
-		     display.getSize(size);
-		    return size.y;
-		 }
-		 else
-		 {
-		     
-		     return  display.getHeight();
-		 }
-	}
-	
 	public static int getDisplayWidth()
 	{
-		
 		 WindowManager wm = (WindowManager) instance.getSystemService(Context.WINDOW_SERVICE);
 		 Display display = wm.getDefaultDisplay();
 		 final int version = android.os.Build.VERSION.SDK_INT;
@@ -212,13 +168,9 @@ public final class Helper
 		     return  display.getWidth();
 		 }
 	}
-	
-	public static String padRight(String s, int n) {
-	     return String.format("%1$-" + n + "s", s);
-	}
 
-	public static String padLeft(String s, int n) {
-	    return String.format("%1$" + n + "s", s);
+	public static String formatMoney(long monney){
+		return decimalformat.format(monney)+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL);
 	}
 
 	public static Date plusMinutes(Date date, int minute) {
@@ -255,15 +207,15 @@ public final class Helper
 	}
 
 	public static void loadOrderDetail(Order order, RelativeLayout detailLayout, Context context){
-		((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(String.valueOf(order.getAmount()));
-		((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(String.valueOf(order.getAmount()));
-		((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getOrderID().substring(0,6)));
-		((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(String.valueOf(order.getAmount()));
+		((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(String.valueOf(order.getGrandTotal()));
+		((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(String.valueOf(order.getGrandTotal()));
+		((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getId().substring(0,6)));
+		((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(String.valueOf(order.getGrandTotal()));
 		if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){
 			((TextView)detailLayout.findViewById(R.id.tvChange)).setText(String.valueOf(0));
 		}
 		OrderDetailListAdapter adapter = new OrderDetailListAdapter((Activity) context);
-		adapter.set(order.getOrderDetails());
+		adapter.set(order.getOrderItems());
 		ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
 		detailsListView.setAdapter(adapter);
 	}
@@ -279,13 +231,12 @@ public final class Helper
 
 	public static boolean checkHasSelectedItem(List<Order> orders,Order item){
 		for (int i = 0; i < orders.size(); i++) {
-			if(item.getOrderID()!= orders.get(i).getOrderID() && orders.get(i).isSelected()){
+			if(item.getId()!= orders.get(i).getId() && orders.get(i).isSelected()){
 				orders.get(i).setSelected(false);
 				return true; //has item selected
 			}
 		}
 		return false;// no item selected;
 	}
-	
 }
 

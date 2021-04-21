@@ -32,8 +32,8 @@ import androidx.fragment.app.Fragment;
 import com.foa.pos.R;
 import com.foa.pos.adapter.CategorySpinnerAdapter;
 import com.foa.pos.dummy.MasterContent;
-import com.foa.pos.entity.Product;
-import com.foa.pos.entity.ProductCategory;
+import com.foa.pos.model.MenuItem;
+import com.foa.pos.model.ProductCategory;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
 import com.foa.pos.sqlite.ds.ProductDataSource;
@@ -97,36 +97,18 @@ public class ProductAddFragment extends Fragment {
 			title.setText(mItem.content);
 		}
 		
-		subtitle.setTypeface(Helper.OpenSansSemibold);
-		chev.setTypeface(Helper.OpenSansSemibold);
-		title.setTypeface(Helper.OpenSansSemibold);
-		
-		t1.setTypeface(Helper.OpenSansRegular);
-		t2.setTypeface(Helper.OpenSansRegular);
-		t3.setTypeface(Helper.OpenSansRegular);
-		t4.setTypeface(Helper.OpenSansRegular);
-		t5.setTypeface(Helper.OpenSansRegular);
-		t6.setTypeface(Helper.OpenSansRegular);
-		t7.setTypeface(Helper.OpenSansRegular);
-		
 		txtName = (EditText)rootView.findViewById(R.id.editText2);
-		txtName.setTypeface(Helper.OpenSansRegular);
-		
+
 		txtPrice = (EditText)rootView.findViewById(R.id.editText1);
-		txtPrice.setTypeface(Helper.OpenSansRegular);
-		
+
 		txtDescription = (EditText)rootView.findViewById(R.id.editText4);
-		txtDescription.setTypeface(Helper.OpenSansRegular);
-		
+
 		txtDiscount = (EditText)rootView.findViewById(R.id.editText5);
-		txtDiscount.setTypeface(Helper.OpenSansRegular);
-		
+
 		radio1 = (RadioButton)rootView.findViewById(R.id.radio0);
 		radio2 = (RadioButton)rootView.findViewById(R.id.radio1);
 		
-		radio1.setTypeface(Helper.OpenSansRegular);
-		radio2.setTypeface(Helper.OpenSansRegular);
-		
+
 		radioGroup = (RadioGroup)rootView.findViewById(R.id.radioGroup1);
 		
 		btnSave = (ImageButton)rootView.findViewById(R.id.btnPlusQuantityCartItem);
@@ -159,10 +141,10 @@ public class ProductAddFragment extends Fragment {
 			
 	        ProductDataSource ds = new ProductDataSource(db);
 	        
-	        Product dt =  ds.get(lastCode);
-	        txtName.setText(dt.getProductName());
-	        txtPrice.setText(Helper.decimalformat2.format(dt.getPrice()));
-	        txtDiscount.setText(Helper.decimalformat2.format(dt.getDiscount()));
+	        MenuItem dt =  ds.get(lastCode);
+	        txtName.setText(dt.getName());
+	        txtPrice.setText(Helper.decimalformat.format(dt.getPrice()));
+	        txtDiscount.setText(Helper.decimalformat.format(dt.getDiscount()));
 	        txtDescription.setText(dt.getDescription());
 	        
 	        radio1.setChecked(true);
@@ -185,8 +167,8 @@ public class ProductAddFragment extends Fragment {
 	        	icon.setImageResource(R.drawable.ic_noimage_square);
 	        }
 	        
-	        spinnerCategory.setSelection( adapter.indexOf(dt.getCategoryID()));
-	        lastName = dt.getProductName();
+	        spinnerCategory.setSelection( adapter.indexOf(dt.getCategoryId()));
+	        lastName = dt.getName();
 	        
 		}
 		
@@ -243,19 +225,18 @@ public class ProductAddFragment extends Fragment {
 			SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 			ProductDataSource ds = new ProductDataSource(db);
 	        
-			Product data = new Product();
+			MenuItem data = new MenuItem();
 			
-			data.setProductID(isEdit ? lastCode : Helper.getProductID());
-			data.setProductName(name);
+			data.setId(isEdit ? lastCode : Helper.getProductID());
+			data.setName(name);
 			data.setStatus(radio1.isChecked() ? "1" : "0");
-			data.setMerchantID(Helper.read(Constants.KEY_SETTING_MERCHANT_ID));
-			data.setRefID(com.foa.pos.MainActivity.SesID);
+			data.setMerchantId(Helper.read(Constants.KEY_SETTING_MERCHANT_ID));
+			data.setCreatedBy(com.foa.pos.MainActivity.SesID);
 			data.setImage(saveImage(Helper.getMD5(String.valueOf(System.currentTimeMillis()))));
-			data.setPrice(Double.parseDouble(price));
-			data.setDiscount(discount.equals("") ? 0 : Double.parseDouble(discount));
+			data.setPrice(Long.parseLong(price));
+			data.setDiscount(discount.equals("") ? 0 : Long.parseLong(discount));
 			data.setDescription(description);
-			data.setCategoryID(category);
-			data.setBranchID(Helper.read(Constants.KEY_SETTING_BRANCH_ID));
+			data.setCategoryId(category);
 			if(isEdit)
 			{
 				if(!lastName.equals(name))

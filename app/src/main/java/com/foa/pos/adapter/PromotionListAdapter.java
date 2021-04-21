@@ -2,12 +2,9 @@ package com.foa.pos.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,9 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Order;
-import com.foa.pos.entity.Promotion;
-import com.foa.pos.entity.Topping;
+import com.foa.pos.model.Promotion;
 
 import java.util.List;
 

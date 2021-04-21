@@ -1,137 +1,153 @@
-package com.foa.pos.entity;
+package com.foa.pos.model;
 
 
 import java.util.Date;
 
-public class Product{
+public class MenuItem {
 	
-	private String productID;
-	private String productName;
-	private String categoryID;
+	private String id;
+	private String name;
+	private String categoryId;
 	private String categoryName;
 	private String description;
-	private double price;
-	private double discount;
+	private long price;
+	private long discount;
 	private Date createdOn;
 	private Date updatedOn;
 	private Date sycnOn;
-	private String createBy;
+	private String createdBy;
 	private String updatedBy;
-	private String merchantID;
-	private String status;
-	private String refID;
+	private String merchantId;
+	private String status; // ready or no
 	private String image;
-	private String branchID;
+	// field for set list view selector, android only
 	private boolean selected = false;
 
-	public String getProductID() {
-		return productID;
+	public String getId() {
+		return id;
 	}
-	public void setProductID(String productID) {
-		this.productID = productID;
+
+	public void setId(String id) {
+		this.id = id;
 	}
-	public String getProductName() {
-		return productName;
+
+	public String getName() {
+		return name;
 	}
-	public void setProductName(String productName) {
-		this.productName = productName;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getCategoryID() {
-		return categoryID;
+
+	public String getCategoryId() {
+		return categoryId;
 	}
-	public void setCategoryID(String categoryID) {
-		this.categoryID = categoryID;
+
+	public void setCategoryId(String categoryId) {
+		this.categoryId = categoryId;
 	}
+
 	public String getCategoryName() {
 		return categoryName;
 	}
+
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public double getPrice() {
+
+	public long getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+
+	public void setPrice(long price) {
 		this.price = price;
 	}
-	public double getDiscount() {
+
+	public long getDiscount() {
 		return discount;
 	}
-	public void setDiscount(double discount) {
+
+	public void setDiscount(long discount) {
 		this.discount = discount;
 	}
+
 	public Date getCreatedOn() {
 		return createdOn;
 	}
+
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
+
 	public Date getUpdatedOn() {
 		return updatedOn;
 	}
+
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
+
 	public Date getSycnOn() {
 		return sycnOn;
 	}
+
 	public void setSycnOn(Date sycnOn) {
 		this.sycnOn = sycnOn;
 	}
-	public String getCreateBy() {
-		return createBy;
+
+	public String getCreatedBy() {
+		return createdBy;
 	}
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
+
 	public String getUpdatedBy() {
 		return updatedBy;
 	}
+
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-	public String getMerchantID() {
-		return merchantID;
+
+	public String getMerchantId() {
+		return merchantId;
 	}
-	public void setMerchantID(String merchantID) {
-		this.merchantID = merchantID;
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
 	}
+
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getRefID() {
-		return refID;
-	}
-	public void setRefID(String refID) {
-		this.refID = refID;
-	}
+
 	public String getImage() {
 		return image;
 	}
+
 	public void setImage(String image) {
 		this.image = image;
 	}
+
 	public boolean isSelected() {
 		return selected;
 	}
+
 	public void setSelected(boolean selected) {
 		this.selected = selected;
-	}
-
-	public String getBranchID() {
-		return branchID;
-	}
-
-	public void setBranchID(String branchID) {
-		this.branchID = branchID;
 	}
 }

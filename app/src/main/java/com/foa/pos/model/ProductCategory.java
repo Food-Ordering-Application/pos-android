@@ -1,4 +1,4 @@
-package com.foa.pos.entity;
+package com.foa.pos.model;
 
 public class ProductCategory{
 	private String categoryID;

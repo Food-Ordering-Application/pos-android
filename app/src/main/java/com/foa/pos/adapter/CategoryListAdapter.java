@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.ProductCategory;
+import com.foa.pos.model.ProductCategory;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
 import com.foa.pos.utils.Constants;
@@ -107,8 +107,6 @@ public class CategoryListAdapter extends BaseAdapter {
         }
         
         final ProductCategory category = (ProductCategory) getItem(position);
-        holder.title.setText(category.getCategoryName());
-        holder.title.setTypeface(Helper.OpenSansRegular);
         
         holder.edit.setOnClickListener(new OnClickListener() {
 			@Override

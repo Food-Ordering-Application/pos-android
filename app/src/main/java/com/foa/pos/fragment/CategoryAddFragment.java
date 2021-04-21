@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.foa.pos.R;
 import com.foa.pos.dummy.MasterContent;
-import com.foa.pos.entity.ProductCategory;
+import com.foa.pos.model.ProductCategory;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
 import com.foa.pos.utils.Constants;
@@ -59,15 +59,7 @@ public class CategoryAddFragment extends Fragment {
 			title.setText(mItem.content);
 		}
 		
-		subtitle.setTypeface(Helper.OpenSansSemibold);
-		chev.setTypeface(Helper.OpenSansSemibold);
-		title.setTypeface(Helper.OpenSansSemibold);
-		
-		t2.setTypeface(Helper.OpenSansRegular);
-		
-		
 		txtName = (EditText)rootView.findViewById(R.id.editText2);
-		txtName.setTypeface(Helper.OpenSansRegular);
 		
 		btnSave = (ImageButton)rootView.findViewById(R.id.btnPlusQuantityCartItem);
 		btnSave.setOnClickListener(saveOnclick);

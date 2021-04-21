@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -17,16 +15,11 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.foa.pos.adapter.DeliveryGridViewAdapter;
-import com.foa.pos.adapter.OrdersGridViewAdapter;
-import com.foa.pos.entity.Item;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class DeliveryFragment extends Fragment {

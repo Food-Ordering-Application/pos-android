@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.foa.pos.entity.User;
+import com.foa.pos.model.User;
 import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
 

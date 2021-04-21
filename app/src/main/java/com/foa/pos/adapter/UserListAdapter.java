@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.User;
+import com.foa.pos.model.User;
 import com.foa.pos.fragment.UserAddFragment;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.UserDataSource;

@@ -1,4 +1,4 @@
-package com.foa.pos.entity;
+package com.foa.pos.model;
 
 public enum DeliveryStatus {
     WAITING,

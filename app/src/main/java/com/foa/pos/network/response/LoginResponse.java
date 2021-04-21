@@ -1,6 +1,6 @@
 package com.foa.pos.network.response;
 
-import com.foa.pos.entity.User;
+import com.foa.pos.model.User;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {

@@ -9,16 +9,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.entity.Order;
+import com.foa.pos.model.Order;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.utils.Helper;
-import com.zj.btsdk.BluetoothService;
 
 public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private Order order;
@@ -48,24 +46,12 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 		
 		btnOk = (Button)findViewById(R.id.btnOrder);
 		btnCancel = (Button)findViewById(R.id.btnCancel);
-		//txtdesc = (EditText)findViewById(R.id.editText1);
-		
-		btnOk.setTypeface(Helper.OpenSansBold);
-		btnCancel.setTypeface(Helper.OpenSansBold);
-		
-		//txtdesc.setTypeface(Helper.openSansLightItalic);
 		
 		TextView t1 =(TextView)findViewById(R.id.tvCartProductName);
 		TextView t2 =(TextView)findViewById(R.id.tvProductPrice);
-		
-		t1.setTypeface(Helper.OpenSansSemibold);
-		t2.setTypeface(Helper.OpenSansRegular);
-		
+
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
-		
-		btnOk.setTypeface(Helper.OpenSansSemibold);
-		btnCancel.setTypeface(Helper.OpenSansSemibold);
 		loading = new LoadingDialog(context);
 		
 	}
