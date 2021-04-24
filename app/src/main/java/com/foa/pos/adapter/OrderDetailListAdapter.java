@@ -56,6 +56,16 @@ public class OrderDetailListAdapter extends BaseAdapter {
     	dtList.remove(user);
         notifyDataSetChanged();
     }
+
+    public void updateIsOutSold (String orderItemId){
+        for (OrderItem item:
+                dtList) {
+            if(item.getId()==orderItemId){
+                item.setOutSlod( !item.isOutSlod());
+            }
+        }
+    }
+
     public void removeAll() {
     	dtList = new ArrayList<OrderItem>();
         notifyDataSetChanged();
@@ -82,11 +92,13 @@ public class OrderDetailListAdapter extends BaseAdapter {
     public Object getItem(int position) {
         return dtList.get(position);
     }
- 
+
+    @Override
     public long getItemId(int position) {
         return 0;
     }
-    
+
+
 //    @Override
 //    public void notifyDataSetChanged() {
 //    	// TODO Auto-generated method stub

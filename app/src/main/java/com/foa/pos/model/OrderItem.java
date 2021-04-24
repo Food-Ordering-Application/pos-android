@@ -8,6 +8,7 @@ public class OrderItem {
 	private int quantity;
 	private long discount;
 	private long price;
+	private boolean outSlod;
 	private String note;
 
 	public String getId() {
@@ -64,6 +65,14 @@ public class OrderItem {
 
 	public void setPrice(long price) {
 		this.price = price;
+	}
+
+	public boolean isOutSlod() {
+		return outSlod;
+	}
+
+	public void setOutSlod(boolean outSlod) {
+		this.outSlod = outSlod;
 	}
 
 	public String getNote() {

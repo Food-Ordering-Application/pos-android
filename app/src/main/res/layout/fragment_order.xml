@@ -315,7 +315,7 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/body_cart"
             android:layout_above="@+id/imageView1"
-            android:visibility="visible"
+            android:visibility="gone"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:paddingStart="15dp"

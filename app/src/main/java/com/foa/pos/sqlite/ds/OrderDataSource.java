@@ -4,12 +4,14 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class OrderDataSource {
@@ -63,14 +65,14 @@ public class OrderDataSource {
 					do {
 						
 						OrderItem orderItem = new OrderItem();
-						orderItem.setId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
-						orderItem.setMenuItemName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-						orderItem.setOrderId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
-						orderItem.setMenuItemId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
-						orderItem.setQuantity(c.getInt(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
-						orderItem.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
-						orderItem.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
-						
+						orderItem.setId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE)));
+						orderItem.setMenuItemName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
+						orderItem.setOrderId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE)));
+						orderItem.setMenuItemId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE)));
+						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
+						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
+						orderItem.setPrice(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
+						orderItem.setOutSlod(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD))>0);
 						details.add(orderItem);
 					} while (cDetail.moveToNext());
 				}
@@ -166,12 +168,21 @@ public class OrderDataSource {
 			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE, detail.getPrice());
 			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY,detail.getQuantity());
 			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT, detail.getDiscount());
+			valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD,false);
 			db.insert(DbSchema.TBL_PRODUCT_ORDER_DETAIL, null, valuesDetails);
 		}
 		
 		return 1;
 	}
-	
+
+	public long updateOutSoldOrderItem(String orderItemId, boolean isOutOfSold)
+	{
+		ContentValues values = new ContentValues();
+
+		values.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD, isOutOfSold ? 1:0);
+
+		return db.update(DbSchema.TBL_PRODUCT_ORDER_DETAIL, values, DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE+"= '"+orderItemId+"' ", null);
+	}
 	
 	public int delete(String code)
 	{

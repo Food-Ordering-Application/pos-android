@@ -3,14 +3,17 @@ package com.foa.pos;
 import android.annotation.SuppressLint;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,6 +28,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.adapter.CartListAdapter;
@@ -43,14 +47,16 @@ import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.widget.CustomConfirm;
+import com.foa.pos.widget.EditOrderItemDialog;
 import com.foa.pos.widget.PickToppingDialog;
 import com.nineoldandroids.animation.Animator;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickListener {
-    private  View root;
+    private View root;
 
     private RelativeLayout menuWrapper;
     private RelativeLayout cartWrapper;
@@ -58,6 +64,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     private GridView menuGrid;
     private ListView menuList;
+    private ListView cartList;
     private RecyclerView promotionsRecyclerView;
     private RadioGroup radioGroup;
 
@@ -93,27 +100,27 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        root =  inflater.inflate(R.layout.fragment_order, container, false);
+        root = inflater.inflate(R.layout.fragment_order, container, false);
         Helper.initialize(requireActivity().getBaseContext());
 
         initFindView();
         initLayout();
 
         //Toolbar setting
-        Toolbar toolbar= requireActivity().findViewById(R.id.toolbar);
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.right_layout_menu);
         toolbar.setOnMenuItemClickListener(this);
 
         //Init sqlite data source
         DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
-        SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
+        SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         DS = new ProductDataSource(db);
 
         //Set menu
         menuAdapter = new ProductGridAdapter(requireActivity());
         menuGrid.setAdapter(menuAdapter);
         menuList.setAdapter(menuAdapter);
-        menuAdapter.set(DS.getAll("",""));
+        menuAdapter.set(DS.getAll("", ""));
 
         //Set category radio group button
         ProductCategoryDataSource catds = new ProductCategoryDataSource(db);
@@ -123,26 +130,24 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         ct.setCategoryName("All");
         catList.add(0, ct);
         radioGroup = root.findViewById(R.id.categoryGroup);
-        addRadioButtons(radioGroup,catList);
+        addRadioButtons(radioGroup, catList);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-                RadioButton item = root.findViewById(checkedId);
-                String cateName = item.getText().toString();
-                menuAdapter.set(DS.getAll(txtKeyword.getText().toString(),DS.getIdByName(cateName)));
-        } );
+            RadioButton item = root.findViewById(checkedId);
+            String cateName = item.getText().toString();
+            menuAdapter.set(DS.getAll(txtKeyword.getText().toString(), DS.getIdByName(cateName)));
+        });
 
         //Set cart
         cartAdapter = new CartListAdapter(requireActivity());
-        ListView cartList = root.findViewById(R.id.listView1);
+        cartList = root.findViewById(R.id.listView1);
         cartList.setAdapter(cartAdapter);
 
         //Set promotion recycler view
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         promotionsRecyclerView.setLayoutManager(layoutManager);
-        promotionAdapter = new PromotionListAdapter(requireActivity(),Promotion.getPromotionListSample());
+        promotionAdapter = new PromotionListAdapter(requireActivity(), Promotion.getPromotionListSample());
         promotionsRecyclerView.setAdapter(promotionAdapter);
-
-
 
         //Init all click listener
         initListener();
@@ -150,7 +155,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         return root;
     }
 
-    private void initFindView(){
+    private void initFindView() {
         menuWrapper = root.findViewById(R.id.bgMenu);
         cartWrapper = root.findViewById(R.id.bgCart);
         menuGrid = root.findViewById(R.id.gridView1);
@@ -170,7 +175,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
     }
 
-    private void initListener(){
+    private void initListener() {
         menuGrid.setOnItemClickListener(gridOnlick);
         menuList.setOnItemClickListener(gridOnlick);
         btnCancelCheckout.setOnClickListener(cancelCheckOutOnlick);
@@ -179,6 +184,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         btnToggleList.setOnClickListener(toogleOnclick);
         cartAdapter.setCartListener(cartOnItemClick);
         promotionAdapter.setItemClickListener(promotionOnItemClick);
+        //cartList.setOnItemClickListener(editOrderOnitemClick);
 
         // Handle input change
         txtKeyword.addTextChangedListener(keywordOnchange);
@@ -188,7 +194,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onMenuItemClick(android.view.MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.clear_cart:
                 cartAdapter.removeAll();
                 menuAdapter.reset();
@@ -209,20 +215,20 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             rdbtn.setText(categoryList.get(i).getCategoryName());
             rdbtn.setBackgroundResource(R.drawable.radio_button_selector);
             rdbtn.setTextColor(R.drawable.radio_button_selector_text);
-            rdbtn.setPadding(50,30,50,30);
+            rdbtn.setPadding(50, 30, 50, 30);
             rdbtn.setGravity(Gravity.CENTER);
             rdbtn.setButtonDrawable(android.R.color.transparent);
             rdbtn.setElevation(4);
             rdbtn.setMinWidth(150);
-            if (i==0) rdbtn.setChecked(true);
+            if (i == 0) rdbtn.setChecked(true);
 
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams. WRAP_CONTENT ,
-                    LinearLayout.LayoutParams. WRAP_CONTENT ) ;
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.leftMargin = 20;
             layoutParams.rightMargin = 20;
-            radioGroup.addView(rdbtn,layoutParams);
+            radioGroup.addView(rdbtn, layoutParams);
         }
     }
 
@@ -232,12 +238,27 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         param.width = (width / 3);
         cartWrapper.setLayoutParams(param);
         LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(menuWrapper.getLayoutParams());
-        param2.width = (width / 3)*2;
+        param2.width = (width / 3) * 2;
         menuWrapper.setLayoutParams(param2);
         root.setVisibility(View.VISIBLE);
     }
 
     // REGION ON CLICK LISTENER
+//
+//    private final AdapterView.OnItemClickListener editOrderOnitemClick = new AdapterView.OnItemClickListener() {
+//        @Override
+//        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//            EditOrderItemDialog dialog = new EditOrderItemDialog(requireActivity(),
+//                    (MenuItem) cartList.getSelectedItem());
+//            dialog.setOutOfProductListener(result -> {
+//                if (result){
+//
+//                }else{
+//
+//                }
+//            });
+//        }
+//    };
 
     private final PromotionListAdapter.OnItemClickListener promotionOnItemClick = new PromotionListAdapter.OnItemClickListener() {
         @Override
@@ -256,7 +277,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         public void onRemove(String result) {
             // TODO Auto-generated method stub
             menuAdapter.setSelection(result);
-            if(cartAdapter.getCount() == 0)
+            if (cartAdapter.getCount() == 0)
                 txtEmpty.setVisibility(View.VISIBLE);
             else
                 txtEmpty.setVisibility(View.GONE);
@@ -267,8 +288,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             // TODO Auto-generated method stub
             long mtotal = 0;
             for (int i = 0; i < list.size(); i++) {
-                long sub = (list.get(i).getPrice()*list.get(i).getQuantity());
-                long discount =  sub * (list.get(i).getDiscount()/100);
+                long sub = (list.get(i).getPrice() * list.get(i).getQuantity());
+                long discount = sub * (list.get(i).getDiscount() / 100);
                 long subtotal = sub - discount;
                 mtotal += subtotal;
             }
@@ -279,7 +300,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             txtTotalPay.setText(txtTotal.getText().toString());
             txtTotalPay2.setText(txtTotal.getText().toString());
 
-            if(cartAdapter.getCount() == 0)
+            if (cartAdapter.getCount() == 0)
                 txtEmpty.setVisibility(View.VISIBLE);
             else
                 txtEmpty.setVisibility(View.GONE);
@@ -292,14 +313,12 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // TODO Auto-generated method stub
 
-            if(!isCheckout)
-            {
+            if (!isCheckout) {
                 MenuItem product = (MenuItem) menuAdapter.getItem(position);
-                PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(),product);
+                PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(), product);
                 pickToppingDialog.setPickToppingistener(result -> {
                     menuAdapter.setSelection(product.getId());
-                    if(menuAdapter.isSelected(product.getId()))
-                    {
+                    if (menuAdapter.isSelected(product.getId())) {
                         Cart cart = new Cart();
                         cart.setMenuItemId(product.getId());
                         cart.setMenuItemName(product.getName());
@@ -307,15 +326,15 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                         cart.setDiscount(product.getDiscount());
                         cart.setQuantity(1);
 
-                        long discount = cart.getPrice() * (product.getDiscount()/100);
+                        long discount = cart.getPrice() * (product.getDiscount() / 100);
                         long subtotal = cart.getPrice() - discount;
                         cart.setSubTotal(subtotal);
                         cartAdapter.add(cart);
                     }
                 });
-                if(!menuAdapter.isSelected(product.getId())) {
+                if (!menuAdapter.isSelected(product.getId())) {
                     pickToppingDialog.show();
-                }else{
+                } else {
                     menuAdapter.setSelection(product.getId());
                     cartAdapter.removeByID(product.getId());
                 }
@@ -332,12 +351,14 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             //ProductCategory cat =   (ProductCategory) spinnerCategory.getSelectedItem();
             RadioButton item = root.findViewById(radioGroup.getCheckedRadioButtonId());
             String cateName = item.getText().toString();
-            menuAdapter.set(DS.getAll(txtKeyword.getText().toString(),DS.getIdByName(cateName)));
+            menuAdapter.set(DS.getAll(txtKeyword.getText().toString(), DS.getIdByName(cateName)));
         }
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             // TODO Auto-generated method stub
         }
+
         @Override
         public void afterTextChanged(Editable s) {
             // TODO Auto-generated method stub
@@ -354,8 +375,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         @Override
         public void onClick(View v) {
             // TODO Auto-generated method stub
-            if(txtPayment.getText().toString().equals(""))
-            {
+            if (txtPayment.getText().toString().equals("")) {
                 Toast.makeText(getActivity(), "Nhập số tiền", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -364,7 +384,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
             Order order = new Order();
             order.setId(Helper.getOrderID());
-            order.setRestaurantId(Helper.read(Constants.KEY_SETTING_BRANCH_ID,""));
+            order.setRestaurantId(Helper.read(Constants.KEY_SETTING_BRANCH_ID, ""));
             order.setCustomerId(com.foa.pos.MainActivity.SesID);
             order.setCreatedAt(dt);
             order.setNote("");
@@ -386,7 +406,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 orderItemsList.add(orderItem);
 
                 subTotal += orderItem.getQuantity() * orderItem.getPrice();
-                discount += subTotal * (orderItem.getDiscount()/100);
+                discount += subTotal * (orderItem.getDiscount() / 100);
             }
 
             order.setOrderItems(orderItemsList);
@@ -398,10 +418,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             order.setGrandTotal(sub);
 
 
-            CustomConfirm con = new CustomConfirm(getActivity(),order);
+            CustomConfirm con = new CustomConfirm(getActivity(), order);
             con.setConfirmListener(result -> {
                 ClearForm();
-                Toast.makeText(getActivity(),"Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
             });
             con.show();
 
@@ -413,8 +433,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         @Override
         public void onClick(View v) {
             // TODO Auto-generated method stub
-            if(cartAdapter.getCount() == 0)
-            {
+            if (cartAdapter.getCount() == 0) {
                 Toast.makeText(getActivity(), "Chọn ít nhất 1 chọn sản phẩm", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -429,14 +448,11 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             // TODO Auto-generated method stub
             try {
-                if(!s.toString().equals(""))
-                {
+                if (!s.toString().equals("")) {
                     long pay = Long.parseLong(s.toString());
                     long change = pay - total;
-                    txtChange.setText(Helper.formatMoney(change) );
-                }
-                else
-                {
+                    txtChange.setText(Helper.formatMoney(change));
+                } else {
                     txtChange.setText(Helper.formatMoney(0));
                 }
 
@@ -463,17 +479,14 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private final View.OnClickListener toogleOnclick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(Helper.read(Constants.KEY_SETTING_MENU, Constants.VAL_DEFAULT_MENU).equals("GRID"))
-            {
-                Helper.write(Constants.KEY_SETTING_MENU,"LIST");
+            if (Helper.read(Constants.KEY_SETTING_MENU, Constants.VAL_DEFAULT_MENU).equals("GRID")) {
+                Helper.write(Constants.KEY_SETTING_MENU, "LIST");
                 btnToggleList.setImageResource(R.drawable.ic_listview);
                 menuAdapter.setMenu("LIST");
                 menuGrid.setVisibility(View.GONE);
                 menuList.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                Helper.write(Constants.KEY_SETTING_MENU,"GRID");
+            } else {
+                Helper.write(Constants.KEY_SETTING_MENU, "GRID");
                 btnToggleList.setImageResource(R.drawable.ic_gridview);
                 menuAdapter.setMenu("GRID");
                 menuList.setVisibility(View.GONE);
@@ -486,7 +499,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     //REGION PRIVATE METHOD
 
-    private void showCart(){
+    private void showCart() {
         YoYo.with(Techniques.FadeOutDown).duration(700).withListener(new Animator.AnimatorListener() {
 
             @Override
@@ -495,10 +508,12 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 btnCancelCheckout.setEnabled(false);
                 btnPay.setEnabled(false);
             }
+
             @Override
             public void onAnimationRepeat(Animator arg0) {
                 // TODO Auto-generated method stub
             }
+
             @Override
             public void onAnimationEnd(Animator arg0) {
                 // TODO Auto-generated method stub
@@ -515,7 +530,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }).playOn(checkOutContainer);
     }
 
-    private void showCheckout(){
+    private void showCheckout() {
         YoYo.with(Techniques.FadeInDown).duration(1000).withListener(new Animator.AnimatorListener() {
 
             @Override
@@ -547,12 +562,12 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }).playOn(checkOutContainer);
     }
 
-    private void ClearForm(){
+    private void ClearForm() {
         cartAdapter.removeAll();
         txtPayment.setText("");
         showCart();
         txtKeyword.setText("");
-        ((RadioButton)radioGroup.getChildAt(0)).setChecked(true);
+        ((RadioButton) radioGroup.getChildAt(0)).setChecked(true);
         menuAdapter.unCheckAll();
         isCheckout = false;
     }

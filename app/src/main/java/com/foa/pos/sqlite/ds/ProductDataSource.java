@@ -159,12 +159,6 @@ public class ProductDataSource {
 		if(item.getDescription() != null)
 			values.put(DbSchema.COL_PRODUCT_DESCRIPTION, item.getDescription());
 		
-	//	if(item.getCreateBy() != null)
-	//		values.put(DbSchema.COL_PRODUCT_CREATED_BY,item.getCreateBy());
-		
-	//	if(item.getUpdatedBy() != null)
-			values.put(DbSchema.COL_PRODUCT_UPDATED_BY, "Device");
-		
 		if(item.getStatus() != null)
 			values.put(DbSchema.COL_PRODUCT_STATUS, item.getStatus());
 		
@@ -176,14 +170,11 @@ public class ProductDataSource {
 		
 		if(item.getMerchantId() != null)
 			values.put(DbSchema.COL_PRODUCT_MERCHANT_ID, item.getMerchantId());
-		
-		
+
 		values.put(DbSchema.COL_PRODUCT_PRICE, item.getPrice());
 		values.put(DbSchema.COL_PRODUCT_DISCOUNT, item.getDiscount());
-		
-	//	values.put(DbSchema.COL_PRODUCT_CREATED_ON, Shared.dateformat.format(item.getCreatedOn()));
+
 		values.put(DbSchema.COL_PRODUCT_UPDATED_ON, Helper.dateformat.format(new Date()));
-	//	values.put(DbSchema.COL_PRODUCT_SYCN_ON, Shared.dateformat.format(item.getSycnOn()));
 		
 		return db.update(DbSchema.TBL_PRODUCT, values, DbSchema.COL_PRODUCT_CODE+"= '"+lastCode+"' ", null);
 	}

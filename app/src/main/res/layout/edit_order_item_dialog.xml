@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="400dp"
     android:layout_height="wrap_content">
 
@@ -43,14 +44,13 @@
                 android:text="Ten mon an"
                 android:textStyle="bold" />
 
-            <ListView
-                android:id="@+id/toppingListView"
+            <Switch
+                android:layout_margin="30dp"
+                android:id="@+id/OutOfProductSwitch"
+                android:text="Xác nhận hết món"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:horizontalSpacing="10dp"
-                android:verticalSpacing="10dp" />
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
         </LinearLayout>
 
         <LinearLayout
