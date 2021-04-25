@@ -15,7 +15,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.POS.NoActionBar" >`
+    <style name="Theme.POS.NoActionBar">`
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -52,8 +52,13 @@
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="TalbleRow">
         <item name="android:textSize">16dp</item>
     </style>
+
+    <style name="Theme.POS.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.POS.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

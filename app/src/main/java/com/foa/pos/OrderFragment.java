@@ -1,6 +1,7 @@
 package com.foa.pos;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -89,6 +90,9 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     private boolean isCheckout = false;
     private long total = 0;
+
+    private Order currentOrder = null;
+    private ArrayList<OrderItem> orderItemsList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -284,7 +288,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
 
         @Override
-        public void onChange(List<Cart> list) {
+        public void onChange(List<OrderItem> list) {
             // TODO Auto-generated method stub
             long mtotal = 0;
             for (int i = 0; i < list.size(); i++) {
@@ -318,18 +322,58 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(), product);
                 pickToppingDialog.setPickToppingistener(result -> {
                     menuAdapter.setSelection(product.getId());
+                    int orderItemCount = cartAdapter.getCount();
                     if (menuAdapter.isSelected(product.getId())) {
-                        Cart cart = new Cart();
-                        cart.setMenuItemId(product.getId());
-                        cart.setMenuItemName(product.getName());
-                        cart.setPrice(product.getPrice());
-                        cart.setDiscount(product.getDiscount());
-                        cart.setQuantity(1);
+                        if(orderItemCount==0){
+                            Date dt = new Date();
+                           currentOrder = new Order();
+                            currentOrder.setId(Helper.getOrderID());
+                            currentOrder.setRestaurantId(Helper.read(Constants.KEY_SETTING_BRANCH_ID, ""));
+                            currentOrder.setCashierId(com.foa.pos.MainActivity.SesID);
+                            currentOrder.setCreatedAt(dt);
+                            currentOrder.setNote("");
+                            currentOrder.setUpdatedAt(dt);
+                        }
 
-                        long discount = cart.getPrice() * (product.getDiscount() / 100);
-                        long subtotal = cart.getPrice() - discount;
-                        cart.setSubTotal(subtotal);
-                        cartAdapter.add(cart);
+                        OrderItem orderItem = new OrderItem();
+                        orderItem.setId(Helper.getOrderDetailID(orderItemCount));
+                        orderItem.setOrderId(currentOrder.getId());
+                        orderItem.setDiscount(product.getDiscount());
+                        orderItem.setMenuItemId(product.getId());
+                        orderItem.setMenuItemName(product.getName());
+                        orderItem.setQuantity(1);
+                        orderItem.setPrice(product.getPrice());
+                        orderItemsList.add(orderItem);
+                        long subTotal = orderItem.getQuantity() * orderItem.getPrice();
+
+                        currentOrder.addOrderItemPrice(orderItem.getPrice()*orderItem.getQuantity());
+
+//                        cart.setSubTotal(subTotal);
+//                        cartAdapter.add(orderItem);
+//
+//
+//                        discount += subTotal * (orderItem.getDiscount() / 100);
+//
+//                        order.setOrderItems(orderItemsList);
+//
+//                        order.setDiscount(discount);
+//
+//                        long sub = subTotal - discount;
+//
+//                        order.setGrandTotal(sub);
+
+//                        Cart cart = new Cart();
+//                        cart.setMenuItemId(product.getId());
+//                        cart.setMenuItemName(product.getName());
+//                        cart.setPrice(product.getPrice());
+//                        cart.setDiscount(product.getDiscount());
+//                        cart.setQuantity(1);
+//
+//                        long discount = cart.getPrice() * (product.getDiscount() / 100);
+//                        long subtotal = cart.getPrice() - discount;
+
+
+
                     }
                 });
                 if (!menuAdapter.isSelected(product.getId())) {
@@ -438,7 +482,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 return;
             }
             isCheckout = true;
-            showCheckout();
+            //showCheckout();
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra(Constants.PUT_ORDER_ID, currentOrder.getId());
+            startActivity(intent);
         }
     };
 

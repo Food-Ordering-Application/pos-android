@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="4"
+    android:orientation="horizontal" >
+
+
+    <Button
+        android:id="@+id/numPadButton1"
+        android:text="1" />
+
+    <Button
+        android:id="@+id/numPadButton2"
+        android:text="2" />
+
+    <Button
+        android:id="@+id/numPadButton3"
+        android:text="3" />
+
+    <ImageButton
+        android:id="@+id/numPadButtonBack"
+        android:layout_gravity="fill"
+        android:src="@drawable/ic_backspace"
+        android:layout_rowSpan="2"/>
+
+    <Button
+        android:id="@+id/numPadButton4"
+        android:text="4" />
+
+    <Button
+        android:id="@+id/numPadButton5"
+        android:text="5" />
+
+    <Button
+        android:id="@+id/numPadButton6"
+        android:text="6" />
+
+    <Button
+        android:id="@+id/numPadButton7"
+        android:text="7" />
+
+    <Button
+        android:id="@+id/numPadButton8"
+        android:text="8" />
+
+    <Button
+        android:id="@+id/numPadButton9"
+        android:text="9" />
+
+    <Button
+        android:id="@+id/numPadButtonClear"
+        android:text="C"
+        android:layout_gravity="fill"
+        android:layout_rowSpan="2"/>
+
+    <Button
+        android:id="@+id/numPadButton0"
+        android:text="0" />
+
+    <Button
+        android:id="@+id/numPadButton00"
+        android:text="00" />
+
+    <Button
+        android:id="@+id/numPadButton000"
+        android:text="000" />
+
+
+
+</GridLayout>

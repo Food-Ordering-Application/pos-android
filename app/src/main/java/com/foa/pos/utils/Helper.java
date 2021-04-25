@@ -242,11 +242,9 @@ public final class Helper
 					((OrderDetailListAdapter) detailsListView.getAdapter())
 							.updateIsOutSold(item.getId());
 
-
 				}
 			});
 			dialog.show();
-
 		});
 	}
 

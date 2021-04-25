@@ -10,6 +10,7 @@ public class OrderItem {
 	private long price;
 	private boolean outSlod;
 	private String note;
+	private long subTotal;
 
 	public String getId() {
 		return id;
@@ -81,5 +82,15 @@ public class OrderItem {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	//view helper method
+
+	public long getSubTotal() {
+		return subTotal;
+	}
+
+	public void setSubTotal(long subTotal) {
+		this.subTotal = subTotal;
 	}
 }
