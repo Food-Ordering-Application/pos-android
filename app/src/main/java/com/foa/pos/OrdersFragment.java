@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -41,7 +40,7 @@ public class OrdersFragment extends Fragment {
         DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
-        final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), DS.getAll());
+        final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), DS.getAllOrder());
         // set elements to adapter
         theListView.setAdapter(adapter);
         theListView.setOnItemClickListener((parent, view, position, id) -> {

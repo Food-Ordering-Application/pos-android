@@ -14,7 +14,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -43,12 +42,12 @@ import com.foa.pos.model.ProductCategory;
 import com.foa.pos.model.Promotion;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
 import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.widget.CustomConfirm;
-import com.foa.pos.widget.EditOrderItemDialog;
 import com.foa.pos.widget.PickToppingDialog;
 import com.nineoldandroids.animation.Animator;
 
@@ -86,7 +85,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private Button btnPay;
     private ImageButton btnToggleList;
 
-    private ProductDataSource DS;
+    private ProductDataSource ProductDS;
+    private OrderDataSource OrderDS;
 
     private boolean isCheckout = false;
     private long total = 0;
@@ -118,13 +118,14 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         //Init sqlite data source
         DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
-        DS = new ProductDataSource(db);
+        ProductDS = new ProductDataSource(db);
+        OrderDS = new OrderDataSource(db);
 
         //Set menu
         menuAdapter = new ProductGridAdapter(requireActivity());
         menuGrid.setAdapter(menuAdapter);
         menuList.setAdapter(menuAdapter);
-        menuAdapter.set(DS.getAll("", ""));
+        menuAdapter.set(ProductDS.getAll("", ""));
 
         //Set category radio group button
         ProductCategoryDataSource catds = new ProductCategoryDataSource(db);
@@ -138,12 +139,12 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton item = root.findViewById(checkedId);
             String cateName = item.getText().toString();
-            menuAdapter.set(DS.getAll(txtKeyword.getText().toString(), DS.getIdByName(cateName)));
+            menuAdapter.set(ProductDS.getAll(txtKeyword.getText().toString(), ProductDS.getIdByName(cateName)));
         });
 
         //Set cart
         cartAdapter = new CartListAdapter(requireActivity());
-        cartList = root.findViewById(R.id.listView1);
+
         cartList.setAdapter(cartAdapter);
 
         //Set promotion recycler view
@@ -177,6 +178,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         btnToggleList = root.findViewById(R.id.imageView2);
         checkOutContainer = root.findViewById(R.id.checkOutContainer);
         promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
+        cartList = root.findViewById(R.id.listView1);
     }
 
     private void initListener() {
@@ -333,6 +335,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             currentOrder.setCreatedAt(dt);
                             currentOrder.setNote("");
                             currentOrder.setUpdatedAt(dt);
+                            //udpate data
+                            OrderDS.insertOrder(currentOrder);
                         }
 
                         OrderItem orderItem = new OrderItem();
@@ -344,36 +348,12 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                         orderItem.setQuantity(1);
                         orderItem.setPrice(product.getPrice());
                         orderItemsList.add(orderItem);
-                        long subTotal = orderItem.getQuantity() * orderItem.getPrice();
-
                         currentOrder.addOrderItemPrice(orderItem.getPrice()*orderItem.getQuantity());
+                        cartAdapter.add(orderItem);
 
-//                        cart.setSubTotal(subTotal);
-//                        cartAdapter.add(orderItem);
-//
-//
-//                        discount += subTotal * (orderItem.getDiscount() / 100);
-//
-//                        order.setOrderItems(orderItemsList);
-//
-//                        order.setDiscount(discount);
-//
-//                        long sub = subTotal - discount;
-//
-//                        order.setGrandTotal(sub);
-
-//                        Cart cart = new Cart();
-//                        cart.setMenuItemId(product.getId());
-//                        cart.setMenuItemName(product.getName());
-//                        cart.setPrice(product.getPrice());
-//                        cart.setDiscount(product.getDiscount());
-//                        cart.setQuantity(1);
-//
-//                        long discount = cart.getPrice() * (product.getDiscount() / 100);
-//                        long subtotal = cart.getPrice() - discount;
-
-
-
+                        //update data
+                        OrderDS.insertOrderItem(orderItem);
+                        OrderDS.updateSumaryOrderInfo(currentOrder.getId(),currentOrder.getAmount(),currentOrder.getAmount());
                     }
                 });
                 if (!menuAdapter.isSelected(product.getId())) {
@@ -381,6 +361,9 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 } else {
                     menuAdapter.setSelection(product.getId());
                     cartAdapter.removeByID(product.getId());
+                    if(cartAdapter.getCount()==0){
+                        currentOrder =null;
+                    }
                 }
 
             }
@@ -395,7 +378,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             //ProductCategory cat =   (ProductCategory) spinnerCategory.getSelectedItem();
             RadioButton item = root.findViewById(radioGroup.getCheckedRadioButtonId());
             String cateName = item.getText().toString();
-            menuAdapter.set(DS.getAll(txtKeyword.getText().toString(), DS.getIdByName(cateName)));
+            menuAdapter.set(ProductDS.getAll(txtKeyword.getText().toString(), ProductDS.getIdByName(cateName)));
         }
 
         @Override
@@ -483,7 +466,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
             isCheckout = true;
             //showCheckout();
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), PaymentActivity.class);
             intent.putExtra(Constants.PUT_ORDER_ID, currentOrder.getId());
             startActivity(intent);
         }

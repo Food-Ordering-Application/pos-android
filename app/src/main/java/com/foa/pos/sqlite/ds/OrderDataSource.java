@@ -4,14 +4,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 public class OrderDataSource {
@@ -21,12 +19,7 @@ public class OrderDataSource {
 		this.db = db;
 	}
 	
-	public long truncate()
-	{
-		return db.delete(DbSchema.TBL_ORDER,null,null);
-	}
-	
-	public Order get(String id) {
+	public Order getOrderById(String id) {
 		 
 		Order order = new Order();
 		 
@@ -41,7 +34,7 @@ public class OrderDataSource {
 			
 				order.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
 				order.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				order.setGrandTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
+				order.setAmount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
 				order.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
 				order.setRestaurantId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_BRANCH_ID)));
 				order.setCustomerId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_USER_ID)));
@@ -54,7 +47,7 @@ public class OrderDataSource {
 				}
 				
 				
-				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_PRODUCT_NAME+",c."+DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
+				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_PRODUCT_NAME+",c."+DbSchema.COL_PRODUCT_CATEGORY_NAME+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT +  " p ON p." +  DbSchema.COL_PRODUCT_CODE + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT_CATEGORY +  " c ON c." +  DbSchema.COL_PRODUCT_CATEGORY_CODE + " = p." + DbSchema.COL_PRODUCT_CATEGORY_CODE +
 											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+id+"'";
@@ -83,13 +76,12 @@ public class OrderDataSource {
 		}
 		return order;
 	}
-	
-	
-	public ArrayList<Order> getAll() {
-		return getAll(null,null,null,null);
+
+	public ArrayList<Order> getAllOrder() {
+		return getAllOrder(null,null,null,null);
 	}
 	
-	public ArrayList<Order> getAll(ArrayList<HashMap<String, String>> filter, String orderby, String limit, String offset) {
+	public ArrayList<Order> getAllOrder(ArrayList<HashMap<String, String>> filter, String orderby, String limit, String offset) {
 		 
 		ArrayList<Order> items = new ArrayList<Order>();
 		//Cursor c = db.rawQuery("DROP TABLE "+DbSchema.TBL_ORDER , null);
@@ -146,8 +138,7 @@ public class OrderDataSource {
 		return items;
 	}
 	
-	public long insert(Order item)
-	{
+	public long insertOrder(Order item){
 		ContentValues values = new ContentValues();
 		values.put(DbSchema.COL_ORDER_CODE, item.getId());
 		values.put(DbSchema.COL_ORDER_DESCRIPTION, item.getNote());
@@ -157,7 +148,6 @@ public class OrderDataSource {
 		values.put(DbSchema.COL_ORDER_USER_ID, item.getCustomerId());
 		values.put(DbSchema.COL_ORDER_ORDERED_ON,  Helper.dateformat.format(item.getCreatedAt()));
 		values.put(DbSchema.COL_ORDER_UPDATED_ON,  Helper.dateformat.format(item.getUpdatedAt()));
-	//	values.put(DbSchema.COL_ORDER_SYCN_ON, Shared.dateformat.format(item.getSycnOn()));
 		db.insert(DbSchema.TBL_ORDER, null, values);
 		
 		for (OrderItem detail : item.getOrderItems()) {
@@ -175,6 +165,21 @@ public class OrderDataSource {
 		return 1;
 	}
 
+	public long insertOrderItem(OrderItem item)
+	{
+		ContentValues valuesDetails = new ContentValues();
+		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE, item.getId());
+		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE, item.getOrderId());
+		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE, item.getMenuItemId());
+		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE, item.getPrice());
+		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY,item.getQuantity());
+		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT, item.getDiscount());
+		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD,false);
+		db.insert(DbSchema.TBL_PRODUCT_ORDER_DETAIL, null, valuesDetails);
+
+		return 1;
+	}
+
 	public long updateOutSoldOrderItem(String orderItemId, boolean isOutOfSold)
 	{
 		ContentValues values = new ContentValues();
@@ -182,6 +187,15 @@ public class OrderDataSource {
 		values.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD, isOutOfSold ? 1:0);
 
 		return db.update(DbSchema.TBL_PRODUCT_ORDER_DETAIL, values, DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE+"= '"+orderItemId+"' ", null);
+	}
+
+	public long updateSumaryOrderInfo(String orderItemId, long amount, long grandTotal)
+	{
+		ContentValues values = new ContentValues();
+
+		values.put(DbSchema.COL_ORDER_AMOUNT, amount) ;
+
+		return db.update(DbSchema.TBL_ORDER, values, DbSchema.COL_ORDER_CODE+"= '"+orderItemId+"' ", null);
 	}
 	
 	public int delete(String code)

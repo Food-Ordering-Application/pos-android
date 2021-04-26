@@ -16,7 +16,6 @@ import com.foa.pos.model.Order;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
-import com.foa.pos.utils.Helper;
 
 public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private Order order;
@@ -98,7 +97,7 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 				SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 				OrderDataSource DS = new OrderDataSource(db);
 				
-				DS.insert(order);
+				DS.insertOrder(order);
 				DatabaseManager.getInstance().closeDatabase();
 				
 				result = "1";

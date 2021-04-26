@@ -45,7 +45,7 @@ public class DeliveryFragment extends Fragment {
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
         //set adapter
-        final DeliveryGridViewAdapter adapter = new DeliveryGridViewAdapter(getActivity(), DS.getAll());
+        final DeliveryGridViewAdapter adapter = new DeliveryGridViewAdapter(getActivity(), DS.getAllOrder());
         theGridView.setAdapter(adapter);
         theGridView.setOnItemClickListener((adapterView, view, pos, l) -> Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT));
         return root;

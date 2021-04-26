@@ -25,6 +25,7 @@ public class CartListAdapter extends BaseAdapter {
     private Activity context;
     private LayoutInflater inflater;
     private CartListener listener;
+    private  boolean isPayment = false;
     public CartListAdapter(Activity context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -47,6 +48,10 @@ public class CartListAdapter extends BaseAdapter {
  
     public int getCount() {
         return dtList.size();
+    }
+
+    public void setIsPayment(boolean isPayment){
+        this.isPayment = isPayment;
     }
     
     public void set(List<OrderItem> list) {
@@ -115,10 +120,15 @@ public class CartListAdapter extends BaseAdapter {
         } else {
         	 holder=(ViewHolder)vi.getTag();
         }
+
+        if(isPayment){
+            holder.btnMinus.setVisibility(View.INVISIBLE);
+            holder.btnPlus.setVisibility(View.INVISIBLE);
+        }
         
         final OrderItem orderItem = (OrderItem) getItem(position);
         holder.name.setText(orderItem.getMenuItemName());
-        holder.price.setText(Helper.decimalformat.format(orderItem.getSubTotal()) +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
+        holder.price.setText(Helper.decimalformat.format(orderItem.getQuantity()* orderItem.getPrice()) +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
         holder.qty.setText(String.valueOf(orderItem.getQuantity()));
         if (orderItem.getQuantity()==1){
             holder.btnMinus.setImageResource(R.drawable.ic_baseline_delete_24);

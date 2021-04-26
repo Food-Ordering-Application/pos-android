@@ -13,11 +13,11 @@ public class Order{
 	private String customerAddressId;
 	private String driverId;
 	private String restaurantId;
-	private float subTotal;
-	private float itemDiscount;
+	private long amount;
+	private long itemDiscount;
 	private long discount;
-	private float shippingFee;
-	private float serviceFee;
+	private long shippingFee;
+	private long serviceFee;
 	private long grandTotal;
 	private int paymentMode;
 	private int paymentType;
@@ -30,6 +30,10 @@ public class Order{
 	private ArrayList<OrderItem> orderItems;
 	// field for setting list view selector.
 	private boolean isSelected;
+
+	public Order() {
+		this.orderItems = new ArrayList<>();
+	}
 
 	public String getId() {
 		return id;
@@ -79,19 +83,19 @@ public class Order{
 		this.restaurantId = restaurantId;
 	}
 
-	public float getSubTotal() {
-		return subTotal;
+	public long getAmount() {
+		return amount;
 	}
 
-	public void setSubTotal(float subTotal) {
-		this.subTotal = subTotal;
+	public void setAmount(long amount) {
+		this.amount = amount;
 	}
 
-	public float getItemDiscount() {
+	public long getItemDiscount() {
 		return itemDiscount;
 	}
 
-	public void setItemDiscount(float itemDiscount) {
+	public void setItemDiscount(long itemDiscount) {
 		this.itemDiscount = itemDiscount;
 	}
 
@@ -103,11 +107,11 @@ public class Order{
 		this.discount = discount;
 	}
 
-	public float getShippingFee() {
+	public long getShippingFee() {
 		return shippingFee;
 	}
 
-	public void setShippingFee(float shippingFee) {
+	public void setShippingFee(long shippingFee) {
 		this.shippingFee = shippingFee;
 	}
 
@@ -115,7 +119,7 @@ public class Order{
 		return serviceFee;
 	}
 
-	public void setServiceFee(float serviceFee) {
+	public void setServiceFee(long serviceFee) {
 		this.serviceFee = serviceFee;
 	}
 
@@ -222,7 +226,7 @@ public class Order{
 	}
 
 	public void addOrderItemPrice(long orderItemPrice){
-		subTotal += orderItemPrice;
+		this.amount += orderItemPrice;
 	}
 
 }
