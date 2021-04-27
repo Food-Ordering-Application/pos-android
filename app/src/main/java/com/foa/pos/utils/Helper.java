@@ -216,37 +216,7 @@ public final class Helper
 		theGridView.setNumColumns(5);
 	}
 
-	public static void loadOrderDetail(Order order, RelativeLayout detailLayout, Context context){
-		((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(String.valueOf(order.getGrandTotal()));
-		((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(String.valueOf(order.getGrandTotal()));
-		((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getId().substring(0,6)));
-		((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(String.valueOf(order.getGrandTotal()));
-		if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){
-			((TextView)detailLayout.findViewById(R.id.tvChange)).setText(String.valueOf(0));
-		}
-		OrderDetailListAdapter adapter = new OrderDetailListAdapter((Activity) context);
-		adapter.set(order.getOrderItems());
-		adapter.notifyDataSetChanged();
-		ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
-		detailsListView.setAdapter(adapter);
-		detailsListView.setOnItemClickListener((parent, view, position, id) -> {
-			Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
-			OrderItem item =(OrderItem) detailsListView.getItemAtPosition(position);
-			EditOrderItemDialog dialog = new EditOrderItemDialog(context,item);
-			dialog.setOutOfProductListener(result -> {
-				if (result){
-					DatabaseManager.initializeInstance(new DatabaseHelper(context));
-					SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
-					OrderDataSource DS = new OrderDataSource(db);
-					DS.updateOutSoldOrderItem(item.getId(),result);
-					((OrderDetailListAdapter) detailsListView.getAdapter())
-							.updateIsOutSold(item.getId());
 
-				}
-			});
-			dialog.show();
-		});
-	}
 
 	public static void clearSelectedItem(List<Order> orders){
 		for (int i = 0; i < orders.size(); i++) {

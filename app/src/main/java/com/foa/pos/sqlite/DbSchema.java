@@ -104,6 +104,7 @@ public interface DbSchema {
 	String COL_ORDER_AMOUNT = "amount";
 	String COL_ORDER_USER_ID = "user_id";
 	String COL_ORDER_BRANCH_ID = "branch_id";
+	String COL_ORDER_STATUS = "status";
 	String COL_SUM_QTY = "sum_quantity";
 	
 	String CREATE_TBL_ORDER = "CREATE TABLE "
@@ -118,6 +119,7 @@ public interface DbSchema {
 				+ COL_ORDER_DISCOUNT + " LONG,"
 				+ COL_ORDER_AMOUNT + " LONG,"
 				+ COL_ORDER_USER_ID + " TEXT,"
+				+ COL_ORDER_STATUS + " INTEGER,"
 				+ COL_ORDER_BRANCH_ID + " TEXT"
 			+ ");";
 	

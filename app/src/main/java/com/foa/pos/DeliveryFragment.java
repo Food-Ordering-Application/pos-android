@@ -47,7 +47,6 @@ public class DeliveryFragment extends Fragment {
         //set adapter
         final DeliveryGridViewAdapter adapter = new DeliveryGridViewAdapter(getActivity(), DS.getAllOrder());
         theGridView.setAdapter(adapter);
-        theGridView.setOnItemClickListener((adapterView, view, pos, l) -> Toast.makeText(getActivity(),"Click", Toast.LENGTH_SHORT));
         return root;
     }
 

@@ -22,6 +22,9 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private Context context;
 	private Button btnOk;
 	private Button btnCancel;
+	TextView grandTotal;
+	TextView paymentTotal;
+	TextView changeTotal;
 	private ConfirmListener listener;
 	private LoadingDialog loading;
 
@@ -43,16 +46,20 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 		setContentView(R.layout.confirm_dialog);
 		
-		btnOk = (Button)findViewById(R.id.btnOrder);
-		btnCancel = (Button)findViewById(R.id.btnCancel);
-		
-		TextView t1 =(TextView)findViewById(R.id.tvCartProductName);
-		TextView t2 =(TextView)findViewById(R.id.tvProductPrice);
+		btnOk = findViewById(R.id.btnOrder);
+		btnCancel = findViewById(R.id.btnCancel);
+		grandTotal = findViewById(R.id.tvGrandTotal);
+		paymentTotal = findViewById(R.id.tvPaymentTottal);
+		changeTotal = findViewById(R.id.tvChangeTottal);
 
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
 		loading = new LoadingDialog(context);
-		
+
+		grandTotal.setText(String.valueOf(order.getAmount()));
+		paymentTotal.setText(String.valueOf(order.getAmount()));
+		changeTotal.setText(String.valueOf(0));
+
 	}
 	
 	@Override
@@ -97,8 +104,8 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 				SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 				OrderDataSource DS = new OrderDataSource(db);
 				
-				DS.insertOrder(order);
-				DatabaseManager.getInstance().closeDatabase();
+				DS.updateOrderStatus(order.getId(),1);
+
 				
 				result = "1";
 				

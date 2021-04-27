@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.Nullable;
+
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.sqlite.DbSchema;
@@ -78,10 +80,10 @@ public class OrderDataSource {
 	}
 
 	public ArrayList<Order> getAllOrder() {
-		return getAllOrder(null,null,null,null);
+		return getAllOrder(null,null,null,null, 1);
 	}
-	
-	public ArrayList<Order> getAllOrder(ArrayList<HashMap<String, String>> filter, String orderby, String limit, String offset) {
+
+	public ArrayList<Order> getAllOrder(ArrayList<HashMap<String, String>> filter, String orderby, String limit, String offset, int status) {
 		 
 		ArrayList<Order> items = new ArrayList<Order>();
 		//Cursor c = db.rawQuery("DROP TABLE "+DbSchema.TBL_ORDER , null);
@@ -89,8 +91,12 @@ public class OrderDataSource {
 
 		Cursor c = db.rawQuery(selectQuery, null);
 		if (c.moveToFirst()) {
-			String x  = c.getColumnName(0);
+
 			do {
+				if(c.getInt(c.getColumnIndex(DbSchema.COL_ORDER_STATUS))!=status){
+					continue;
+				}
+
 				Order item = new Order();
 				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
 				item.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
@@ -126,6 +132,7 @@ public class OrderDataSource {
 						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
 						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
 						orderItem.setPrice(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
+						orderItem.setOutSlod(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD))>0);
 						details.add(orderItem);
 					} while (cDetail.moveToNext());
 				}
@@ -165,8 +172,22 @@ public class OrderDataSource {
 		return 1;
 	}
 
-	public long insertOrderItem(OrderItem item)
+	public long updateOrderStatus(String orderId, int status)
 	{
+		ContentValues values = new ContentValues();
+
+		values.put(DbSchema.COL_ORDER_STATUS, status);
+
+		return db.update(DbSchema.TBL_ORDER, values, DbSchema.COL_ORDER_CODE+"= '"+orderId+"' ", null);
+	}
+
+	public long deleteOrder(String orderId){
+		return db.delete(DbSchema.TBL_ORDER, DbSchema.COL_ORDER_CODE+"= '"+orderId+"' ", null);
+	}
+
+	//------------------- ORDER ITEM -----------------//
+
+	public long insertOrderItem(OrderItem item){
 		ContentValues valuesDetails = new ContentValues();
 		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE, item.getId());
 		valuesDetails.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE, item.getOrderId());
@@ -180,6 +201,8 @@ public class OrderDataSource {
 		return 1;
 	}
 
+
+
 	public long updateOutSoldOrderItem(String orderItemId, boolean isOutOfSold)
 	{
 		ContentValues values = new ContentValues();
@@ -187,6 +210,18 @@ public class OrderDataSource {
 		values.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD, isOutOfSold ? 1:0);
 
 		return db.update(DbSchema.TBL_PRODUCT_ORDER_DETAIL, values, DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE+"= '"+orderItemId+"' ", null);
+	}
+
+	public int deleteOrderItem(String orderItemId)
+	{
+		return db.delete(DbSchema.TBL_PRODUCT_ORDER_DETAIL, DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE+"= '"+orderItemId+"' ", null);
+	}
+
+	public void updateOrderItemQuantity(String orderItemId, int quantity){
+		ContentValues orderItemValues = new ContentValues();
+		orderItemValues.put(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY, quantity);
+		db.update(DbSchema.TBL_PRODUCT_ORDER_DETAIL, orderItemValues, DbSchema.COL_PRODUCT_ORDER_DETAIL_CODE+"= '"+orderItemId+"' ", null);
+
 	}
 
 	public long updateSumaryOrderInfo(String orderItemId, long amount, long grandTotal)

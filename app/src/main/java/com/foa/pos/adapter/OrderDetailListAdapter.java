@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.foa.pos.R;
@@ -36,6 +38,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
     }
     
     private class ViewHolder {
+        RelativeLayout layoutOrderItem;
         TextView name;
         TextView price;
         TextView qty;
@@ -51,11 +54,6 @@ public class OrderDetailListAdapter extends BaseAdapter {
     	dtList = list;
         notifyDataSetChanged();
     }
-    
-    public void remove(OrderItem user) {
-    	dtList.remove(user);
-        notifyDataSetChanged();
-    }
 
     public void updateIsOutSold (String orderItemId){
         for (OrderItem item:
@@ -64,29 +62,6 @@ public class OrderDetailListAdapter extends BaseAdapter {
                 item.setOutSlod( !item.isOutSlod());
             }
         }
-    }
-
-    public void removeAll() {
-    	dtList = new ArrayList<OrderItem>();
-        notifyDataSetChanged();
-    }
-    
-    public void removeByID(String code) {
-    	for (int i = 0; i < dtList.size(); i++) {
-			if(dtList.get(i).getMenuItemId().equals(code))
-				dtList.remove(i);
-		};
-        notifyDataSetChanged();
-    }
-    
-    public void add(OrderItem user) {
-    	dtList.add(user);
-        notifyDataSetChanged();
-    }
-    
-    public void insert(OrderItem user, int index) {
-    	dtList.add(index, user);
-        notifyDataSetChanged();
     }
  
     public Object getItem(int position) {
@@ -97,15 +72,6 @@ public class OrderDetailListAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
-
-
-//    @Override
-//    public void notifyDataSetChanged() {
-//    	// TODO Auto-generated method stub
-//    	super.notifyDataSetChanged();
-//		if(listener != null)
-//			listener.onChange(dtList);
-//    }
  
     public View getView(final int position, View convertView, ViewGroup parent) {
         View vi = convertView;
@@ -114,12 +80,13 @@ public class OrderDetailListAdapter extends BaseAdapter {
         if (convertView == null) {
         	vi = inflater.inflate(R.layout.cart_list_item, null);
             holder = new ViewHolder();
- 
-            holder.name = (TextView) vi.findViewById(R.id.tvCartProductName);
-            holder.price = (TextView) vi.findViewById(R.id.tvProductPrice);
-            holder.qty = (TextView) vi.findViewById(R.id.tvTotal);
-            holder.btnMinus = (ImageButton) vi.findViewById(R.id.btnSubQuantityCartItem);
-            holder.btnPlus = (ImageButton)vi.findViewById(R.id.btnPlusQuantityCartItem);
+
+            holder.layoutOrderItem = vi.findViewById(R.id.layoutOrderItem);
+            holder.name = vi.findViewById(R.id.tvCartProductName);
+            holder.price = vi.findViewById(R.id.tvProductPrice);
+            holder.qty = vi.findViewById(R.id.tvTotal);
+            holder.btnMinus = vi.findViewById(R.id.btnSubQuantityCartItem);
+            holder.btnPlus = vi.findViewById(R.id.btnPlusQuantityCartItem);
             
             vi.setTag(holder);
         } else {
@@ -127,7 +94,12 @@ public class OrderDetailListAdapter extends BaseAdapter {
         }
         
         final OrderItem orderItem = (OrderItem) getItem(position);
+        if (orderItem.isOutSlod()){
+            holder.layoutOrderItem.setBackgroundResource(R.color.line_gray);
+        }
+
         holder.name.setText(orderItem.getMenuItemName());
+        holder.qty.setText(String.valueOf(orderItem.getQuantity()));
         holder.price.setText(Helper.decimalformat.format(orderItem.getPrice()* orderItem.getQuantity())
                 +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
 
@@ -137,58 +109,6 @@ public class OrderDetailListAdapter extends BaseAdapter {
         }
         holder.btnMinus.setVisibility(View.INVISIBLE);
         holder.btnPlus.setVisibility(View.INVISIBLE);
-
-        
-//        holder.btnMinus.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//
-//				orderDetails.setQty(orderDetails.getQty() - 1);
-//
-//				double discount =  (orderDetails.getPrice()*orderDetails.getQty()) * (orderDetails.getDiscount()/100);
-//				double subtotal = (orderDetails.getPrice()*orderDetails.getQty()) - discount;
-//				orderDetails.setSubtotal(subtotal);
-//				dtList.set(position, orderDetails);
-//
-//				if(orderDetails.getQty() <= 0)
-//		        {
-//					dtList.remove(position);
-//					if(listener != null)
-//						listener.onRemove(orderDetails.getProductID());
-//
-//		        }
-//				notifyDataSetChanged();
-//			}
-//		});
-        
-//        holder.btnPlus.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				orderDetails.setQty(orderDetails.getQty() + 1);
-//
-//				double discount = (orderDetails.getPrice()*orderDetails.getQty()) * (orderDetails.getDiscount()/100);
-//				double subtotal = (orderDetails.getPrice()*orderDetails.getQty()) - discount;
-//				orderDetails.setSubtotal(subtotal);
-//
-//				dtList.set(position, orderDetails);
-//				notifyDataSetChanged();
-//			}
-//		});
-        
         return vi;
     }
-    
-
-    
-//    public void setCartListener(CartListener listener)
-//    {
-//    	this.listener = listener;
-//    }
-    
-//    public interface CartListener {
-//        public void onRemove(String result);
-//        public void onChange(List<OrderDetails> list);
-//    }
 }

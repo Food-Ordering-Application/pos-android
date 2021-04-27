@@ -29,12 +29,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
-import com.foa.pos.model.Cart;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
@@ -47,9 +44,7 @@ import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
 import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
-import com.foa.pos.widget.CustomConfirm;
 import com.foa.pos.widget.PickToppingDialog;
-import com.nineoldandroids.animation.Animator;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,16 +68,13 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private PromotionListAdapter promotionAdapter;
 
     private TextView txtTotal;
-    private TextView txtTotalPay;
-    private TextView txtTotalPay2;
+    private TextView grandTotal;
     private EditText txtKeyword;
     private EditText txtPayment;
     private TextView txtChange;
     private TextView txtEmpty;
 
     private Button btnOrder;
-    private Button btnCancelCheckout;
-    private Button btnPay;
     private ImageButton btnToggleList;
 
     private ProductDataSource ProductDS;
@@ -167,14 +159,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         menuList = root.findViewById(R.id.listView2);
         txtEmpty = root.findViewById(R.id.textView9);
         txtTotal = root.findViewById(R.id.tvTotal);
-        txtTotalPay = root.findViewById(R.id.tvTotalPay);
-        txtTotalPay2 = root.findViewById(R.id.textView5);
+        grandTotal = root.findViewById(R.id.tvTotalPay);
         txtKeyword = root.findViewById(R.id.editText1);
-        txtPayment = root.findViewById(R.id.editText2);
         txtChange = root.findViewById(R.id.textView8);
         btnOrder = root.findViewById(R.id.btnOrder);
-        btnCancelCheckout = root.findViewById(R.id.btnCancelCheckout);
-        btnPay = root.findViewById(R.id.btnCheckout);
         btnToggleList = root.findViewById(R.id.imageView2);
         checkOutContainer = root.findViewById(R.id.checkOutContainer);
         promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
@@ -184,8 +172,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private void initListener() {
         menuGrid.setOnItemClickListener(gridOnlick);
         menuList.setOnItemClickListener(gridOnlick);
-        btnCancelCheckout.setOnClickListener(cancelCheckOutOnlick);
-        btnPay.setOnClickListener(payOnlick);
         btnOrder.setOnClickListener(orderOnlick);
         btnToggleList.setOnClickListener(toogleOnclick);
         cartAdapter.setCartListener(cartOnItemClick);
@@ -194,7 +180,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
         // Handle input change
         txtKeyword.addTextChangedListener(keywordOnchange);
-        txtPayment.addTextChangedListener(paymentOnchange);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -301,10 +286,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
 
             total = mtotal;
+            OrderDS.updateSumaryOrderInfo(currentOrder.getId(),mtotal,mtotal);
             txtTotal.setText(Helper.formatMoney(mtotal));
 
-            txtTotalPay.setText(txtTotal.getText().toString());
-            txtTotalPay2.setText(txtTotal.getText().toString());
+            grandTotal.setText(txtTotal.getText().toString());
 
             if (cartAdapter.getCount() == 0)
                 txtEmpty.setVisibility(View.VISIBLE);
@@ -392,68 +377,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
     };
 
-    private final View.OnClickListener cancelCheckOutOnlick = v -> {
-        // TODO Auto-generated method stub
-        isCheckout = false;
-        showCart();
-    };
-
-    private final View.OnClickListener payOnlick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // TODO Auto-generated method stub
-            if (txtPayment.getText().toString().equals("")) {
-                Toast.makeText(getActivity(), "Nhập số tiền", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Date dt = new Date();
-
-            Order order = new Order();
-            order.setId(Helper.getOrderID());
-            order.setRestaurantId(Helper.read(Constants.KEY_SETTING_BRANCH_ID, ""));
-            order.setCustomerId(com.foa.pos.MainActivity.SesID);
-            order.setCreatedAt(dt);
-            order.setNote("");
-            order.setUpdatedAt(dt);
-
-            ArrayList<OrderItem> orderItemsList = new ArrayList<>();
-            long subTotal = 0;
-            long discount = 0;
-            for (int i = 0; i < cartAdapter.getCount(); i++) {
-                Cart cart = (Cart) cartAdapter.getItem(i);
-                OrderItem orderItem = new OrderItem();
-                orderItem.setId(Helper.getOrderDetailID(i));
-                orderItem.setDiscount(cart.getDiscount());
-                orderItem.setMenuItemName(cart.getMenuItemName());
-                orderItem.setQuantity(cart.getQuantity());
-                orderItem.setPrice(cart.getPrice());
-                orderItem.setMenuItemId(cart.getMenuItemId());
-                orderItem.setOrderId(order.getId());
-                orderItemsList.add(orderItem);
-
-                subTotal += orderItem.getQuantity() * orderItem.getPrice();
-                discount += subTotal * (orderItem.getDiscount() / 100);
-            }
-
-            order.setOrderItems(orderItemsList);
-
-            order.setDiscount(discount);
-
-            long sub = subTotal - discount;
-
-            order.setGrandTotal(sub);
-
-
-            CustomConfirm con = new CustomConfirm(getActivity(), order);
-            con.setConfirmListener(result -> {
-                ClearForm();
-                Toast.makeText(getActivity(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
-            });
-            con.show();
-
-        }
-    };
 
     private final View.OnClickListener orderOnlick = new View.OnClickListener() {
 
@@ -469,40 +392,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             Intent intent = new Intent(getActivity(), PaymentActivity.class);
             intent.putExtra(Constants.PUT_ORDER_ID, currentOrder.getId());
             startActivity(intent);
-        }
-    };
-
-    private final TextWatcher paymentOnchange = new TextWatcher() {
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // TODO Auto-generated method stub
-            try {
-                if (!s.toString().equals("")) {
-                    long pay = Long.parseLong(s.toString());
-                    long change = pay - total;
-                    txtChange.setText(Helper.formatMoney(change));
-                } else {
-                    txtChange.setText(Helper.formatMoney(0));
-                }
-
-
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                                      int after) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            // TODO Auto-generated method stub
-
         }
     };
 
@@ -524,83 +413,4 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
         }
     };
-
-    // END REGION ON CLICK LISTENER
-
-    //REGION PRIVATE METHOD
-
-    private void showCart() {
-        YoYo.with(Techniques.FadeOutDown).duration(700).withListener(new Animator.AnimatorListener() {
-
-            @Override
-            public void onAnimationStart(Animator arg0) {
-                // TODO Auto-generated method stub
-                btnCancelCheckout.setEnabled(false);
-                btnPay.setEnabled(false);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator arg0) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onAnimationEnd(Animator arg0) {
-                // TODO Auto-generated method stub
-                checkOutContainer.setVisibility(View.GONE);
-                btnOrder.setEnabled(true);
-                //.setEnabled(true);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator arg0) {
-                // TODO Auto-generated method stub
-
-            }
-        }).playOn(checkOutContainer);
-    }
-
-    private void showCheckout() {
-        YoYo.with(Techniques.FadeInDown).duration(1000).withListener(new Animator.AnimatorListener() {
-
-            @Override
-            public void onAnimationStart(Animator arg0) {
-                // TODO Auto-generated method stub
-                checkOutContainer.setVisibility(View.VISIBLE);
-                btnOrder.setEnabled(false);
-                //btnCancel.setEnabled(false);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator arg0) {
-                // TODO Auto-generated method stub
-                btnPay.setEnabled(true);
-                btnCancelCheckout.setEnabled(true);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator arg0) {
-                // TODO Auto-generated method stub
-
-            }
-        }).playOn(checkOutContainer);
-    }
-
-    private void ClearForm() {
-        cartAdapter.removeAll();
-        txtPayment.setText("");
-        showCart();
-        txtKeyword.setText("");
-        ((RadioButton) radioGroup.getChildAt(0)).setChecked(true);
-        menuAdapter.unCheckAll();
-        isCheckout = false;
-    }
-
-    //END REGION PRIVATE METHOD
 }

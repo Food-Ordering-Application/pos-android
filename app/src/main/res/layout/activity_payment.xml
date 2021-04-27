@@ -192,6 +192,7 @@
                     android:layout_marginTop="100dp"
                     />
                 <Button
+                    android:id="@+id/paymentCash"
                     android:text="Tiền mặt"
                     android:layout_width="match_parent"
                     android:layout_height="80dp"

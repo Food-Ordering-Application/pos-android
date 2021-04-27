@@ -2,6 +2,7 @@ package com.foa.pos.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,15 +10,22 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.foa.pos.R;
 import com.foa.pos.model.Order;
+import com.foa.pos.model.OrderItem;
+import com.foa.pos.sqlite.DatabaseHelper;
+import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.utils.Helper;
+import com.foa.pos.widget.EditOrderItemDialog;
 
 import java.util.List;
 import java.util.Random;
@@ -93,7 +101,7 @@ public class DeliveryGridViewAdapter extends ArrayAdapter<Order> {
                 if(! Helper.checkHasSelectedItem(orders,order)){//disable another item
                     Helper.enableSplitLayout(deliveriesLayout,detailLayout,theGridView);
                 }
-                Helper.loadOrderDetail(order,detailLayout, context);
+                loadOrderDetail(order,detailLayout, context);
             }
             notifyDataSetChanged();
         });
@@ -124,5 +132,36 @@ public class DeliveryGridViewAdapter extends ArrayAdapter<Order> {
         TextView orderAmount;
         TextView paymentStatus;
         TextView timeLeft;
+    }
+
+    public static void loadOrderDetail(Order order, RelativeLayout detailLayout, Context context){
+        ((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(String.valueOf(order.getGrandTotal()));
+        ((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(String.valueOf(order.getGrandTotal()));
+        ((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getId().substring(0,6)));
+        ((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(String.valueOf(order.getGrandTotal()));
+        if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){
+            ((TextView)detailLayout.findViewById(R.id.tvChange)).setText(String.valueOf(0));
+        }
+        OrderDetailListAdapter adapter = new OrderDetailListAdapter((Activity) context);
+        adapter.set(order.getOrderItems());
+        adapter.notifyDataSetChanged();
+        ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
+        detailsListView.setAdapter(adapter);
+        detailsListView.setOnItemClickListener((parent, view, position, id) -> {
+            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+            OrderItem item =(OrderItem) detailsListView.getItemAtPosition(position);
+            EditOrderItemDialog dialog = new EditOrderItemDialog(context,item);
+            dialog.setOutOfProductListener(result -> {
+                if (result){
+                    DatabaseManager.initializeInstance(new DatabaseHelper(context));
+                    SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
+                    OrderDataSource DS = new OrderDataSource(db);
+                    DS.updateOutSoldOrderItem(item.getId(),result);
+                    ((OrderDetailListAdapter) detailsListView.getAdapter()).updateIsOutSold(item.getId());
+                    ((OrderDetailListAdapter) detailsListView.getAdapter()).notifyDataSetChanged();
+                }
+            });
+            dialog.show();
+        });
     }
 }

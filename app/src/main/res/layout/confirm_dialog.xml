@@ -2,116 +2,162 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
     android:layout_height="250dp"
-    android:background="@android:color/transparent" >
-   <RelativeLayout
-         android:id="@+id/bgCart"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content" >
-        
-		
-         <RelativeLayout
-             android:id="@+id/cartContainer"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:layout_below="@+id/relativeLayout1"
-             android:layout_centerHorizontal="true"
-             android:background="@drawable/body_cart"
-             android:layout_above="@+id/imageView1"
-             
-             android:layout_marginTop="-20dp" >
+    android:background="@android:color/transparent">
 
-             <LinearLayout
-                 android:id="@+id/relativeLayout2"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:padding="10dp"
-                 android:weightSum="2"
-                 android:layout_alignParentBottom="true" >
+    <RelativeLayout
+        android:id="@+id/bgCart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-                 <Button
-                     android:id="@+id/btnOrder"
-                     android:layout_weight="1"
-                     android:layout_width="wrap_content"
-                     android:layout_height="50dp"
-                     android:layout_alignParentRight="true"
-                     android:layout_alignParentTop="true"
-                     android:textSize="12sp"
-                     android:layout_marginRight="10dp"
-                      android:paddingTop="10dp"
-                     android:paddingBottom="10dp"
-                     android:paddingLeft="16dp"
-                      android:paddingRight="16dp"
-                     android:textAllCaps="true"
-                     android:text="Chấp nhận" />
-                 
-                 <Button
-                     android:id="@+id/btnCancel"
-                     android:layout_weight="1"
-                     android:layout_width="wrap_content"
-                     android:layout_height="50dp"
-                     android:layout_alignParentTop="true"
-                     android:textSize="12sp"
-                      android:paddingTop="10dp"
-                     android:paddingBottom="10dp"
-                     android:paddingLeft="16dp"
-                      android:paddingRight="16dp"
-                     android:backgroundTint="@color/secondaryColor"
-                     android:layout_toLeftOf="@+id/btnOrder"
-                     android:layout_marginRight="8dp"
-                     android:text="Huỷ" />
 
-             </LinearLayout>
-             <RelativeLayout
-                 android:id="@+id/summaryPay"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:padding="5dp"
-                 android:layout_marginLeft="16dp"
-                  android:layout_above="@+id/relativeLayout2" >
+        <RelativeLayout
+            android:id="@+id/cartContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/imageView1"
+            android:layout_below="@+id/relativeLayout1"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/body_cart">
 
-             </RelativeLayout>
-				
-              <TextView
-                 android:id="@+id/tvProductPrice"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                  android:layout_alignParentTop="true"
-                  android:layout_above="@+id/relativeLayout2"
-                 android:layout_centerHorizontal="true"
-                 android:layout_marginTop="30dp"
-                  android:gravity="center_vertical"
-                 android:textSize="18dp"
-                 android:text="Xác nhận thanh toán 180.000đ\n Nhận: 200.000đ \n Trả lại 20.000 đ " />
+            <LinearLayout
+                android:id="@+id/relativeLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:padding="10dp"
+                android:weightSum="2">
 
-         </RelativeLayout>
-           <ImageView
-                 android:id="@+id/imageView1"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_alignParentBottom="true"
-                 android:layout_marginTop="-5dp"
-                 android:layout_marginLeft="3dp"
-                 android:layout_marginRight="3dp"
-                 android:background="@drawable/footer_cart" />
-         
-         <RelativeLayout
-             android:id="@+id/relativeLayout1"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:layout_alignParentTop="true"
-             android:layout_centerHorizontal="true"
-             android:background="@color/primaryColor" >
+                <Button
+                    android:id="@+id/btnOrder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/primaryColor"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="10dp"
+                    android:text="Chấp nhận"
+                    android:textAllCaps="true"
+                    android:textSize="12sp" />
 
-             <TextView
-                 android:id="@+id/tvCartProductName"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_centerHorizontal="true"
-                 android:text="Xác nhận hoá đơn #123123"
-                 android:padding="5dp"
-                 android:textStyle="bold"
-                 android:textColor="@color/putih" />
-         </RelativeLayout>
-     </RelativeLayout>
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@+id/btnOrder"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/secondaryColor"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="10dp"
+                    android:text="Huỷ"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/summaryPay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/relativeLayout2"
+                android:layout_marginLeft="16dp"
+                android:padding="5dp">
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/relativeLayout2"
+                android:layout_alignParentTop="true"
+                android:gravity="center">
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:text="Xác nhân thanh toán" />
+
+                    <TextView
+                        android:id="@+id/tvGrandTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textSize="15sp"
+                        android:text="200.000đ" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:text="Nhận" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textSize="15sp"
+                        android:text="200.000đ" />
+
+                    <TextView
+                        android:id="@+id/tvPaymentTottal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:text="Trả lại" />
+
+                    <TextView
+                        android:id="@+id/tvChangeTottal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textSize="15sp"
+                        android:text="0đ" />
+
+                </GridLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginRight="3dp"
+            android:background="@drawable/footer_cart" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/primaryColor">
+
+            <TextView
+                android:id="@+id/tvCartProductName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:padding="5dp"
+                android:text="Xác nhận hoá đơn #123123"
+                android:textColor="@color/putih"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
