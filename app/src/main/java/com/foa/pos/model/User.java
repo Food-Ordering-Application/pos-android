@@ -5,14 +5,17 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 
 public class User {
+	@SerializedName("id")
 	private String id;
-	@SerializedName("phoneNumber")
+	@SerializedName("username")
 	private String userName;
-	@SerializedName("password")
 	private String password;
+	@SerializedName("restaurantId")
+	private String restaurantId;
 	private Date lastLogin;
 	private String level;
 	private String cashierID;
+
 
 	public User() {
 	}
@@ -44,6 +47,15 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public String getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
 	public String getLevel() {
 		return level;
 	}

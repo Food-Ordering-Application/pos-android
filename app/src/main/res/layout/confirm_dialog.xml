@@ -104,6 +104,7 @@
                         android:text="Nhận" />
 
                     <TextView
+                        android:id="@+id/tvPaymentTottal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -111,7 +112,6 @@
                         android:text="200.000đ" />
 
                     <TextView
-                        android:id="@+id/tvPaymentTottal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"

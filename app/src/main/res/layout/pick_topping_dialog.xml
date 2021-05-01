@@ -43,14 +43,11 @@
                 android:text="Ten mon an"
                 android:textStyle="bold" />
 
-            <ListView
-                android:id="@+id/toppingListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:horizontalSpacing="10dp"
-                android:verticalSpacing="10dp" />
+          <RadioGroup
+              android:id="@+id/toppingsRadioGroup"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="50dp"/>
         </LinearLayout>
 
         <LinearLayout

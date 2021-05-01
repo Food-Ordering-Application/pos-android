@@ -338,7 +338,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                         //update data
                         OrderDS.insertOrderItem(orderItem);
-                        OrderDS.updateSumaryOrderInfo(currentOrder.getId(),currentOrder.getAmount(),currentOrder.getAmount());
+                        OrderDS.updateSumaryOrderInfo(currentOrder.getId(),currentOrder.getSubTotal(),currentOrder.getSubTotal());
                     }
                 });
                 if (!menuAdapter.isSelected(product.getId())) {

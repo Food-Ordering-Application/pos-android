@@ -16,14 +16,6 @@
             android:background="@drawable/card_product"
             android:orientation="horizontal"
             android:padding="10dp">
-
-            <ImageView
-                android:id="@+id/toppingImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/radio_button_selector"
-                android:src="@drawable/bg1" />
-
             <TextView
                 android:id="@+id/toppingName"
                 android:layout_width="match_parent"

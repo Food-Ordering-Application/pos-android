@@ -5,16 +5,23 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.foa.pos.R;
 import com.foa.pos.adapter.ToppingListAdapter;
 import com.foa.pos.model.MenuItem;
+import com.foa.pos.model.ProductCategory;
 import com.foa.pos.model.Topping;
+
+import java.util.List;
 
 public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	private MenuItem product;
@@ -22,6 +29,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	private Button btnOk;
 	private Button btnCancel;
 	private ListView toppingListView;
+	private RadioGroup toppingsRadioGroup;
 
 	private PickToppingListener listener;
 
@@ -46,21 +54,29 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		btnOk = findViewById(R.id.btnDoneTopping);
 		btnCancel = findViewById(R.id.btnCancel);
 
-		TextView t1 = findViewById(R.id.tvCartProductName);
-		TextView t2 = findViewById(R.id.tvProductPrice);
-		toppingListView = findViewById(R.id.toppingListView);
-
-		ToppingListAdapter adapter = new ToppingListAdapter((Activity) context, Topping.getSampleList());
-		toppingListView.setAdapter(adapter);
-
-		toppingListView.setOnItemClickListener((parent, view, position, id) -> {
-			view.setSelected(true);
-			btnOk.setEnabled(true);
-		});
+		TextView nameTextView = findViewById(R.id.tvCartProductName);
+		TextView priceTextView = findViewById(R.id.tvProductPrice);
+		toppingsRadioGroup  = findViewById(R.id.toppingsRadioGroup);
+		addRadioButtons(toppingsRadioGroup,Topping.getSampleList());
+		toppingsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> btnOk.setEnabled(true));
 
 		btnOk.setEnabled(false);
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
+	}
+
+	private void addRadioButtons(RadioGroup radioGroup, List<Topping> toppingList) {
+		radioGroup.setOrientation(LinearLayout.VERTICAL);
+
+		for (int i = 0; i < toppingList.size(); i++) {
+			RadioButton rdbtn = new RadioButton(context);
+			rdbtn.setId(View.generateViewId());
+			rdbtn.setText(toppingList.get(i).getName());
+			rdbtn.setPadding(50, 30, 50, 30);
+			rdbtn.setGravity(Gravity.CENTER);
+
+			radioGroup.addView(rdbtn);
+		}
 	}
 	
 	@Override

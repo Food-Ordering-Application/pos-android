@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import androidx.annotation.Nullable;
-
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.sqlite.DbSchema;
@@ -36,7 +34,7 @@ public class OrderDataSource {
 			
 				order.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CODE)));
 				order.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				order.setAmount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
+				order.setSubTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_AMOUNT)));
 				order.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
 				order.setRestaurantId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_BRANCH_ID)));
 				order.setCustomerId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_USER_ID)));
@@ -44,7 +42,6 @@ public class OrderDataSource {
 				try {  
 				    order.setCreatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
 				    order.setUpdatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
-				    order.setSycnAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYCN_ON))));
 				} catch (Exception e) {
 				}
 				
@@ -109,7 +106,6 @@ public class OrderDataSource {
 				try {  
 				    item.setCreatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
 				    item.setUpdatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
-				    item.setSycnAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYCN_ON))));
 				} catch (Exception e) {
 				}
 				

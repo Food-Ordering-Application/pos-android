@@ -1,9 +1,9 @@
 package com.foa.pos.network.response;
 
-import com.foa.pos.model.User;
+import com.foa.pos.model.Order;
 import com.google.gson.annotations.SerializedName;
 
-public class LoginResponse {
+public class OrderRespone {
     @SerializedName( "statusCode" )
     private int status;
     @SerializedName( "message" )
@@ -36,28 +36,20 @@ public class LoginResponse {
     }
 
     static class Data{
-        @SerializedName( "user" )
-        User user;
-        @SerializedName("accessToken")
-        String accessToken;
+        @SerializedName( "order" )
+        Order order;
 
-        public User getUser() {
-            return user;
+        public Data(Order order) {
+            this.order = order;
         }
 
-        public void setUser(User user) {
-            this.user = user;
+        public Order getOrder() {
+            return order;
         }
 
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        public void setAccessToken(String accessToken) {
-            this.accessToken = accessToken;
+        public void setOrder(Order order) {
+            this.order = order;
         }
     }
 }
-
-
 

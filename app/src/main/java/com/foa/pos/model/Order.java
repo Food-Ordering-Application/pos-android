@@ -1,5 +1,7 @@
 package com.foa.pos.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,26 +9,41 @@ import java.util.Date;
 import java.util.List;
 
 public class Order{
+	@SerializedName( "id" )
 	private String id;
+	@SerializedName( "customerId" )
 	private String customerId;
+
 	private String cashierId;
 	private String customerAddressId;
+	@SerializedName( "driverId" )
 	private String driverId;
+	@SerializedName( "restaurantId" )
 	private String restaurantId;
-	private long amount;
+	@SerializedName( "subTotal" )
+	private long subTotal;
+	@SerializedName( "itemDiscount" )
 	private long itemDiscount;
+	@SerializedName( "discount" )
 	private long discount;
+	@SerializedName( "shippingFee" )
 	private long shippingFee;
+	@SerializedName( "serviceFee" )
 	private long serviceFee;
+	@SerializedName( "grandTotal" )
 	private long grandTotal;
 	private int paymentMode;
+	@SerializedName( "paymentType" )
 	private int paymentType;
 	private String note;
 	private int status;
+	@SerializedName( "deliveredAt" )
 	private Date deliveredAt;
+	@SerializedName( "createdAt" )
 	private Date createdAt;
+	@SerializedName( "updatedAt" )
 	private Date updatedAt;
-	private Date sycnAt;
+	@SerializedName( "orderItems" )
 	private ArrayList<OrderItem> orderItems;
 	// field for setting list view selector.
 	private boolean isSelected;
@@ -83,12 +100,12 @@ public class Order{
 		this.restaurantId = restaurantId;
 	}
 
-	public long getAmount() {
-		return amount;
+	public long getSubTotal() {
+		return subTotal;
 	}
 
-	public void setAmount(long amount) {
-		this.amount = amount;
+	public void setSubTotal(long subTotal) {
+		this.subTotal = subTotal;
 	}
 
 	public long getItemDiscount() {
@@ -187,14 +204,6 @@ public class Order{
 		this.updatedAt = updatedAt;
 	}
 
-	public Date getSycnAt() {
-		return sycnAt;
-	}
-
-	public void setSycnAt(Date sycnAt) {
-		this.sycnAt = sycnAt;
-	}
-
 	public ArrayList<OrderItem> getOrderItems() {
 		return orderItems;
 	}
@@ -226,7 +235,7 @@ public class Order{
 	}
 
 	public void addOrderItemPrice(long orderItemPrice){
-		this.amount += orderItemPrice;
+		this.subTotal += orderItemPrice;
 	}
 
 }

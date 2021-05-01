@@ -16,7 +16,6 @@ import com.foa.pos.widget.CustomConfirm;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.service.autofill.OnClickAction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -37,8 +36,6 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
     private TextView tvTotalPay;
 
     private Button paymentCash;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +61,9 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
         currentOrder = DS.getOrderById(orderId);
-        txtGrantTotal.setText(String.valueOf(currentOrder.getAmount()));
-        txtAmount.setText(String.valueOf(currentOrder.getAmount()));
-        tvTotalPay.setText(String.valueOf(currentOrder.getAmount()));
+        txtGrantTotal.setText(String.valueOf(currentOrder.getSubTotal()));
+        txtAmount.setText(String.valueOf(currentOrder.getSubTotal()));
+        tvTotalPay.setText(String.valueOf(currentOrder.getSubTotal()));
 
         cartAdapter = new CartListAdapter(this);
         cartAdapter.setIsPayment(true);
@@ -106,8 +103,6 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
                 }else{
                     tvTotalPay.setText( tvTotalPay.getText()+data);
                 }
-
-
         }
     }
 

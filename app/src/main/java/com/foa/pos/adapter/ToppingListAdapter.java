@@ -45,9 +45,7 @@ public class ToppingListAdapter  extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(R.layout.card_item_topping,null);
         TextView toppingName = convertView.findViewById(R.id.toppingName);
-        ImageView toppingImage = convertView.findViewById(R.id.toppingImage);
         toppingName.setText(getItem(position).getName());
-        toppingImage.setImageResource(R.drawable.bg1);
         return convertView;
     }
 }

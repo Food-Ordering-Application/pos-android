@@ -56,8 +56,8 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 		btnCancel.setOnClickListener(this);
 		loading = new LoadingDialog(context);
 
-		grandTotal.setText(String.valueOf(order.getAmount()));
-		paymentTotal.setText(String.valueOf(order.getAmount()));
+		grandTotal.setText(String.valueOf(order.getSubTotal()));
+		paymentTotal.setText(String.valueOf(order.getSubTotal()));
 		changeTotal.setText(String.valueOf(0));
 
 	}
