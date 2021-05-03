@@ -10,12 +10,13 @@
     <string name="activation_enter_sn">enter serial number to activate your device</string>
     <string name="activation_enter_sn_hint">enter serial number</string>
     <string name="submit">SUBMIT</string>
-    <string name="activation_failed">activation failed</string>
-    <string name="activation_succeed">activation succeed</string>
+    <string name="activation_failed">Xác nhận thất bại</string>
+    <string name="activation_succeed">Xác nhận thành công</string>
     <string name="login">LOGIN</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="error_field_empty">field can not be empty</string>
-    <string name="error_user_or_password">invalid username or password</string>
+    <string name="error_user_or_password">Tên đăng nhập hoặc mật khẩu không đúng</string>
+    <string name="error_restaurant">Nhà hàng chưa được kích hoạt</string>
     <string name="quick_order">QUICK\nORDER</string>
     <string name="report">REPORT</string>
     <string name="master_data">MASTER\nDATA</string>
@@ -95,4 +96,13 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_verify_app">VerifyAppActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Đăng nhập thất bại"</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.foa.pos.widget;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -8,16 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.adapter.ToppingListAdapter;
-import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.OrderItem;
-import com.foa.pos.model.Topping;
+import com.foa.pos.model.enums.StockState;
 
 public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
 	private OrderItem orderItem;
@@ -25,7 +20,7 @@ public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
 	private Button btnOk;
 	private Button btnCancel;
 	private Switch outOfProductSwitch;
-	private boolean preIsOutOfSod;
+	private StockState preIsOutOfSod;
 
 	private OutOfProductListener listener;
 
@@ -54,11 +49,11 @@ public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
 		TextView t2 = findViewById(R.id.tvProductPrice);
 		outOfProductSwitch = findViewById(R.id.OutOfProductSwitch);
 
-		preIsOutOfSod = orderItem.isOutSlod();
+		preIsOutOfSod = orderItem.getStockState();
 		btnOk.setEnabled(false);
-		outOfProductSwitch.setChecked(preIsOutOfSod);
+		outOfProductSwitch.setChecked(preIsOutOfSod== StockState.OUT_OF_STOCK);
 		outOfProductSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-			btnOk.setEnabled(isChecked != preIsOutOfSod);
+			btnOk.setEnabled(isChecked != preIsOutOfSod.equals(StockState.IN_STOCK));
 		});
 
 		btnOk.setEnabled(false);

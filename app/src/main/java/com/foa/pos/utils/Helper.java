@@ -19,6 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.R;
 import com.foa.pos.adapter.OrderDetailListAdapter;
 import com.foa.pos.model.MenuItem;
@@ -29,6 +31,7 @@ import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.widget.EditOrderItemDialog;
+import com.foa.pos.widget.LoadingDialog;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -235,6 +238,12 @@ public final class Helper
 			}
 		}
 		return false;// no item selected;
+	}
+
+	public static void showFailNotification(Context context,LoadingDialog loading,LinearLayout wrapper,String message){
+		loading.dismiss();
+		YoYo.with(Techniques.Shake).duration(700).playOn(wrapper);
+		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 }
 

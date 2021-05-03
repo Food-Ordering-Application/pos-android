@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.foa.pos.R;
 import com.foa.pos.model.OrderItem;
+import com.foa.pos.model.enums.StockState;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 
@@ -55,11 +55,11 @@ public class OrderDetailListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void updateIsOutSold (String orderItemId){
+    public void updateIsOutSold (String orderItemId, StockState stockState){
         for (OrderItem item:
                 dtList) {
             if(item.getId()==orderItemId){
-                item.setOutSlod( !item.isOutSlod());
+                item.setStockState( stockState);
             }
         }
     }
@@ -94,7 +94,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
         }
         
         final OrderItem orderItem = (OrderItem) getItem(position);
-        if (orderItem.isOutSlod()){
+        if (orderItem.getStockState()==StockState.IN_STOCK){
             holder.layoutOrderItem.setBackgroundResource(R.color.line_gray);
         }
 

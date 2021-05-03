@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 
 import com.foa.pos.fragment.CategoryListFragment;
 import com.foa.pos.fragment.ProductListFragment;
-import com.foa.pos.fragment.UserListFragment;
 import com.foa.pos.utils.Constants;
 
 
@@ -49,12 +48,10 @@ public class SettingFragment extends Fragment implements SettingControlFragment.
 		Bundle arguments = new Bundle();
 		arguments.putString(Constants.ARG_ITEM_ID, id);
 		
-		Fragment fragment  = new UserListFragment();
+		Fragment fragment  = new CategoryListFragment();
 		String tag = "";
-		
-		if(id.equals("1"))
-			fragment = new UserListFragment();
-		else if(id.equals("2"))
+
+		 if(id.equals("2"))
 			fragment = new CategoryListFragment();
 		else if(id.equals("3"))
 			fragment = new ProductListFragment();

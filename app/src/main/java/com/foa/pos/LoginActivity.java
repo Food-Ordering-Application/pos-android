@@ -2,6 +2,7 @@ package com.foa.pos;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -12,12 +13,14 @@ import android.view.View.OnClickListener;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.response.LoginResponse;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
+import com.foa.pos.utils.LoginSession;
 import com.foa.pos.widget.LoadingDialog;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -29,21 +32,25 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends Activity implements OnClickListener {
+
+	Context context;
 	private EditText txtusername;
 	private EditText txtpassword;
 	private Button btnLogin;
+	private Button btnSaleOffline;
+	LinearLayout wrapperLogin;
 	private LoadingDialog loading;
-
-	String result = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-
+		context = this;
 		btnLogin = (Button) findViewById(R.id.btnLogin);
 		btnLogin.setOnClickListener(this);
 
+		wrapperLogin = findViewById(R.id.loginWrapper);
+		btnSaleOffline = findViewById(R.id.OfflineSaleModeButton);
 		txtusername = (EditText) findViewById(R.id.txtUserName);
 		txtpassword = (EditText) findViewById(R.id.txtPassword);
 
@@ -58,13 +65,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 				requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, 1001);
 			}
 		}
-	}
 
-	private void goNext() {
-		Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-		startActivity(intent);
-		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-		finish();
+		btnSaleOffline.setOnClickListener(v -> startActivity( new Intent(LoginActivity.this,MainActivity.class)));
 	}
 
 	@Override
@@ -94,25 +96,21 @@ public class LoginActivity extends Activity implements OnClickListener {
 		if (username.equals("") || password.equals("")) {
 			YoYo.with(Techniques.Shake).duration(700).playOn(findViewById(R.id.loginWrapper));
 			Toast.makeText(com.foa.pos.LoginActivity.this, getString(R.string.error_field_empty), Toast.LENGTH_SHORT).show();
+
 			return;
 		}
 
 		loading.show();
-		Call<LoginResponse> responseCall = RetrofitClient.getInstance().getAppService().login(username, password);
+		Call<LoginResponse> responseCall = RetrofitClient.getInstance().getAppService()
+				.login(username, password,Helper.read(Constants.RESTAURANT_ID));
 		responseCall.enqueue(new Callback<LoginResponse>() {
 			@Override
 			public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 				switch (response.code()) {
-					case Constants.STATUS_CODE_NOT_FOUND:
-						loading.dismiss();
-						Toast.makeText(LoginActivity.this, "Yêu cầu thất bại", Toast.LENGTH_SHORT).show();
-						break;
-
 					case Constants.STATUS_CODE_SUCCESS:
 					LoginResponse res = response.body();
 					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-						result = res.getData().getUser().getId();
-
+						LoginSession.getInstance().setStaffLogin(res.getData());
 						loading.dismiss();
 						btnLogin.setEnabled(false);
 						YoYo.with(Techniques.FadeOutDown).interpolate(new OvershootInterpolator()).duration(500).withListener(new AnimatorListener() {
@@ -129,7 +127,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 							@Override
 							public void onAnimationEnd(Animator arg0) {
 								// TODO Auto-generated method stub
-								com.foa.pos.MainActivity.SesID = result;
+
 								Intent intent = new Intent(com.foa.pos.LoginActivity.this, com.foa.pos.MainActivity.class);
 								startActivity(intent);
 								overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -141,8 +139,19 @@ public class LoginActivity extends Activity implements OnClickListener {
 								// TODO Auto-generated method stub
 							}
 						}).playOn(findViewById(R.id.loginWrapper));
+					}else{
+						Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
 					}
-					break;
+						break;
+
+					case Constants.STATUS_CODE_UNAUTHORIZED:
+						Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.error_user_or_password));
+						break;
+					case Constants.STATUS_CODE_FORBIDDEN:
+						Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.error_restaurant));
+						break;
+					default:
+						Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
 				}
 
 			}
@@ -150,32 +159,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 			@Override
 			public void onFailure(Call<LoginResponse> call, Throwable t) {
 				Log.e("Login Error", t.getMessage());
-				loading.dismiss();
-				YoYo.with(Techniques.Shake).duration(700).playOn(findViewById(R.id.loginWrapper));
-				Toast.makeText(com.foa.pos.LoginActivity.this, getString(R.string.error_user_or_password), Toast.LENGTH_SHORT).show();
+				Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
 
 			}
 		});
 	}
-
-
-	//DatabaseManager.initializeInstance(new DatabaseHelper(com.foa.pos.LoginActivity.this));
-	//SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-	//UserDataSource DS = new UserDataSource(db);
-	//final User usr = DS.auth(username, password);
-	//DatabaseManager.getInstance().closeDatabase();
-
-//			try {
-//
-//				if(usr.getId() != null)
-//				{
-//					result = usr.getId() ;
-//				}
-//
-//				Thread.sleep(3000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 
 }

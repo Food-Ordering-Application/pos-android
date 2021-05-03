@@ -22,9 +22,13 @@ public class Constants {
     //HTTP RES CODE
     public static final int STATUS_CODE_SUCCESS = 200;
     public static final int STATUS_CODE_UNAUTHORIZED = 401;
+    public static final int STATUS_CODE_FORBIDDEN = 403;
     public static final int STATUS_CODE_NOT_FOUND = 404;
 
-    //INTENT_PUT_CPDE
-
+    //INTENT_PUT_BUNDLE
     public static final String PUT_ORDER_ID = "orderId";
+
+    //PREFERENCE_SHARE
+    public static final String MERCHANT_ID="merchant_id";
+    public static final String RESTAURANT_ID="restaurant_id";
 }

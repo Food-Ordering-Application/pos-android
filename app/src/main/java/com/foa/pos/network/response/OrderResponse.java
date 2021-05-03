@@ -3,7 +3,7 @@ package com.foa.pos.network.response;
 import com.foa.pos.model.Order;
 import com.google.gson.annotations.SerializedName;
 
-public class OrderRespone {
+public class OrderResponse {
     @SerializedName( "statusCode" )
     private int status;
     @SerializedName( "message" )

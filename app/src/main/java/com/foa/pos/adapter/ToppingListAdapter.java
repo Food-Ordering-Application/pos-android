@@ -6,21 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.model.Topping;
+import com.foa.pos.model.MenuItemTopping;
 
 import java.util.List;
 
 public class ToppingListAdapter  extends BaseAdapter {
 
-    private List<Topping> dtList;
+    private List<MenuItemTopping> dtList;
     private Activity context;
     private LayoutInflater inflater;
 
-    public ToppingListAdapter(Activity context, List<Topping> data) {
+    public ToppingListAdapter(Activity context, List<MenuItemTopping> data) {
 
         this.context = context;
         this.dtList = data;
@@ -32,7 +31,7 @@ public class ToppingListAdapter  extends BaseAdapter {
     }
 
     @Override
-    public Topping getItem(int position) {
+    public MenuItemTopping getItem(int position) {
         return  dtList.get(position);
     }
 

@@ -1,6 +1,5 @@
 package com.foa.pos.widget;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -16,10 +15,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.adapter.ToppingListAdapter;
 import com.foa.pos.model.MenuItem;
-import com.foa.pos.model.ProductCategory;
-import com.foa.pos.model.Topping;
+import com.foa.pos.model.MenuItemTopping;
 
 import java.util.List;
 
@@ -57,7 +54,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		TextView nameTextView = findViewById(R.id.tvCartProductName);
 		TextView priceTextView = findViewById(R.id.tvProductPrice);
 		toppingsRadioGroup  = findViewById(R.id.toppingsRadioGroup);
-		addRadioButtons(toppingsRadioGroup,Topping.getSampleList());
+		addRadioButtons(toppingsRadioGroup, MenuItemTopping.getSampleList());
 		toppingsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> btnOk.setEnabled(true));
 
 		btnOk.setEnabled(false);
@@ -65,7 +62,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		btnCancel.setOnClickListener(this);
 	}
 
-	private void addRadioButtons(RadioGroup radioGroup, List<Topping> toppingList) {
+	private void addRadioButtons(RadioGroup radioGroup, List<MenuItemTopping> toppingList) {
 		radioGroup.setOrientation(LinearLayout.VERTICAL);
 
 		for (int i = 0; i < toppingList.size(); i++) {

@@ -1,5 +1,7 @@
 package com.foa.pos.model;
 
+import com.foa.pos.model.enums.OrderStatus;
+import com.foa.pos.model.enums.PaymentType;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
@@ -34,9 +36,10 @@ public class Order{
 	private long grandTotal;
 	private int paymentMode;
 	@SerializedName( "paymentType" )
-	private int paymentType;
+	private PaymentType paymentType;
 	private String note;
-	private int status;
+	@SerializedName( "paymentType" )
+	private OrderStatus status;
 	@SerializedName( "deliveredAt" )
 	private Date deliveredAt;
 	@SerializedName( "createdAt" )
@@ -156,11 +159,11 @@ public class Order{
 		this.paymentMode = paymentMode;
 	}
 
-	public int getPaymentType() {
+	public PaymentType getPaymentType() {
 		return paymentType;
 	}
 
-	public void setPaymentType(int paymentType) {
+	public void setPaymentType(PaymentType paymentType) {
 		this.paymentType = paymentType;
 	}
 
@@ -172,11 +175,11 @@ public class Order{
 		this.note = note;
 	}
 
-	public int getStatus() {
+	public OrderStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
 

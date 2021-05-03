@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
+import com.foa.pos.model.enums.StockState;
 import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
 
@@ -64,7 +65,7 @@ public class OrderDataSource {
 						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
 						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
 						orderItem.setPrice(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
-						orderItem.setOutSlod(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD))>0);
+						orderItem.setStockState(StockState.valueOf(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD))));
 						details.add(orderItem);
 					} while (cDetail.moveToNext());
 				}
@@ -128,7 +129,7 @@ public class OrderDataSource {
 						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_QTY)));
 						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_DISCOUNT)));
 						orderItem.setPrice(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_PRICE)));
-						orderItem.setOutSlod(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD))>0);
+						orderItem.setStockState(StockState.valueOf(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_PRODUCT_ORDER_DETAIL_IS_OUT_SOLD))));
 						details.add(orderItem);
 					} while (cDetail.moveToNext());
 				}

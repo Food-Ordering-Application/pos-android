@@ -1,6 +1,5 @@
 package com.foa.pos.network.response;
 
-import com.foa.pos.model.User;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
@@ -9,7 +8,7 @@ public class LoginResponse {
     @SerializedName( "message" )
     private String message;
     @SerializedName( "data" )
-    private Data data;
+    private StaffLogin data;
 
     public int getStatus() {
         return status;
@@ -27,37 +26,16 @@ public class LoginResponse {
         this.message = message;
     }
 
-    public Data getData() {
+    public StaffLogin getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(StaffLogin data) {
         this.data = data;
     }
-
-    static class Data{
-        @SerializedName( "user" )
-        User user;
-        @SerializedName("accessToken")
-        String accessToken;
-
-        public User getUser() {
-            return user;
-        }
-
-        public void setUser(User user) {
-            this.user = user;
-        }
-
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        public void setAccessToken(String accessToken) {
-            this.accessToken = accessToken;
-        }
-    }
 }
+
+
 
 
 

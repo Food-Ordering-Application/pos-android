@@ -6,12 +6,12 @@ import java.util.Date;
 
 public class OrderDelivery {
     String OrderId;
-    User driver;
+    Staff driver;
     DeliveryStatus status;
     String address;
     Date acceptanceDeadline;
 
-    public OrderDelivery(String orderId, User driver, DeliveryStatus status, String address, Date acceptanceDeadline) {
+    public OrderDelivery(String orderId, Staff driver, DeliveryStatus status, String address, Date acceptanceDeadline) {
         OrderId = orderId;
         this.driver = driver;
         this.status = status;
@@ -27,11 +27,11 @@ public class OrderDelivery {
         OrderId = orderId;
     }
 
-    public User getDriver() {
+    public Staff getDriver() {
         return driver;
     }
 
-    public void setDriver(User driver) {
+    public void setDriver(Staff driver) {
         this.driver = driver;
     }
 
@@ -59,7 +59,4 @@ public class OrderDelivery {
         this.acceptanceDeadline = acceptanceDeadline;
     }
 
-    public static OrderDelivery getDeliverySample(String orderId){
-        return new OrderDelivery(orderId, User.getSampleUser(), DeliveryStatus.WAITING,"300 Lý Thường Kiệt, Q. Tân Bình, TPHCM", Helper.plusMinutes(new Date(),5));
-    }
 }

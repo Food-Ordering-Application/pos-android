@@ -1,14 +1,20 @@
 package com.foa.pos.model;
 
+import com.foa.pos.model.enums.StockState;
+import com.google.gson.annotations.SerializedName;
+
 public class OrderItem {
+	@SerializedName( "id" )
 	private String id;
 	private String orderId;
 	private String menuItemId;
 	private String menuItemName;
+	@SerializedName( "quantity" )
 	private int quantity;
+	@SerializedName( "discount" )
 	private long discount;
 	private long price;
-	private boolean outSlod;
+	private StockState stockState;
 	private String note;
 	private long subTotal;
 
@@ -68,12 +74,12 @@ public class OrderItem {
 		this.price = price;
 	}
 
-	public boolean isOutSlod() {
-		return outSlod;
+	public StockState getStockState() {
+		return stockState;
 	}
 
-	public void setOutSlod(boolean outSlod) {
-		this.outSlod = outSlod;
+	public void setStockState(StockState stockState) {
+		this.stockState = stockState;
 	}
 
 	public String getNote() {

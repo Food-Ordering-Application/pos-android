@@ -2,14 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_default"
-    tools:context="${relativePackage}.${activityClass}" >
-	 
-    <ImageView android:layout_width="match_parent"
-        	   android:layout_height="match_parent"
-        	   android:src="@drawable/bg1"
-        	  android:scaleType="centerCrop"
-        	   ></ImageView>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bg_default">
+
     <LinearLayout
         android:id="@+id/loginWrapper"
         android:layout_width="wrap_content"
@@ -17,47 +12,68 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:background="@drawable/textbox"
+        android:padding="20dp">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            app:endIconMode="clear_text"
+            android:labelFor="@+id/txtUserName"
+            app:helperText="Bắt buộc"
+            app:errorEnabled="true"
+            android:hint=" Tên đăng nhập"
+            android:paddingBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-         <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txtUserName"
-             android:layout_width="270dp"
-            android:layout_height="50dp"
-            android:background="@drawable/textbox"
+            android:layout_height="60dp"
+            android:layout_width="300dp"
             android:textColor="@color/text_gray"
-             android:singleLine="true"
-             android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:hint="@string/hint_username"
-             android:imeOptions="flagNoFullscreen" >
-        </EditText>
+            android:ems="10"
+            android:singleLine="true"
 
-         <EditText
-             android:id="@+id/txtPassword"
-           android:layout_width="270dp"
-            android:hint="@string/hint_password"
-            android:layout_height="50dp"
-            android:background="@drawable/textbox"
-            android:textColor="@color/text_gray"
-             android:ems="10"
-             android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-             android:layout_marginTop="4dp"
-             android:singleLine="true"
-             android:inputType="textPassword" >
-         </EditText>
+        />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            app:endIconMode="password_toggle"
+            app:helperText="Bắt buộc"
+            android:labelFor="@+id/txtPassword"
+            app:errorEnabled="true"
+            android:hint="Mật khẩu"
+            android:paddingBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtPassword"
+                android:layout_height="60dp"
+                android:layout_width="300dp"
+                android:inputType="textPassword"
+                android:textColor="@color/text_gray"
+                android:ems="10"
+                android:singleLine="true"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
          <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="300dp"
-            android:layout_height="70dp"
-            android:background="@drawable/bg_btn_trans"
-            android:paddingBottom="10dp"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/putih"
-            android:text="@string/login" />
+             android:id="@+id/btnLogin"
+             android:layout_width="300dp"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="8dp"
+             android:text="@string/login"
+             android:background="@color/primaryColor"
+             />
          
-
+        <Button
+            android:id="@+id/OfflineSaleModeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_transparent"
+            android:textColor="@color/black"
+            android:text="Bán hàng ngoại tuyến"/>
     </LinearLayout>
 
 </RelativeLayout>

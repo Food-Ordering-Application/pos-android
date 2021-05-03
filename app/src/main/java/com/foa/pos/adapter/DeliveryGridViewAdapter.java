@@ -157,7 +157,7 @@ public class DeliveryGridViewAdapter extends ArrayAdapter<Order> {
                     SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
                     OrderDataSource DS = new OrderDataSource(db);
                     DS.updateOutSoldOrderItem(item.getId(),result);
-                    ((OrderDetailListAdapter) detailsListView.getAdapter()).updateIsOutSold(item.getId());
+                    ((OrderDetailListAdapter) detailsListView.getAdapter()).updateIsOutSold(item.getId(),item.getStockState());
                     ((OrderDetailListAdapter) detailsListView.getAdapter()).notifyDataSetChanged();
                 }
             });

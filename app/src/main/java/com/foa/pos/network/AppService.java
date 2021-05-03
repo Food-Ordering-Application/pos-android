@@ -2,7 +2,7 @@ package com.foa.pos.network;
 
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
-import com.foa.pos.network.entity.MenuItemTopping;
+import com.foa.pos.network.entity.SendItem;
 import com.foa.pos.network.response.LoginResponse;
 import com.foa.pos.network.response.VerifyAppResponse;
 
@@ -18,15 +18,16 @@ public interface AppService {
     @FormUrlEncoded
     @POST("/user/pos/login")
     Call<LoginResponse> login (
-            @Field("userName") String username,
+            @Field("username") String username,
             @Field("password") String password,
             @Field("restaurantId") String restaurantId
     );
 
     @FormUrlEncoded
-    @POST("/user/pos/verifi-app-key")
+    @POST("/user/pos/verify-app-key")
     Call<VerifyAppResponse> verifyAppKey (
-            @Field("posAppKey") String posAppKey
+            @Field("posAppKey") String posAppKey,
+            @Field("deviceId") String deviceId
     );
 
     @FormUrlEncoded
@@ -40,10 +41,8 @@ public interface AppService {
     @FormUrlEncoded
     @POST("/add-new-item")
     Call<Order> addOrderItem (
-            @Field("menuItemId") String menuItemId,
-            @Field("price") long price,
-            @Field("quantity") int quantity,
-            @Field("orderItemToppings") List<MenuItemTopping> orderItemToppings
+            @Field("sendItem") SendItem sendItem,
+            @Field("orderId") String orderId
     );
 
     @FormUrlEncoded
@@ -55,6 +54,12 @@ public interface AppService {
     @FormUrlEncoded
     @POST("/increase-orditem-quantity")
     Call<Order> increaseOrderItemQuantity (
+            @Field("orderItemId") String orderItemId
+    );
+
+    @FormUrlEncoded
+    @POST("/remove-orditem")
+    Call<Order> removeOrderItem (
             @Field("orderItemId") String orderItemId
     );
 }
