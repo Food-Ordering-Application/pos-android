@@ -24,10 +24,7 @@
         android:theme="@style/Theme.POS"
         android:windowSoftInputMode="adjustPan">
         <activity android:name=".VerifyAppActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity
             android:name=".PaymentActivity"
@@ -39,14 +36,16 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.POS.NoActionBar"
             android:windowSoftInputMode="adjustPan|stateHidden">
-
         </activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan|adjustResize">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

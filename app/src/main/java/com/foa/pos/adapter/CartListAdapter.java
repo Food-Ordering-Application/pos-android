@@ -14,10 +14,12 @@ import android.widget.TextView;
 import com.foa.pos.R;
 import com.foa.pos.model.Cart;
 import com.foa.pos.model.OrderItem;
+import com.foa.pos.network.response.StaffLogin;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
+import com.foa.pos.utils.LoginSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +30,16 @@ public class CartListAdapter extends BaseAdapter {
     private Activity context;
     private LayoutInflater inflater;
     private CartListener listener;
-    OrderDataSource OrderDS;
+    private OrderDataSource OrderDS;
     private boolean isPayment = false;
+    private StaffLogin staffLogin;
 
     public CartListAdapter(Activity context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         OrderDS = new OrderDataSource(db);
+        staffLogin = LoginSession.getInstance();
     }
 
     private class ViewHolder {

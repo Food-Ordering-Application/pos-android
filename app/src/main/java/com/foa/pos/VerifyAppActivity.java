@@ -3,8 +3,11 @@ package com.foa.pos;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,13 +32,13 @@ import android.widget.Toast;
 import static com.foa.pos.utils.Helper.getContext;
 
 public class VerifyAppActivity extends AppCompatActivity {
-    Context context;
-    EditText txtInput1;
-    EditText txtInput2;
-    EditText txtInput3;
-    Button btnVerify;
-    LoadingDialog loading;
-    LinearLayout verifyWrapper;
+    private Context context;
+    private EditText txtInput1;
+    private EditText txtInput2;
+    private EditText txtInput3;
+    private Button btnVerify;
+    private LoadingDialog loading;
+    private LinearLayout verifyWrapper;
     private String androidId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,18 @@ public class VerifyAppActivity extends AppCompatActivity {
         verifyWrapper = findViewById(R.id.verifyWrapper);
         loading = new LoadingDialog(this);
 
-        if (!Helper.read(Constants.RESTAURANT_ID).isEmpty()){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, 1001);
+            }
+        }
+
+        if (Helper.read(Constants.RESTAURANT_ID)!=null || true){//temp
             startActivity(new Intent(VerifyAppActivity.this, LoginActivity.class));
         }
 
@@ -143,5 +157,20 @@ public class VerifyAppActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        boolean allgranted = true;
+        for (int i = 0; i < grantResults.length; i++) {
+            if (PackageManager.PERMISSION_GRANTED != grantResults[i]) {
+                allgranted = false;
+            }
+        }
+        if (!allgranted) {
+            Toast.makeText(VerifyAppActivity.this, "All permission are required", Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 }

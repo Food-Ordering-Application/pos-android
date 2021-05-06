@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +31,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
@@ -37,6 +41,10 @@ import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.ProductCategory;
 import com.foa.pos.model.Promotion;
+import com.foa.pos.network.RetrofitClient;
+import com.foa.pos.network.response.LoginResponse;
+import com.foa.pos.network.response.OrderResponse;
+import com.foa.pos.network.response.StaffLogin;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
@@ -44,11 +52,17 @@ import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
 import com.foa.pos.sqlite.ds.ProductDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
+import com.foa.pos.utils.LoginSession;
 import com.foa.pos.widget.PickToppingDialog;
+import com.nineoldandroids.animation.Animator;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickListener {
     private View root;
@@ -86,10 +100,13 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private Order currentOrder = null;
     private ArrayList<OrderItem> orderItemsList = new ArrayList<>();
 
+    private StaffLogin staffLogin;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        staffLogin = LoginSession.getInstance();
     }
 
 
@@ -268,9 +285,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         public void onRemove(String result) {
             // TODO Auto-generated method stub
             menuAdapter.setSelection(result);
-            if (cartAdapter.getCount() == 0)
+            if (cartAdapter.getCount() == 0){
                 txtEmpty.setVisibility(View.VISIBLE);
-            else
+                currentOrder = null;
+            }else
                 txtEmpty.setVisibility(View.GONE);
         }
 
@@ -286,10 +304,9 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
 
             total = mtotal;
-            OrderDS.updateSumaryOrderInfo(currentOrder.getId(),mtotal,mtotal);
             txtTotal.setText(Helper.formatMoney(mtotal));
-
             grandTotal.setText(txtTotal.getText().toString());
+            OrderDS.updateSumaryOrderInfo(currentOrder.getId(),mtotal,mtotal);
 
             if (cartAdapter.getCount() == 0)
                 txtEmpty.setVisibility(View.VISIBLE);
@@ -309,36 +326,13 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(), product);
                 pickToppingDialog.setPickToppingistener(result -> {
                     menuAdapter.setSelection(product.getId());
-                    int orderItemCount = cartAdapter.getCount();
                     if (menuAdapter.isSelected(product.getId())) {
-                        if(orderItemCount==0){
-                            Date dt = new Date();
-                           currentOrder = new Order();
-                            currentOrder.setId(Helper.getOrderID());
-                            currentOrder.setRestaurantId(Helper.read(Constants.KEY_SETTING_BRANCH_ID, ""));
-                            currentOrder.setCashierId(com.foa.pos.MainActivity.SesID);
-                            currentOrder.setCreatedAt(dt);
-                            currentOrder.setNote("");
-                            currentOrder.setUpdatedAt(dt);
-                            //udpate data
-                            OrderDS.insertOrder(currentOrder);
+                        if (staffLogin!=null){
+                            createOrderAndFirstOrderItemOnline(Helper.createOrderItem(product,0));
+                        }else{
+                            updateOrderOffline(currentOrder,product);
                         }
 
-                        OrderItem orderItem = new OrderItem();
-                        orderItem.setId(Helper.getOrderDetailID(orderItemCount));
-                        orderItem.setOrderId(currentOrder.getId());
-                        orderItem.setDiscount(product.getDiscount());
-                        orderItem.setMenuItemId(product.getId());
-                        orderItem.setMenuItemName(product.getName());
-                        orderItem.setQuantity(1);
-                        orderItem.setPrice(product.getPrice());
-                        orderItemsList.add(orderItem);
-                        currentOrder.addOrderItemPrice(orderItem.getPrice()*orderItem.getQuantity());
-                        cartAdapter.add(orderItem);
-
-                        //update data
-                        OrderDS.insertOrderItem(orderItem);
-                        OrderDS.updateSumaryOrderInfo(currentOrder.getId(),currentOrder.getSubTotal(),currentOrder.getSubTotal());
                     }
                 });
                 if (!menuAdapter.isSelected(product.getId())) {
@@ -354,6 +348,57 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
         }
     };
+
+    private void updateOrderOffline(Order currentOrder, MenuItem product){
+        if(cartAdapter.getCount()==0){
+            Date dt = new Date();
+            currentOrder = new Order();
+            currentOrder.setId(Helper.getOrderID());
+            currentOrder.setRestaurantId(Helper.read(Constants.KEY_SETTING_BRANCH_ID, ""));
+            currentOrder.setCashierId(com.foa.pos.MainActivity.SesID);
+            currentOrder.setCreatedAt(dt);
+            currentOrder.setNote("");
+            currentOrder.setUpdatedAt(dt);
+            //udpate data
+            OrderDS.insertOrder(currentOrder);
+        }
+        OrderItem orderItem = Helper.createOrderItem(product,cartAdapter.getCount());
+
+        orderItemsList.add(orderItem);
+        currentOrder.addOrderItemPrice(orderItem.getPrice()*orderItem.getQuantity());
+        cartAdapter.add(orderItem);
+
+        //update data
+        OrderDS.insertOrderItem(orderItem);
+        OrderDS.updateSumaryOrderInfo(currentOrder.getId(),currentOrder.getSubTotal(),currentOrder.getSubTotal());
+    }
+
+    private void createOrderAndFirstOrderItemOnline(OrderItem orderItem){
+        Call<Object> responseCall = RetrofitClient.getInstance().getAppService()
+                .createOrderAndAddFirstOrderItem(staffLogin.getBearerAccessToken(),orderItem,Helper.read(Constants.RESTAURANT_ID),"");
+        responseCall.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                if(response.code() ==Constants.STATUS_CODE_SUCCESS){
+                    Object res = response.body();
+//                        if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+//                            currentOrder =  res.getData().getOrder();
+//                            Toast.makeText(getActivity(), currentOrder.getId(), Toast.LENGTH_SHORT).show();
+//                        }else{
+//                            Log.e("[Order fragment]","Create order fail");
+//                        }
+                }else {
+                    Log.e("[Order fragment]","Create order fail");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Log.e("Login Error", t.getMessage());
+            }
+        });
+    }
 
     private final TextWatcher keywordOnchange = new TextWatcher() {
 

@@ -56,34 +56,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		loading = new LoadingDialog(this);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-					checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-					checkSelfPermission(Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
-					checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
-					checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, 1001);
-			}
-		}
+		//temp
+		Helper.initialize(getBaseContext());
+		Helper.write(Constants.MERCHANT_ID, "3346f520-4de7-4a0e-b5e7-28e691f8e546");
+		Helper.write(Constants.RESTAURANT_ID, "32f49431-e572-4cbb-8f04-34bf858ef3de");
+
+
 
 		btnSaleOffline.setOnClickListener(v -> startActivity( new Intent(LoginActivity.this,MainActivity.class)));
 	}
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-		boolean allgranted = true;
-		for (int i = 0; i < grantResults.length; i++) {
-			if (PackageManager.PERMISSION_GRANTED != grantResults[i]) {
-				allgranted = false;
-			}
-		}
-		if (!allgranted) {
-			Toast.makeText(LoginActivity.this, "All permission are required", Toast.LENGTH_LONG).show();
-			finish();
-		}
-	}
 
 	@Override
 	public void onClick(View v) {

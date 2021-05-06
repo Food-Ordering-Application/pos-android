@@ -35,7 +35,7 @@ public class OrderResponse {
         this.data = data;
     }
 
-    static class Data{
+    public static class Data{
         @SerializedName( "order" )
         Order order;
 

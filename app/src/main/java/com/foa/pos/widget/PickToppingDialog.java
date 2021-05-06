@@ -67,8 +67,9 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 
 		for (int i = 0; i < toppingList.size(); i++) {
 			RadioButton rdbtn = new RadioButton(context);
+			MenuItemTopping topping = toppingList.get(i);
 			rdbtn.setId(View.generateViewId());
-			rdbtn.setText(toppingList.get(i).getName());
+			rdbtn.setText(topping.getName() + " ("+ topping.getPrice() +") ");
 			rdbtn.setPadding(50, 30, 50, 30);
 			rdbtn.setGravity(Gravity.CENTER);
 

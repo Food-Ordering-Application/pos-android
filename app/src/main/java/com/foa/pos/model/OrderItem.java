@@ -3,18 +3,28 @@ package com.foa.pos.model;
 import com.foa.pos.model.enums.StockState;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class OrderItem {
 	@SerializedName( "id" )
 	private String id;
+	@SerializedName( "orderId" )
 	private String orderId;
+	@SerializedName( "menuItemId" )
 	private String menuItemId;
+	@SerializedName( "menuItemName" )
 	private String menuItemName;
 	@SerializedName( "quantity" )
 	private int quantity;
 	@SerializedName( "discount" )
 	private long discount;
+	@SerializedName( "price" )
 	private long price;
+	@SerializedName( "state" )
 	private StockState stockState;
+	@SerializedName( "orderItemToppings" )
+	private List<OrderItemTopping> orderItemToppings;
+
 	private String note;
 	private long subTotal;
 
@@ -80,6 +90,14 @@ public class OrderItem {
 
 	public void setStockState(StockState stockState) {
 		this.stockState = stockState;
+	}
+
+	public List<OrderItemTopping> getOrderItemToppings() {
+		return orderItemToppings;
+	}
+
+	public void setOrderItemToppings(List<OrderItemTopping> orderItemToppings) {
+		this.orderItemToppings = orderItemToppings;
 	}
 
 	public String getNote() {

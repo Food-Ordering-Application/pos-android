@@ -26,6 +26,7 @@ import com.foa.pos.adapter.OrderDetailListAdapter;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
+import com.foa.pos.model.OrderItemTopping;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
@@ -40,6 +41,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -244,6 +246,17 @@ public final class Helper
 		loading.dismiss();
 		YoYo.with(Techniques.Shake).duration(700).playOn(wrapper);
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+	}
+
+	public static OrderItem createOrderItem(MenuItem product, int pos){
+		OrderItem orderItem = new OrderItem();
+		orderItem.setId(Helper.getOrderDetailID(pos));
+		orderItem.setMenuItemId(product.getId());
+		orderItem.setMenuItemName(product.getName());
+		orderItem.setQuantity(1);
+		orderItem.setPrice(product.getPrice());
+		orderItem.setOrderItemToppings(new ArrayList<>());
+		return orderItem;
 	}
 }
 

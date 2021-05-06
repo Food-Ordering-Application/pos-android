@@ -4,6 +4,7 @@ import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.network.entity.SendItem;
 import com.foa.pos.network.response.LoginResponse;
+import com.foa.pos.network.response.OrderResponse;
 import com.foa.pos.network.response.VerifyAppResponse;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface AppService {
@@ -32,34 +34,35 @@ public interface AppService {
 
     @FormUrlEncoded
     @POST("/order")
-    Call<Order> createOrder (
-            @Field("orderItem") List<OrderItem> orderItem,
+    Call<Object> createOrderAndAddFirstOrderItem (
+            @Header("Authorization") String accessToken,
+            @Field("orderItem") OrderItem orderItem,
             @Field("restaurantId") String restaurantId,
             @Field("customerId") String customerId
     );
 
     @FormUrlEncoded
     @POST("/add-new-item")
-    Call<Order> addOrderItem (
+    Call<OrderResponse> addOrderItem (
             @Field("sendItem") SendItem sendItem,
             @Field("orderId") String orderId
     );
 
     @FormUrlEncoded
     @POST("/reduce-orditem-quantity")
-    Call<Order> reduceOrderItemQuantity (
+    Call<OrderResponse> reduceOrderItemQuantity (
             @Field("orderItemId") String orderItemId
     );
 
     @FormUrlEncoded
     @POST("/increase-orditem-quantity")
-    Call<Order> increaseOrderItemQuantity (
+    Call<OrderResponse> increaseOrderItemQuantity (
             @Field("orderItemId") String orderItemId
     );
 
     @FormUrlEncoded
     @POST("/remove-orditem")
-    Call<Order> removeOrderItem (
+    Call<OrderResponse> removeOrderItem (
             @Field("orderItemId") String orderItemId
     );
 }

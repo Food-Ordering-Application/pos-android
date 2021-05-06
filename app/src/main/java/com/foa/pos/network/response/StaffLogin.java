@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class StaffLogin{
     @SerializedName( "user" )
     Staff staff;
-    @SerializedName("accessToken")
+    @SerializedName("access_token")
     String accessToken;
 
     public StaffLogin() {
@@ -36,5 +36,9 @@ public class StaffLogin{
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getBearerAccessToken() {
+        return "Bearer "+accessToken;
     }
 }

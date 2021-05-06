@@ -100,35 +100,12 @@ public class MenuItemTopping {
 
     public static List<MenuItemTopping> getSampleList(){
         List<MenuItemTopping> toppingList = new ArrayList<>();
-//        toppingList.add(new MenuItemTopping("1","Topping name 1"));
-//        toppingList.add(new MenuItemTopping("2","Topping name 2"));
-//        toppingList.add(new MenuItemTopping("3","Topping name 3"));
+        List<MenuItemToppingCustom> customPriceList = new ArrayList<>();
+        customPriceList.add(new MenuItemToppingCustom("123",6000));
+        toppingList.add(new MenuItemTopping("123","Tran chau","",5,1,true,
+                5000,customPriceList));
+        toppingList.add(new MenuItemTopping("124","Hat dau","",5,1,true,
+                7000,customPriceList));
         return toppingList;
-    }
-
-    class MenuItemToppingCustom{
-        private String id;
-        private long price;
-
-        public MenuItemToppingCustom(String id, long price) {
-            this.id = id;
-            this.price = price;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public long getPrice() {
-            return price;
-        }
-
-        public void setPrice(long price) {
-            this.price = price;
-        }
     }
 }
