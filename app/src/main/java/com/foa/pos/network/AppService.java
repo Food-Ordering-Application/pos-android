@@ -52,6 +52,12 @@ public interface AppService {
     Call<OrderData> increaseOrderItemQuantity (
             @Field("orderItemId") String orderItemId
     );
+    @FormUrlEncoded
+    @POST("/update-orditem-quantity")
+    Call<ResponseAdapter<OrderData>> updateOrderItemQuantity (
+            @Field("orderItemId") String orderItemId,
+            @Field("quantity") int quantity
+    );
 
     @FormUrlEncoded
     @POST("/remove-orditem")

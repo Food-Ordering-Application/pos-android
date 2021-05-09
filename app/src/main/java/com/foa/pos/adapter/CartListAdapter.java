@@ -3,6 +3,7 @@ package com.foa.pos.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,28 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.foa.pos.R;
+import com.foa.pos.model.IResultCallback;
+import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
+import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.response.LoginData;
+import com.foa.pos.network.response.OrderData;
+import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.utils.Constants;
+import com.foa.pos.utils.Debouncer;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartListAdapter extends BaseAdapter {
 
@@ -30,14 +43,17 @@ public class CartListAdapter extends BaseAdapter {
     private CartListener listener;
     private OrderDataSource OrderDS;
     private boolean isPayment = false;
-    private LoginData staffLogin;
+    private LoginData loginData;
+
+    private final Debouncer debouncer = new Debouncer();
+
 
     public CartListAdapter(Activity context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         OrderDS = new OrderDataSource(db);
-        staffLogin = LoginSession.getInstance();
+        loginData = LoginSession.getInstance();
     }
 
     private class ViewHolder {
@@ -108,8 +124,8 @@ public class CartListAdapter extends BaseAdapter {
     public void notifyDataSetChanged() {
         // TODO Auto-generated method stub
         super.notifyDataSetChanged();
-        if (listener != null)
-            listener.onChange(dtList);
+        //if (listener != null || loginData ==null)
+            //listener.onChange(dtList);
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -152,9 +168,16 @@ public class CartListAdapter extends BaseAdapter {
 
         holder.btnMinus.setOnClickListener(v -> {
             // TODO Auto-generated method stub
+            int newQuantity = orderItem.getQuantity() - 1;
+            orderItem.setQuantity(newQuantity);
 
-            orderItem.setQuantity(orderItem.getQuantity() - 1);
-            OrderDS.updateOrderItemQuantity(orderItem.getId(), orderItem.getQuantity());
+            //updateOrderItemQuantity(orderItem);
+            debouncer.debounce(CartListAdapter.class, new Runnable() {
+                @Override
+                public void run() {
+                    updateOrderItemQuantityOnline(orderItem);
+                }
+            }, 1000, TimeUnit.MILLISECONDS);
 
             long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
             long subtotal = (orderItem.getPrice() * orderItem.getQuantity()) - discount;
@@ -173,7 +196,13 @@ public class CartListAdapter extends BaseAdapter {
         holder.btnPlus.setOnClickListener(v -> {
             // TODO Auto-generated method stub
             orderItem.setQuantity(orderItem.getQuantity() + 1);
-            OrderDS.updateOrderItemQuantity(orderItem.getId(), orderItem.getQuantity());
+            //updateOrderItemQuantity(orderItem);
+            debouncer.debounce(CartListAdapter.class, new Runnable() {
+                @Override
+                public void run() {
+                    updateOrderItemQuantityOnline(orderItem);
+                }
+            }, 1000, TimeUnit.MILLISECONDS);
 
             long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
             long subtotal = (orderItem.getPrice() * orderItem.getQuantity()) - discount;
@@ -186,6 +215,27 @@ public class CartListAdapter extends BaseAdapter {
         return vi;
     }
 
+    private void updateOrderItemQuantityOnline(OrderItem orderItem){
+        if (loginData!=null){
+            updateOrderItemQuantityOnline(orderItem.getId(), orderItem.getQuantity(), new IResultCallback() {
+                @Override
+                public void onSuccess(boolean success) {
+                    if (success){
+                        Log.i("[CartListAdapter][Api call]","Order item "+ orderItem.getId() +"update new quantity"+ orderItem.getQuantity());
+                    }
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }else{
+            OrderDS.updateOrderItemQuantity(orderItem.getId(), orderItem.getQuantity());
+        }
+
+    }
+
 
     public void setCartListener(CartListener listener) {
         this.listener = listener;
@@ -194,6 +244,42 @@ public class CartListAdapter extends BaseAdapter {
     public interface CartListener {
         public void onRemove(String result);
 
-        public void onChange(List<OrderItem> list);
+        public void onChange(Order currentOrder);
+    }
+
+    private void updateOrderItemQuantityOnline(String orderItemId, int quantity, IResultCallback resultCallback){
+        Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .updateOrderItemQuantity(orderItemId,quantity);
+        responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
+                if (response.errorBody()!=null){
+                    try {
+                        Log.e("[OrderFragment][Api error]",response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(response.code() ==Constants.STATUS_CODE_CREATED){
+                    resultCallback.onSuccess(true);
+                    ResponseAdapter<OrderData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
+                        listener.onChange(res.getData().getOrder());
+                    }else{
+                        Log.e("[Order fragment]","Create order fail");
+                    }
+                }else {
+                    resultCallback.onSuccess(false);
+                    Log.e("[Order fragment]","Create order fail");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
+                Log.e("Login Error", t.getMessage());
+            }
+        });
     }
 }

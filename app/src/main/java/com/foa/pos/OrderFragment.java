@@ -268,9 +268,18 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 //        }
 //    };
 
-    private void updateStatistic(long subTotal, long grandTotal){
-        txtTotal.setText(Helper.formatMoney(subTotal));
-        txtGrandTotal.setText(Helper.formatMoney(subTotal));
+    private long updateStatistic(List<OrderItem> orderItems){
+        long mtotal = 0;
+        for (int i = 0; i < orderItems.size(); i++) {
+            long sub = (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity());
+            long discount = sub * (orderItems.get(i).getDiscount() / 100);
+            long subtotal = sub - discount;
+            mtotal += subtotal;
+        }
+        txtTotal.setText(Helper.formatMoney(mtotal));
+        txtGrandTotal.setText(Helper.formatMoney(mtotal));
+
+        return mtotal;
     }
 
     private final PromotionListAdapter.OnItemClickListener promotionOnItemClick = new PromotionListAdapter.OnItemClickListener() {
@@ -298,22 +307,11 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
 
         @Override
-        public void onChange(List<OrderItem> list) {
+        public void onChange(Order currentOrder) {
             // TODO Auto-generated method stub
-            long mtotal = 0;
-            for (int i = 0; i < list.size(); i++) {
-                long sub = (list.get(i).getPrice() * list.get(i).getQuantity());
-                long discount = sub * (list.get(i).getDiscount() / 100);
-                long subtotal = sub - discount;
-                mtotal += subtotal;
-            }
-
-            total = mtotal;
-
-            updateStatistic(total,total);
-            if (loginData!=null){
-
-            }else {
+            List<OrderItem> list = currentOrder.getOrderItems();
+            total = updateStatistic(list);
+            if (loginData==null){
                 OrderDS.updateSumaryOrderInfo(currentOrder.getId(),total,total);
             }
 
@@ -340,7 +338,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             OrderItem orderItem = Helper.createOrderItem(product,0);
                             createOrderAndFirstOrderItemOnline(orderItem, new IResultCallback() {
                                 @Override
-                                public void onSuccess(boolean value) {
+                                public void onSuccess(boolean success) {
                                     cartAdapter.add(orderItem);
                                 }
 
@@ -394,14 +392,15 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     }
 
 
-    private boolean createOrderAndFirstOrderItemOnline(OrderItem orderItem, IResultCallback resultCallback){
+
+
+    private void createOrderAndFirstOrderItemOnline(OrderItem orderItem, IResultCallback resultCallback){
 
         final SendOrderItem sendOrderItem = orderItem.createSendOrderItem();
         Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .createOrderAndAddFirstOrderItem(
                         new NewOrder(sendOrderItem,Helper.read(Constants.RESTAURANT_ID),
                                 "", loginData.getStaff().getId()));
-        final boolean[] isSuccesses = {false};
         responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
@@ -433,7 +432,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 Log.e("Login Error", t.getMessage());
             }
         });
-        return isSuccesses[0];
     }
 
     private final TextWatcher keywordOnchange = new TextWatcher() {
