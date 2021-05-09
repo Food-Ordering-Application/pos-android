@@ -3,21 +3,21 @@ package com.foa.pos.network.response;
 import com.foa.pos.model.Staff;
 import com.google.gson.annotations.SerializedName;
 
-public class StaffLogin{
+public class LoginData {
     @SerializedName( "user" )
     Staff staff;
     @SerializedName("access_token")
     String accessToken;
 
-    public StaffLogin() {
+    public LoginData() {
     }
 
-    public StaffLogin(Staff staff, String accessToken) {
+    public LoginData(Staff staff, String accessToken) {
         this.staff = staff;
         this.accessToken = accessToken;
     }
 
-    public void setStaffLogin(StaffLogin staffLogin) {
+    public void setStaffLogin(LoginData staffLogin) {
         this.staff = staffLogin.staff;
         this.accessToken = staffLogin.accessToken;
     }

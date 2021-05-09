@@ -1,21 +1,21 @@
 package com.foa.pos.utils;
 
-import com.foa.pos.network.response.StaffLogin;
+import com.foa.pos.network.response.LoginData;
 
 public class LoginSession {
-    private static  StaffLogin staffLogin;
+    private static LoginData staffLogin = null;
 
     public LoginSession() {
     }
 
-    public static StaffLogin getInstance(){
+    public static LoginData getInstance(){
         if (staffLogin == null){
-            return new StaffLogin();
+            staffLogin  = new LoginData();
         }
         return staffLogin;
     }
 
-    public void setStaffLogin(StaffLogin staffLogin){
-        this.setStaffLogin(staffLogin);
+    public void setStaffLogin(LoginData staffLogin){
+        LoginSession.staffLogin = staffLogin;
     }
 }

@@ -15,11 +15,8 @@ public class Order{
 	private String id;
 	@SerializedName( "customerId" )
 	private String customerId;
-
+	@SerializedName( "cashierId" )
 	private String cashierId;
-	private String customerAddressId;
-	@SerializedName( "driverId" )
-	private String driverId;
 	@SerializedName( "restaurantId" )
 	private String restaurantId;
 	@SerializedName( "subTotal" )
@@ -28,17 +25,14 @@ public class Order{
 	private long itemDiscount;
 	@SerializedName( "discount" )
 	private long discount;
-	@SerializedName( "shippingFee" )
-	private long shippingFee;
 	@SerializedName( "serviceFee" )
 	private long serviceFee;
 	@SerializedName( "grandTotal" )
 	private long grandTotal;
-	private int paymentMode;
 	@SerializedName( "paymentType" )
 	private PaymentType paymentType;
 	private String note;
-	@SerializedName( "paymentType" )
+	@SerializedName( "status" )
 	private OrderStatus status;
 	@SerializedName( "deliveredAt" )
 	private Date deliveredAt;
@@ -47,7 +41,7 @@ public class Order{
 	@SerializedName( "updatedAt" )
 	private Date updatedAt;
 	@SerializedName( "orderItems" )
-	private ArrayList<OrderItem> orderItems;
+	private List<OrderItem> orderItems;
 	// field for setting list view selector.
 	private boolean isSelected;
 
@@ -77,22 +71,6 @@ public class Order{
 
 	public void setCashierId(String cashierId) {
 		this.cashierId = cashierId;
-	}
-
-	public String getCustomerAddressId() {
-		return customerAddressId;
-	}
-
-	public void setCustomerAddressId(String customerAddressId) {
-		this.customerAddressId = customerAddressId;
-	}
-
-	public String getDriverId() {
-		return driverId;
-	}
-
-	public void setDriverId(String driverId) {
-		this.driverId = driverId;
 	}
 
 	public String getRestaurantId() {
@@ -127,15 +105,7 @@ public class Order{
 		this.discount = discount;
 	}
 
-	public long getShippingFee() {
-		return shippingFee;
-	}
-
-	public void setShippingFee(long shippingFee) {
-		this.shippingFee = shippingFee;
-	}
-
-	public float getServiceFee() {
+	public long getServiceFee() {
 		return serviceFee;
 	}
 
@@ -148,15 +118,7 @@ public class Order{
 	}
 
 	public void setGrandTotal(long grandTotal) {
-		this.grandTotal = grandTotal + this.grandTotal;
-	}
-
-	public int getPaymentMode() {
-		return paymentMode;
-	}
-
-	public void setPaymentMode(int paymentMode) {
-		this.paymentMode = paymentMode;
+		this.grandTotal = grandTotal;
 	}
 
 	public PaymentType getPaymentType() {
@@ -207,11 +169,11 @@ public class Order{
 		this.updatedAt = updatedAt;
 	}
 
-	public ArrayList<OrderItem> getOrderItems() {
+	public List<OrderItem> getOrderItems() {
 		return orderItems;
 	}
 
-	public void setOrderItems(ArrayList<OrderItem> orderItems) {
+	public void setOrderItems(List<OrderItem> orderItems) {
 		this.orderItems = orderItems;
 	}
 

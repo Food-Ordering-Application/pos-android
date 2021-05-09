@@ -4,9 +4,10 @@ import com.foa.pos.model.MenuItemTopping;
 import com.foa.pos.model.OrderItemTopping;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class SendItem {
+public class SendOrderItem {
     @SerializedName("menuItemId")
     private String menuItemId;
     @SerializedName("price")
@@ -16,7 +17,7 @@ public class SendItem {
     @SerializedName("orderItemToppings")
     private List<OrderItemTopping> orderItemToppings;
 
-    public SendItem(String menuItemId, long price, int quantity, List<OrderItemTopping> orderItemToppings) {
+    public SendOrderItem(String menuItemId, long price, int quantity, List<OrderItemTopping> orderItemToppings) {
         this.menuItemId = menuItemId;
         this.price = price;
         this.quantity = quantity;

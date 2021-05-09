@@ -1,11 +1,10 @@
 package com.foa.pos.model.enums;
 
+import com.google.gson.annotations.SerializedName;
+
 public enum OrderStatus {
+    @SerializedName("DRAFT")
     DRAFT,
-    WAITING_DRIVER,
-    CHECKING,
-    PICKING,
-    DELIVERING,
-    COMPELETED,
-    CANCELLED
+    @SerializedName("COMPLETED")
+    COMPLETED
 }

@@ -1,8 +1,10 @@
 package com.foa.pos.model;
 
 import com.foa.pos.model.enums.StockState;
+import com.foa.pos.network.entity.SendOrderItem;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderItem {
@@ -117,4 +119,12 @@ public class OrderItem {
 	public void setSubTotal(long subTotal) {
 		this.subTotal = subTotal;
 	}
+
+	public SendOrderItem createSendOrderItem(){
+		List<OrderItemTopping> orderItemTopping = new ArrayList<>();
+		//orderItemTopping.add(new OrderItemTopping(null,"123-123",5000,1,StockState.IN_STOCK));
+		return new SendOrderItem(menuItemId,price,quantity, orderItemTopping);
+	}
 }
+
+

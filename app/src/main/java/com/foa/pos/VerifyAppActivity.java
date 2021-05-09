@@ -1,6 +1,5 @@
 package com.foa.pos;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -11,13 +10,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.response.LoginResponse;
 import com.foa.pos.network.response.VerifyAppResponse;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;

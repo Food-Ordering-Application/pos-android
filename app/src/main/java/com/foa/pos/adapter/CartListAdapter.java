@@ -5,16 +5,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.model.Cart;
 import com.foa.pos.model.OrderItem;
-import com.foa.pos.network.response.StaffLogin;
+import com.foa.pos.network.response.LoginData;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.utils.Constants;
@@ -32,7 +30,7 @@ public class CartListAdapter extends BaseAdapter {
     private CartListener listener;
     private OrderDataSource OrderDS;
     private boolean isPayment = false;
-    private StaffLogin staffLogin;
+    private LoginData staffLogin;
 
     public CartListAdapter(Activity context) {
         this.context = context;

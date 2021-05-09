@@ -1,11 +1,8 @@
 package com.foa.pos;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.response.LoginResponse;
+import com.foa.pos.network.entity.Login;
+import com.foa.pos.network.response.LoginData;
+import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
@@ -61,9 +60,15 @@ public class LoginActivity extends Activity implements OnClickListener {
 		Helper.write(Constants.MERCHANT_ID, "3346f520-4de7-4a0e-b5e7-28e691f8e546");
 		Helper.write(Constants.RESTAURANT_ID, "32f49431-e572-4cbb-8f04-34bf858ef3de");
 
+		btnSaleOffline.setOnClickListener(v -> goNext());
+//		if (Helper.read(Constants.CASHIER_ID)!= null){
+//			goNext();
+//		}
 
+	}
 
-		btnSaleOffline.setOnClickListener(v -> startActivity( new Intent(LoginActivity.this,MainActivity.class)));
+	private void goNext(){
+		startActivity( new Intent(LoginActivity.this,MainActivity.class));
 	}
 
 
@@ -84,16 +89,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 		}
 
 		loading.show();
-		Call<LoginResponse> responseCall = RetrofitClient.getInstance().getAppService()
-				.login(username, password,Helper.read(Constants.RESTAURANT_ID));
-		responseCall.enqueue(new Callback<LoginResponse>() {
+		Call<ResponseAdapter<LoginData>> responseCall = RetrofitClient.getInstance().getAppService()
+				.login(new Login(username, password,Helper.read(Constants.RESTAURANT_ID)));
+		responseCall.enqueue(new Callback<ResponseAdapter<LoginData>>() {
 			@Override
-			public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+			public void onResponse(Call<ResponseAdapter<LoginData>> call, Response<ResponseAdapter<LoginData>> response) {
 				switch (response.code()) {
 					case Constants.STATUS_CODE_SUCCESS:
-					LoginResponse res = response.body();
+						ResponseAdapter<LoginData> res = response.body();
 					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
 						LoginSession.getInstance().setStaffLogin(res.getData());
+						RetrofitClient.getInstance().setAuthorizationHeader(res.getData().getBearerAccessToken());
 						loading.dismiss();
 						btnLogin.setEnabled(false);
 						YoYo.with(Techniques.FadeOutDown).interpolate(new OvershootInterpolator()).duration(500).withListener(new AnimatorListener() {
@@ -140,7 +146,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 			}
 
 			@Override
-			public void onFailure(Call<LoginResponse> call, Throwable t) {
+			public void onFailure(Call<ResponseAdapter<LoginData>> call, Throwable t) {
 				Log.e("Login Error", t.getMessage());
 				Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
 

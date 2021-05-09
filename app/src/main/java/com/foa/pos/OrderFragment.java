@@ -17,7 +17,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,20 +30,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
+import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.ProductCategory;
 import com.foa.pos.model.Promotion;
 import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.response.LoginResponse;
-import com.foa.pos.network.response.OrderResponse;
-import com.foa.pos.network.response.StaffLogin;
+import com.foa.pos.network.entity.NewOrder;
+import com.foa.pos.network.entity.SendOrderItem;
+import com.foa.pos.network.response.OrderData;
+import com.foa.pos.network.response.ResponseAdapter;
+import com.foa.pos.network.response.LoginData;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
@@ -54,8 +54,8 @@ import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
 import com.foa.pos.widget.PickToppingDialog;
-import com.nineoldandroids.animation.Animator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -82,7 +82,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private PromotionListAdapter promotionAdapter;
 
     private TextView txtTotal;
-    private TextView grandTotal;
+    private TextView txtGrandTotal;
     private EditText txtKeyword;
     private EditText txtPayment;
     private TextView txtChange;
@@ -100,13 +100,13 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private Order currentOrder = null;
     private ArrayList<OrderItem> orderItemsList = new ArrayList<>();
 
-    private StaffLogin staffLogin;
+    private LoginData loginData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        staffLogin = LoginSession.getInstance();
+        loginData = LoginSession.getInstance();
     }
 
 
@@ -176,7 +176,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         menuList = root.findViewById(R.id.listView2);
         txtEmpty = root.findViewById(R.id.textView9);
         txtTotal = root.findViewById(R.id.tvTotal);
-        grandTotal = root.findViewById(R.id.tvTotalPay);
+        txtGrandTotal = root.findViewById(R.id.tvTotalPay);
         txtKeyword = root.findViewById(R.id.editText1);
         txtChange = root.findViewById(R.id.textView8);
         btnOrder = root.findViewById(R.id.btnOrder);
@@ -268,6 +268,11 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 //        }
 //    };
 
+    private void updateStatistic(long subTotal, long grandTotal){
+        txtTotal.setText(Helper.formatMoney(subTotal));
+        txtGrandTotal.setText(Helper.formatMoney(subTotal));
+    }
+
     private final PromotionListAdapter.OnItemClickListener promotionOnItemClick = new PromotionListAdapter.OnItemClickListener() {
         @Override
         public void onPick(Promotion item) {
@@ -304,9 +309,13 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
 
             total = mtotal;
-            txtTotal.setText(Helper.formatMoney(mtotal));
-            grandTotal.setText(txtTotal.getText().toString());
-            OrderDS.updateSumaryOrderInfo(currentOrder.getId(),mtotal,mtotal);
+
+            updateStatistic(total,total);
+            if (loginData!=null){
+
+            }else {
+                OrderDS.updateSumaryOrderInfo(currentOrder.getId(),total,total);
+            }
 
             if (cartAdapter.getCount() == 0)
                 txtEmpty.setVisibility(View.VISIBLE);
@@ -327,8 +336,19 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 pickToppingDialog.setPickToppingistener(result -> {
                     menuAdapter.setSelection(product.getId());
                     if (menuAdapter.isSelected(product.getId())) {
-                        if (staffLogin!=null){
-                            createOrderAndFirstOrderItemOnline(Helper.createOrderItem(product,0));
+                        if (loginData !=null){
+                            OrderItem orderItem = Helper.createOrderItem(product,0);
+                            createOrderAndFirstOrderItemOnline(orderItem, new IResultCallback() {
+                                @Override
+                                public void onSuccess(boolean value) {
+                                    cartAdapter.add(orderItem);
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            });
                         }else{
                             updateOrderOffline(currentOrder,product);
                         }
@@ -373,31 +393,47 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         OrderDS.updateSumaryOrderInfo(currentOrder.getId(),currentOrder.getSubTotal(),currentOrder.getSubTotal());
     }
 
-    private void createOrderAndFirstOrderItemOnline(OrderItem orderItem){
-        Call<Object> responseCall = RetrofitClient.getInstance().getAppService()
-                .createOrderAndAddFirstOrderItem(staffLogin.getBearerAccessToken(),orderItem,Helper.read(Constants.RESTAURANT_ID),"");
-        responseCall.enqueue(new Callback<Object>() {
+
+    private boolean createOrderAndFirstOrderItemOnline(OrderItem orderItem, IResultCallback resultCallback){
+
+        final SendOrderItem sendOrderItem = orderItem.createSendOrderItem();
+        Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .createOrderAndAddFirstOrderItem(
+                        new NewOrder(sendOrderItem,Helper.read(Constants.RESTAURANT_ID),
+                                "", loginData.getStaff().getId()));
+        final boolean[] isSuccesses = {false};
+        responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                if(response.code() ==Constants.STATUS_CODE_SUCCESS){
-                    Object res = response.body();
-//                        if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-//                            currentOrder =  res.getData().getOrder();
-//                            Toast.makeText(getActivity(), currentOrder.getId(), Toast.LENGTH_SHORT).show();
-//                        }else{
-//                            Log.e("[Order fragment]","Create order fail");
-//                        }
+            public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
+                if (response.errorBody()!=null){
+                    try {
+                        Log.e("[OrderFragment][Api error]",response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(response.code() ==Constants.STATUS_CODE_CREATED){
+                    resultCallback.onSuccess(true);
+                    ResponseAdapter<OrderData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
+                            currentOrder =  res.getData().getOrder();
+                        }else{
+                            Log.e("[Order fragment]","Create order fail");
+                        }
                 }else {
+                    resultCallback.onSuccess(false);
                     Log.e("[Order fragment]","Create order fail");
                 }
 
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
                 Log.e("Login Error", t.getMessage());
             }
         });
+        return isSuccesses[0];
     }
 
     private final TextWatcher keywordOnchange = new TextWatcher() {

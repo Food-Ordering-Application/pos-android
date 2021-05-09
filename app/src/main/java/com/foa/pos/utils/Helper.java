@@ -255,7 +255,7 @@ public final class Helper
 		orderItem.setMenuItemName(product.getName());
 		orderItem.setQuantity(1);
 		orderItem.setPrice(product.getPrice());
-		orderItem.setOrderItemToppings(new ArrayList<>());
+		//orderItem.setOrderItemToppings(new ArrayList<>());
 		return orderItem;
 	}
 }
