@@ -33,14 +33,14 @@ import android.widget.Toast;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
-import com.foa.pos.model.IResultCallback;
+import com.foa.pos.model.IDataResultCallback;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.ProductCategory;
 import com.foa.pos.model.Promotion;
 import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.entity.NewOrder;
+import com.foa.pos.network.entity.NewOrderBody;
 import com.foa.pos.network.entity.SendOrderItem;
 import com.foa.pos.network.response.OrderData;
 import com.foa.pos.network.response.ResponseAdapter;
@@ -94,7 +94,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private ProductDataSource ProductDS;
     private OrderDataSource OrderDS;
 
-    private boolean isCheckout = false;
     private long total = 0;
 
     private Order currentOrder = null;
@@ -268,7 +267,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 //        }
 //    };
 
-    private long updateStatistic(List<OrderItem> orderItems){
+    private long updateStatistic(List<OrderItem> orderItems) {
         long mtotal = 0;
         for (int i = 0; i < orderItems.size(); i++) {
             long sub = (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity());
@@ -299,10 +298,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         public void onRemove(String result) {
             // TODO Auto-generated method stub
             menuAdapter.setSelection(result);
-            if (cartAdapter.getCount() == 0){
+            if (cartAdapter.getCount() == 0) {
                 txtEmpty.setVisibility(View.VISIBLE);
                 currentOrder = null;
-            }else
+            } else
                 txtEmpty.setVisibility(View.GONE);
         }
 
@@ -311,8 +310,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             // TODO Auto-generated method stub
             List<OrderItem> list = currentOrder.getOrderItems();
             total = updateStatistic(list);
-            if (loginData==null){
-                OrderDS.updateSumaryOrderInfo(currentOrder.getId(),total,total);
+            if (loginData == null) {
+                OrderDS.updateSumaryOrderInfo(currentOrder.getId(), total, total);
             }
 
             if (cartAdapter.getCount() == 0)
@@ -328,18 +327,19 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // TODO Auto-generated method stub
 
-            if (!isCheckout) {
-                MenuItem product = (MenuItem) menuAdapter.getItem(position);
-                PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(), product);
-                pickToppingDialog.setPickToppingistener(result -> {
-                    menuAdapter.setSelection(product.getId());
-                    if (menuAdapter.isSelected(product.getId())) {
-                        if (loginData !=null){
-                            OrderItem orderItem = Helper.createOrderItem(product,0);
-                            createOrderAndFirstOrderItemOnline(orderItem, new IResultCallback() {
+            MenuItem menuItem = (MenuItem) menuAdapter.getItem(position);
+            PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(), menuItem);
+            pickToppingDialog.setPickToppingistener(result -> {
+                menuAdapter.setSelection(menuItem.getId());
+                if (menuAdapter.isSelected(menuItem.getId())) {
+                    if (loginData != null) {
+                        if (cartAdapter.getCount()==0){
+                            OrderItem orderItem = Helper.createSendOrderItem(menuItem);
+                            createOrderAndFirstOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
                                 @Override
-                                public void onSuccess(boolean success) {
-                                    cartAdapter.add(orderItem);
+                                public void onSuccess(boolean success, Order order) {
+                                    Helper.write(Constants.CURRENT_ORDER_ID,order.getId());
+                                    cartAdapter.set(order.getOrderItems());
                                 }
 
                                 @Override
@@ -347,28 +347,28 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                                 }
                             });
-                        }else{
-                            updateOrderOffline(currentOrder,product);
                         }
 
+                    } else {
+                        updateOrderOffline(currentOrder, menuItem);
                     }
-                });
-                if (!menuAdapter.isSelected(product.getId())) {
-                    pickToppingDialog.show();
-                } else {
-                    menuAdapter.setSelection(product.getId());
-                    cartAdapter.removeByID(product.getId());
-                    if(cartAdapter.getCount()==0){
-                        currentOrder =null;
-                    }
-                }
 
+                }
+            });
+            if (!menuAdapter.isSelected(menuItem.getId())) {
+                pickToppingDialog.show();
+            } else {
+                menuAdapter.setSelection(menuItem.getId());
+                cartAdapter.removeByID(menuItem.getId());
+                if (cartAdapter.getCount() == 0) {
+                    currentOrder = null;
+                }
             }
         }
     };
 
-    private void updateOrderOffline(Order currentOrder, MenuItem product){
-        if(cartAdapter.getCount()==0){
+    private void updateOrderOffline(Order currentOrder, MenuItem product) {
+        if (cartAdapter.getCount() == 0) {
             Date dt = new Date();
             currentOrder = new Order();
             currentOrder.setId(Helper.getOrderID());
@@ -380,49 +380,48 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             //udpate data
             OrderDS.insertOrder(currentOrder);
         }
-        OrderItem orderItem = Helper.createOrderItem(product,cartAdapter.getCount());
+        OrderItem orderItem = Helper.createOrderItem(product, cartAdapter.getCount());
 
         orderItemsList.add(orderItem);
-        currentOrder.addOrderItemPrice(orderItem.getPrice()*orderItem.getQuantity());
+        currentOrder.addOrderItemPrice(orderItem.getPrice() * orderItem.getQuantity());
         cartAdapter.add(orderItem);
 
         //update data
         OrderDS.insertOrderItem(orderItem);
-        OrderDS.updateSumaryOrderInfo(currentOrder.getId(),currentOrder.getSubTotal(),currentOrder.getSubTotal());
+        OrderDS.updateSumaryOrderInfo(currentOrder.getId(), currentOrder.getSubTotal(), currentOrder.getSubTotal());
     }
 
 
-
-
-    private void createOrderAndFirstOrderItemOnline(OrderItem orderItem, IResultCallback resultCallback){
+    private void createOrderAndFirstOrderItemOnline(OrderItem orderItem, IDataResultCallback<Order> resultCallback) {
 
         final SendOrderItem sendOrderItem = orderItem.createSendOrderItem();
         Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .createOrderAndAddFirstOrderItem(
-                        new NewOrder(sendOrderItem,Helper.read(Constants.RESTAURANT_ID),
+                        new NewOrderBody(sendOrderItem, Helper.read(Constants.RESTAURANT_ID),
                                 "", loginData.getStaff().getId()));
         responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
-                if (response.errorBody()!=null){
+                if (response.errorBody() != null) {
                     try {
-                        Log.e("[OrderFragment][Api error]",response.errorBody().string());
+                        Log.e("[OrderFragment][Api error]", response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                if(response.code() ==Constants.STATUS_CODE_CREATED){
-                    resultCallback.onSuccess(true);
+                if (response.code() == Constants.STATUS_CODE_CREATED) {
+
                     ResponseAdapter<OrderData> res = response.body();
                     assert res != null;
                     if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
-                            currentOrder =  res.getData().getOrder();
-                        }else{
-                            Log.e("[Order fragment]","Create order fail");
-                        }
-                }else {
-                    resultCallback.onSuccess(false);
-                    Log.e("[Order fragment]","Create order fail");
+                        currentOrder = res.getData().getOrder();
+                        resultCallback.onSuccess(true, currentOrder);
+                    } else {
+                        Log.e("[Order fragment]", "Create order fail");
+                    }
+                } else {
+                    resultCallback.onSuccess(false, null);
+                    Log.e("[Order fragment]", "Create order fail");
                 }
 
             }
@@ -466,10 +465,9 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 Toast.makeText(getActivity(), "Chọn ít nhất 1 chọn sản phẩm", Toast.LENGTH_SHORT).show();
                 return;
             }
-            isCheckout = true;
             //showCheckout();
             Intent intent = new Intent(getActivity(), PaymentActivity.class);
-            intent.putExtra(Constants.PUT_ORDER_ID, currentOrder.getId());
+            intent.putExtra(Constants.CURRENT_ORDER_ID, currentOrder.getId());
             startActivity(intent);
         }
     };

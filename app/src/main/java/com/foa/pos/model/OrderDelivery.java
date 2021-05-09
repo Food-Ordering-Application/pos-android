@@ -1,6 +1,6 @@
 package com.foa.pos.model;
 
-import com.foa.pos.utils.Helper;
+import com.foa.pos.model.enums.DeliveryStatus;
 
 import java.util.Date;
 

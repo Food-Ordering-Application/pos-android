@@ -16,6 +16,7 @@ import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.network.RetrofitClient;
+import com.foa.pos.network.entity.UpdateQuantityBody;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.OrderData;
 import com.foa.pos.network.response.ResponseAdapter;
@@ -86,19 +87,22 @@ public class CartListAdapter extends BaseAdapter {
 
     }
 
-    public void removeByID(String code) {
-        String orderId;
-        for (int i = 0; i < dtList.size(); i++) {
-            if (dtList.get(i).getId().equals(code))
-                OrderDS.deleteOrderItem(dtList.get(i).getId());
-            orderId = dtList.get(i).getOrderId();
-            dtList.remove(i);
+    public void removeByID(String orderItemId) {
+        if(loginData!=null){
+            removeOrderItemQuantityOffline(orderItemId);
+        }else {
+            removeOrderItemQuantityOnline(orderItemId, new IResultCallback() {
+                @Override
+                public void onSuccess(boolean success) {
 
-            if (dtList.size() == 0) {
-                OrderDS.deleteOrder(orderId);
-            }
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
         }
-        ;
         notifyDataSetChanged();
     }
 
@@ -106,11 +110,6 @@ public class CartListAdapter extends BaseAdapter {
         dtList.add(user);
         notifyDataSetChanged();
     }
-
-//    public void insert(OrderItem user,int index) {
-//    	dtList.add(index, user);
-//        notifyDataSetChanged();
-//    }
 
     public Object getItem(int position) {
         return dtList.get(position);
@@ -125,7 +124,7 @@ public class CartListAdapter extends BaseAdapter {
         // TODO Auto-generated method stub
         super.notifyDataSetChanged();
         //if (listener != null || loginData ==null)
-            //listener.onChange(dtList);
+        //listener.onChange(dtList);
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -171,13 +170,10 @@ public class CartListAdapter extends BaseAdapter {
             int newQuantity = orderItem.getQuantity() - 1;
             orderItem.setQuantity(newQuantity);
 
+            updateOrderItemQuantityOnline(orderItem);
             //updateOrderItemQuantity(orderItem);
-            debouncer.debounce(CartListAdapter.class, new Runnable() {
-                @Override
-                public void run() {
-                    updateOrderItemQuantityOnline(orderItem);
-                }
-            }, 1000, TimeUnit.MILLISECONDS);
+//            debouncer.debounce(CartListAdapter.class, () ->
+//                    updateOrderItemQuantityOnline(orderItem), 1000, TimeUnit.MILLISECONDS);
 
             long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
             long subtotal = (orderItem.getPrice() * orderItem.getQuantity()) - discount;
@@ -197,12 +193,9 @@ public class CartListAdapter extends BaseAdapter {
             // TODO Auto-generated method stub
             orderItem.setQuantity(orderItem.getQuantity() + 1);
             //updateOrderItemQuantity(orderItem);
-            debouncer.debounce(CartListAdapter.class, new Runnable() {
-                @Override
-                public void run() {
-                    updateOrderItemQuantityOnline(orderItem);
-                }
-            }, 1000, TimeUnit.MILLISECONDS);
+            updateOrderItemQuantityOnline(orderItem);
+//            debouncer.debounce(CartListAdapter.class, () ->
+//                    updateOrderItemQuantityOnline(orderItem), 1000, TimeUnit.MILLISECONDS);
 
             long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
             long subtotal = (orderItem.getPrice() * orderItem.getQuantity()) - discount;
@@ -215,13 +208,13 @@ public class CartListAdapter extends BaseAdapter {
         return vi;
     }
 
-    private void updateOrderItemQuantityOnline(OrderItem orderItem){
-        if (loginData!=null){
-            updateOrderItemQuantityOnline(orderItem.getId(), orderItem.getQuantity(), new IResultCallback() {
+    private void updateOrderItemQuantityOnline(OrderItem orderItem) {
+        if (loginData != null) {
+            updateOrderItemQuantityOnline(Helper.read(Constants.CURRENT_ORDER_ID),orderItem.getId(), orderItem.getQuantity(), new IResultCallback() {
                 @Override
                 public void onSuccess(boolean success) {
-                    if (success){
-                        Log.i("[CartListAdapter][Api call]","Order item "+ orderItem.getId() +"update new quantity"+ orderItem.getQuantity());
+                    if (success) {
+                        Log.i("[CartListAdapter][Api call]", "Order item " + orderItem.getId() + "update new quantity" + orderItem.getQuantity());
                     }
                 }
 
@@ -230,7 +223,7 @@ public class CartListAdapter extends BaseAdapter {
 
                 }
             });
-        }else{
+        } else {
             OrderDS.updateOrderItemQuantity(orderItem.getId(), orderItem.getQuantity());
         }
 
@@ -247,31 +240,80 @@ public class CartListAdapter extends BaseAdapter {
         public void onChange(Order currentOrder);
     }
 
-    private void updateOrderItemQuantityOnline(String orderItemId, int quantity, IResultCallback resultCallback){
+    private void updateOrderItemQuantityOnline(String orderId,String orderItemId, int quantity, IResultCallback resultCallback) {
         Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .updateOrderItemQuantity(orderItemId,quantity);
+                .updateOrderItemQuantity(orderId, new UpdateQuantityBody(orderItemId,quantity));
         responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
-                if (response.errorBody()!=null){
+                if (response.errorBody() != null) {
                     try {
-                        Log.e("[OrderFragment][Api error]",response.errorBody().string());
+                        Log.e("[OrderFragment][Api error]", response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                if(response.code() ==Constants.STATUS_CODE_CREATED){
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
                     resultCallback.onSuccess(true);
                     ResponseAdapter<OrderData> res = response.body();
                     assert res != null;
                     if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
                         listener.onChange(res.getData().getOrder());
-                    }else{
-                        Log.e("[Order fragment]","Create order fail");
+                    } else {
+                        Log.e("[Order fragment]", "Create order fail");
                     }
-                }else {
+                } else {
                     resultCallback.onSuccess(false);
-                    Log.e("[Order fragment]","Create order fail");
+                    Log.e("[Order fragment]", "Create order fail");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
+                Log.e("Login Error", t.getMessage());
+            }
+        });
+    }
+
+    private void removeOrderItemQuantityOffline(String orderItemId) {
+
+        for (int i = 0; i < dtList.size(); i++) {
+            if (dtList.get(i).getId().equals(orderItemId)) {
+                OrderDS.deleteOrderItem(dtList.get(i).getId());
+                dtList.remove(i);
+            }
+            if (dtList.size() == 0) {
+                OrderDS.deleteOrder(dtList.get(i).getOrderId());
+            }
+        }
+    }
+
+    private void removeOrderItemQuantityOnline(String orderItemId, IResultCallback resultCallback) {
+        Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .removeOrderItem(orderItemId);
+        responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
+                if (response.errorBody() != null) {
+                    try {
+                        Log.e("[OrderFragment][Api error]", response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    resultCallback.onSuccess(true);
+                    ResponseAdapter<OrderData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
+                        listener.onChange(res.getData().getOrder());
+                    } else {
+                        Log.e("[Order fragment]", "Create order fail");
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                    Log.e("[Order fragment]", "Create order fail");
                 }
 
             }

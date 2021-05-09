@@ -258,5 +258,13 @@ public final class Helper
 		//orderItem.setOrderItemToppings(new ArrayList<>());
 		return orderItem;
 	}
+	public static OrderItem createSendOrderItem(MenuItem product){
+		OrderItem orderItem = new OrderItem();
+		orderItem.setMenuItemId(product.getId());
+		orderItem.setQuantity(1);
+		orderItem.setPrice(product.getPrice());
+		orderItem.setOrderItemToppings(new ArrayList<>());
+		return orderItem;
+	}
 }
 

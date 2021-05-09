@@ -27,7 +27,7 @@ public class Constants {
     public static final int STATUS_CODE_NOT_FOUND = 404;
 
     //INTENT_PUT_BUNDLE
-    public static final String PUT_ORDER_ID = "orderId";
+    public static final String CURRENT_ORDER_ID = "orderId";
 
     //PREFERENCE_SHARE
     public static final String MERCHANT_ID="merchant_id";

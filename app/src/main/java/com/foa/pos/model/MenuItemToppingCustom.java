@@ -1,12 +1,16 @@
 package com.foa.pos.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class MenuItemToppingCustom {
+    @SerializedName("id")
     private String id;
-    private long price;
+    @SerializedName("customPrice")
+    private long customPrice;
 
     public MenuItemToppingCustom(String id, long price) {
         this.id = id;
-        this.price = price;
+        this.customPrice = price;
     }
 
     public String getId() {
@@ -17,11 +21,11 @@ public class MenuItemToppingCustom {
         this.id = id;
     }
 
-    public long getPrice() {
-        return price;
+    public long getCustomPrice() {
+        return customPrice;
     }
 
-    public void setPrice(long price) {
-        this.price = price;
+    public void setCustomPrice(long customPrice) {
+        this.customPrice = customPrice;
     }
 }

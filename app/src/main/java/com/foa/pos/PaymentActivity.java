@@ -51,7 +51,7 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
             if(extras == null) {
                 orderId= null;
             } else {
-                orderId= extras.getString(Constants.PUT_ORDER_ID);
+                orderId= extras.getString(Constants.CURRENT_ORDER_ID);
             }
         } else {
             orderId= (String) savedInstanceState.getSerializable("STRING_I_NEED");

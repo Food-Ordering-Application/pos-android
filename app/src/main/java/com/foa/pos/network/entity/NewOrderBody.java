@@ -3,7 +3,7 @@ package com.foa.pos.network.entity;
 import com.google.gson.annotations.SerializedName;
 
 
-public class NewOrder {
+public class NewOrderBody {
     @SerializedName("orderItem")
     private SendOrderItem orderItem;
     @SerializedName("restaurantId")
@@ -13,7 +13,7 @@ public class NewOrder {
     private @SerializedName("cashierId")
     String cashierId;
 
-    public NewOrder(SendOrderItem orderItem, String restaurantId, String customerId, String cashierId) {
+    public NewOrderBody(SendOrderItem orderItem, String restaurantId, String customerId, String cashierId) {
         this.orderItem = orderItem;
         this.restaurantId = restaurantId;
         this.customerId = customerId;

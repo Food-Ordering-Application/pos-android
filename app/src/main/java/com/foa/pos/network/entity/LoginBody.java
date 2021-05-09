@@ -2,7 +2,7 @@ package com.foa.pos.network.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Login {
+public class LoginBody {
     @SerializedName("username")
     private String username;
     @SerializedName("password")
@@ -13,7 +13,7 @@ public class Login {
     @SerializedName("temp")
     private String temp;
 
-    public Login(String username, String password, String restaurantId) {
+    public LoginBody(String username, String password, String restaurantId) {
         this.username = username;
         this.password = password;
         this.restaurantId = restaurantId;

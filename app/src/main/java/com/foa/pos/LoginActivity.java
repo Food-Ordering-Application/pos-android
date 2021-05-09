@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.entity.Login;
+import com.foa.pos.network.entity.LoginBody;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.utils.Constants;
@@ -57,8 +57,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		//temp
 		Helper.initialize(getBaseContext());
-		Helper.write(Constants.MERCHANT_ID, "3346f520-4de7-4a0e-b5e7-28e691f8e546");
-		Helper.write(Constants.RESTAURANT_ID, "32f49431-e572-4cbb-8f04-34bf858ef3de");
+		Helper.write(Constants.MERCHANT_ID, "20c2c064-2457-4525-b7e4-7c2c10564e86");
+		Helper.write(Constants.RESTAURANT_ID, "dea72dac-6bcd-4bd8-b3a8-70565b36e0d5");
 
 		btnSaleOffline.setOnClickListener(v -> goNext());
 //		if (Helper.read(Constants.CASHIER_ID)!= null){
@@ -77,8 +77,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
-		String username = txtusername.getText().toString();
-		String password = txtpassword.getText().toString();
+		//String username = txtusername.getText().toString();
+		//String password = txtpassword.getText().toString();
+		String username = "hoangcashier";
+		String password= "123123123";
 
 
 		if (username.equals("") || password.equals("")) {
@@ -90,7 +92,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		loading.show();
 		Call<ResponseAdapter<LoginData>> responseCall = RetrofitClient.getInstance().getAppService()
-				.login(new Login(username, password,Helper.read(Constants.RESTAURANT_ID)));
+				.login(new LoginBody(username, password,Helper.read(Constants.RESTAURANT_ID)));
 		responseCall.enqueue(new Callback<ResponseAdapter<LoginData>>() {
 			@Override
 			public void onResponse(Call<ResponseAdapter<LoginData>> call, Response<ResponseAdapter<LoginData>> response) {

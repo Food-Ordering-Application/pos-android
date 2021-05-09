@@ -6,16 +6,30 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.foa.pos.R;
+import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.Order;
+import com.foa.pos.network.RetrofitClient;
+import com.foa.pos.network.response.LoginData;
+import com.foa.pos.network.response.OrderData;
+import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
+import com.foa.pos.utils.Constants;
+import com.foa.pos.utils.LoginSession;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private Order order;
@@ -27,6 +41,8 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 	TextView changeTotal;
 	private ConfirmListener listener;
 	private LoadingDialog loading;
+
+	private LoginData loginData;
 
 	public CustomConfirm(Context context) {
 		super(context);
@@ -45,6 +61,8 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 		setContentView(R.layout.confirm_dialog);
+
+		loginData = LoginSession.getInstance();
 		
 		btnOk = findViewById(R.id.btnOrder);
 		btnCancel = findViewById(R.id.btnCancel);
@@ -100,17 +118,17 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 			String result = "0";
 			
 			try {
-				DatabaseManager.initializeInstance(new DatabaseHelper(context));
-				SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-				OrderDataSource DS = new OrderDataSource(db);
-				
-				DS.updateOrderStatus(order.getId(),1);
+				if (loginData!=null){
 
-				
+				}else{
+					DatabaseManager.initializeInstance(new DatabaseHelper(context));
+					SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
+					OrderDataSource DS = new OrderDataSource(db);
+					DS.updateOrderStatus(order.getId(),1);
+				}
 				result = "1";
-				
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
+
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -139,6 +157,41 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
     public interface ConfirmListener {
         public void onFinish(String result);
     }
-    
+
+//	private void updateCompletedOrder(String orderId, IResultCallback resultCallback) {
+//		Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
+//				.updateCompletedOrder(orderId);
+//		responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
+//			@Override
+//			public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
+//				if (response.errorBody() != null) {
+//					try {
+//						Log.e("[OrderFragment][Api error]", response.errorBody().string());
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//				if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+//					resultCallback.onSuccess(true);
+//					ResponseAdapter<OrderData> res = response.body();
+//					assert res != null;
+//					if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
+//						listener.onChange(res.getData().getOrder());
+//					} else {
+//						Log.e("[Order fragment]", "Create order fail");
+//					}
+//				} else {
+//					resultCallback.onSuccess(false);
+//					Log.e("[Order fragment]", "Create order fail");
+//				}
+//
+//			}
+//
+//			@Override
+//			public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
+//				Log.e("Login Error", t.getMessage());
+//			}
+//		});
+//	}
 
 }
