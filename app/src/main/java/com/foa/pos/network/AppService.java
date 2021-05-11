@@ -5,6 +5,7 @@ import com.foa.pos.network.entity.NewOrderBody;
 import com.foa.pos.network.entity.SendOrderItem;
 import com.foa.pos.network.entity.UpdateQuantityBody;
 import com.foa.pos.network.response.LoginData;
+import com.foa.pos.network.response.MenuData;
 import com.foa.pos.network.response.OrderData;
 import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.network.response.ToppingGroupData;
@@ -14,6 +15,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -58,6 +60,12 @@ public interface AppService {
             @Field("orderItemId") String orderItemId
     );
 
+
+    @FormUrlEncoded
+    @GET("/restaurant/{restaurantId}/get-menu-information")
+    Call<ResponseAdapter<MenuData>> getMenuByRestaurantId (
+            @Path("restaurantId") String restaurantId
+    );
 
     @FormUrlEncoded
     @POST("/restaurant/get-menu-item-topping-info")

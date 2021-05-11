@@ -8,18 +8,6 @@ public interface DbSchema {
 	String DB_NAME = "com_foa_androidpos.db";
 	int DB_VERSION = 1;
 	
-	String TBL_SETTING = "setting";	
-	String COL_SETTING_CODE = "code";
-	String COL_SETTING_VALUE = "value";
-	
-	String CREATE_TBL_SETTING = "CREATE TABLE "
-								+ TBL_SETTING
-								+ "(" 
-									+ COL_SETTING_CODE  + " TEXT PRIMARY KEY," 
-									+ COL_SETTING_VALUE + " TEXT" 
-								+ ");";
-
-	
 	String TBL_PRODUCT_CATEGORY = "product_category";
 	String COL_PRODUCT_CATEGORY_CODE = "category_id";
 	String COL_PRODUCT_CATEGORY_NAME = "name";
@@ -32,8 +20,8 @@ public interface DbSchema {
 			+ ");";
 	
 	
-	String TBL_PRODUCT = "product";
-	String COL_PRODUCT_CODE = "product_id";
+	String TBL_MENU_ITEM = "menu_item";
+	String COL_MENU_ITEM_ID = "menu_item_id";
 	String COL_PRODUCT_PRODUCT_CATEGORY_CODE = "category_id";
 	String COL_PRODUCT_PRODUCT_CATEGORY_NAME = "category";
 	String COL_PRODUCT_NAME = "name";
@@ -51,9 +39,9 @@ public interface DbSchema {
 	String COL_PRODUCT_IMAGE = "image";
 	
 	String CREATE_TBL_PRODUCT = "CREATE TABLE "
-			+ TBL_PRODUCT
+			+ TBL_MENU_ITEM
 			+ "(" 
-				+ COL_PRODUCT_CODE  + " TEXT PRIMARY KEY,"
+				+ COL_MENU_ITEM_ID + " TEXT PRIMARY KEY,"
 				+ COL_PRODUCT_PRODUCT_CATEGORY_CODE + " TEXT," 
 				+ COL_PRODUCT_NAME + " TEXT," 
 				+ COL_PRODUCT_DESCRIPTION + " TEXT," 
@@ -145,8 +133,7 @@ public interface DbSchema {
 			+ ");";
 	
 	String DROP_TBL_PRODUCT_CATEGORY = "DROP TABLE IF EXISTS "+ TBL_PRODUCT_CATEGORY;
-	String DROP_TBL_PRODUCT = "DROP TABLE IF EXISTS "+ TBL_PRODUCT;	
-	String DROP_TBL_SETTING = "DROP TABLE IF EXISTS "+ TBL_SETTING;
+	String DROP_TBL_PRODUCT = "DROP TABLE IF EXISTS "+ TBL_MENU_ITEM;
 	String DROP_TBL_USER = "DROP TABLE IF EXISTS "+ TBL_USER;
 	String DROP_TBL_ORDER = "DROP TABLE IF EXISTS "+ TBL_ORDER;
 	String DROP_TBL_PRODUCT_ORDER_DETAIL = "DROP TABLE IF EXISTS "+ TBL_PRODUCT_ORDER_DETAIL;

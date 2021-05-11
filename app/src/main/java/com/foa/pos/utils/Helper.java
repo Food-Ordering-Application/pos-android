@@ -1,37 +1,25 @@
 package com.foa.pos.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.os.Environment;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.foa.pos.R;
-import com.foa.pos.adapter.OrderDetailListAdapter;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
-import com.foa.pos.model.OrderItemTopping;
-import com.foa.pos.sqlite.DatabaseHelper;
-import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.OrderDataSource;
-import com.foa.pos.sqlite.ds.ProductDataSource;
-import com.foa.pos.widget.EditOrderItemDialog;
 import com.foa.pos.widget.LoadingDialog;
 
 import java.io.File;

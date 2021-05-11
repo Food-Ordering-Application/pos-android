@@ -14,11 +14,9 @@ import androidx.fragment.app.Fragment;
 import com.foa.pos.R;
 import com.foa.pos.adapter.CategoryListAdapter;
 import com.foa.pos.dummy.MasterContent;
-import com.foa.pos.model.ProductCategory;
 import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
+import com.foa.pos.sqlite.ds.MenuGroupDataSource;
 import com.foa.pos.utils.Constants;
-import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
 
@@ -26,7 +24,7 @@ public class CategoryListFragment extends Fragment implements OnClickListener {
 	private MasterContent.DummyItem mItem;
 	private ListView lv;
 	private CategoryListAdapter adapter;
-	private ArrayList<ProductCategory> dtlist;
+	private ArrayList<MenuGroup> dtlist;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,7 +58,7 @@ public class CategoryListFragment extends Fragment implements OnClickListener {
 	private void popolateAdapter()
 	{
 		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-        ProductCategoryDataSource ds = new ProductCategoryDataSource(db);
+        MenuGroupDataSource ds = new MenuGroupDataSource(db);
         dtlist = ds.getAll();
      
 		adapter.set(dtlist);

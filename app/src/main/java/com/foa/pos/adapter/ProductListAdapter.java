@@ -21,7 +21,7 @@ import com.foa.pos.R;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.fragment.ProductAddFragment;
 import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.ProductDataSource;
+import com.foa.pos.sqlite.ds.MenuItemDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 
@@ -144,11 +144,11 @@ public class ProductListAdapter extends BaseAdapter {
 		               @Override
 		               public void onClick(DialogInterface dialog, int id) {
 		            		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-		        	        ProductDataSource ds = new ProductDataSource(db);
+		        	        MenuItemDataSource ds = new MenuItemDataSource(db);
 		        	        if(!ds.cekAvailable(product.getId()))
 	            	    	{
 		        	        	  
-			        	        ds.delete(product.getCategoryId());
+			        	        ds.delete(product.getGroupId());
 			        	        dtList.remove(position);
 			        	        notifyDataSetChanged();
 			        	      

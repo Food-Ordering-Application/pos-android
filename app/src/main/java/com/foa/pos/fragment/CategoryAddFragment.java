@@ -17,9 +17,8 @@ import androidx.fragment.app.Fragment;
 
 import com.foa.pos.R;
 import com.foa.pos.dummy.MasterContent;
-import com.foa.pos.model.ProductCategory;
 import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
+import com.foa.pos.sqlite.ds.MenuGroupDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 
@@ -31,7 +30,6 @@ public class CategoryAddFragment extends Fragment {
 		if (getArguments().containsKey(Constants.ARG_ITEM_ID)) {
 			mItem = MasterContent.ITEM_MAP.get(getArguments().getString(Constants.ARG_ITEM_ID));
 		}
-		
 	}
 	
 	
@@ -79,11 +77,11 @@ public class CategoryAddFragment extends Fragment {
 			subtitle.setText(getString(R.string.edit));
 			
 			SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-	        ProductCategoryDataSource ds = new ProductCategoryDataSource(db);
+	        MenuGroupDataSource ds = new MenuGroupDataSource(db);
 	        
-	        ProductCategory dt =  ds.get(lastCode);
-	        txtName.setText(dt.getCategoryName());
-	        lastName = dt.getCategoryName();
+	        MenuGroup dt =  ds.get(lastCode);
+	        txtName.setText(dt.getName());
+	        lastName = dt.getName();
 	        DatabaseManager.getInstance().closeDatabase();;
 		}
 	}
@@ -102,12 +100,12 @@ public class CategoryAddFragment extends Fragment {
 			}
 			
 			SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-			ProductCategoryDataSource ds = new ProductCategoryDataSource(db);
+			MenuGroupDataSource ds = new MenuGroupDataSource(db);
 	        
-			ProductCategory data = new ProductCategory();
+			MenuGroup data = new MenuGroup();
 			
-			data.setCategoryID(isEdit ? lastCode : Helper.getCategoryID());
-			data.setCategoryName(name);
+			data.setId(isEdit ? lastCode : Helper.getCategoryID());
+			data.setName(name);
 			
 			
 			if(isEdit)

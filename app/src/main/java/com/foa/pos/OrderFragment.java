@@ -37,7 +37,6 @@ import com.foa.pos.model.IDataResultCallback;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
-import com.foa.pos.model.ProductCategory;
 import com.foa.pos.model.Promotion;
 import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.entity.NewOrderBody;
@@ -48,8 +47,8 @@ import com.foa.pos.network.response.LoginData;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
-import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
-import com.foa.pos.sqlite.ds.ProductDataSource;
+import com.foa.pos.sqlite.ds.MenuGroupDataSource;
+import com.foa.pos.sqlite.ds.MenuItemDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
@@ -91,7 +90,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private Button btnOrder;
     private ImageButton btnToggleList;
 
-    private ProductDataSource ProductDS;
+    private MenuItemDataSource ProductDS;
     private OrderDataSource OrderDS;
 
     private long total = 0;
@@ -126,7 +125,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         //Init sqlite data source
         DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
-        ProductDS = new ProductDataSource(db);
+        ProductDS = new MenuItemDataSource(db);
         OrderDS = new OrderDataSource(db);
 
         //Set menu
@@ -136,11 +135,11 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         menuAdapter.set(ProductDS.getAll("", ""));
 
         //Set category radio group button
-        ProductCategoryDataSource catds = new ProductCategoryDataSource(db);
-        ArrayList<ProductCategory> catList = catds.getAll();
-        ProductCategory ct = new ProductCategory();
-        ct.setCategoryID("");
-        ct.setCategoryName("All");
+        MenuGroupDataSource catds = new MenuGroupDataSource(db);
+        ArrayList<MenuGroup> catList = catds.getAll();
+        MenuGroup ct = new MenuGroup();
+        ct.setId("");
+        ct.setName("All");
         catList.add(0, ct);
         radioGroup = root.findViewById(R.id.categoryGroup);
         addRadioButtons(radioGroup, catList);
@@ -213,13 +212,13 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         return false;
     }
 
-    private void addRadioButtons(RadioGroup radioGroup, List<ProductCategory> categoryList) {
+    private void addRadioButtons(RadioGroup radioGroup, List<MenuGroup> categoryList) {
         radioGroup.setOrientation(LinearLayout.HORIZONTAL);
         //
         for (int i = 0; i < categoryList.size(); i++) {
             RadioButton rdbtn = new RadioButton(getActivity());
             rdbtn.setId(View.generateViewId());
-            rdbtn.setText(categoryList.get(i).getCategoryName());
+            rdbtn.setText(categoryList.get(i).getName());
             rdbtn.setBackgroundResource(R.drawable.radio_button_selector);
             rdbtn.setTextColor(R.drawable.radio_button_selector_text);
             rdbtn.setPadding(50, 30, 50, 30);

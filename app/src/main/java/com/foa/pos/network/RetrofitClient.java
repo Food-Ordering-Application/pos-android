@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private  Retrofit retrofit;
     private  static RetrofitClient instance;
-    private static final String BASE_URL = "https://api-gateway-pos.herokuapp.com/";
+    private static final String BASE_URL = "https://apigway.herokuapp.com/";
 
     private  RetrofitClient() {
 

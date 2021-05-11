@@ -1,15 +1,21 @@
 package com.foa.pos.model;
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 public class MenuItem {
-	
+	@SerializedName("id")
 	private String id;
+	@SerializedName("name")
 	private String name;
-	private String categoryId;
+	@SerializedName("groupId")
+	private String groupId;
 	private String categoryName;
+	@SerializedName("description")
 	private String description;
+	@SerializedName("price")
 	private long price;
 	private long discount;
 	private Date createdOn;
@@ -19,7 +25,13 @@ public class MenuItem {
 	private String updatedBy;
 	private String merchantId;
 	private String status; // ready or no
+	@SerializedName("imageUrl")
 	private String image;
+	@SerializedName("index")
+	private int index;
+	@SerializedName("isActive")
+	private boolean isActive;
+
 	// field for set list view selector, android only
 	private boolean selected = false;
 
@@ -39,12 +51,12 @@ public class MenuItem {
 		this.name = name;
 	}
 
-	public String getCategoryId() {
-		return categoryId;
+	public String getGroupId() {
+		return groupId;
 	}
 
-	public void setCategoryId(String categoryId) {
-		this.categoryId = categoryId;
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	public String getCategoryName() {

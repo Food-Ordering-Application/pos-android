@@ -3,6 +3,7 @@ package com.foa.pos;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,10 +14,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.foa.pos.model.MenuItem;
+import com.foa.pos.model.MenuGroup;
 import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.entity.LoginBody;
 import com.foa.pos.network.response.LoginData;
+import com.foa.pos.network.response.MenuData;
 import com.foa.pos.network.response.ResponseAdapter;
+import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.sqlite.ds.MenuGroupDataSource;
+import com.foa.pos.sqlite.ds.MenuItemDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
@@ -25,6 +32,8 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,6 +73,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 //		if (Helper.read(Constants.CASHIER_ID)!= null){
 //			goNext();
 //		}
+
+		getMenuData();
 
 	}
 
@@ -154,6 +165,56 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 			}
 		});
+	}
+
+	public void getMenuData(){
+		loading.show();
+		Call<ResponseAdapter<MenuData>> responseCall = RetrofitClient.getInstance().getAppService()
+				.getMenuByRestaurantId(Helper.read(Constants.RESTAURANT_ID));
+		responseCall.enqueue(new Callback<ResponseAdapter<MenuData>>() {
+			@Override
+			public void onResponse(Call<ResponseAdapter<MenuData>> call, Response<ResponseAdapter<MenuData>> response) {
+				switch (response.code()) {
+					case Constants.STATUS_CODE_SUCCESS:
+						ResponseAdapter<MenuData> res = response.body();
+						if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+
+							loading.dismiss();
+							res.getData().getMenuGroups();
+
+
+						}else{
+							Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
+						}
+						break;
+					default:
+						Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
+				}
+
+			}
+
+			@Override
+			public void onFailure(Call<ResponseAdapter<MenuData>> call, Throwable t) {
+				Log.e("Login Error", t.getMessage());
+				Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
+
+			}
+		});
+	}
+
+	private void saveMenuToLocal(List<MenuGroup> menuGroups){
+		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
+		MenuItemDataSource menuItemDS = new MenuItemDataSource(db);
+		MenuGroupDataSource menuGroupDS = new MenuGroupDataSource(db);
+
+		for (MenuGroup menuGroup: menuGroups) {
+			menuGroupDS.insert(menuGroup);
+			for (MenuItem menuItem : menuGroup.getMenuItems()) {
+				menuItemDS.insert(menuItem);
+			}
+		}
+
+
 	}
 
 }

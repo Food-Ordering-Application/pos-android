@@ -9,15 +9,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.foa.pos.R;
-import com.foa.pos.model.ProductCategory;
-import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategorySpinnerAdapter extends BaseAdapter {
  
-    private List<ProductCategory> dtList = new ArrayList<ProductCategory>();
+    private List<MenuGroup> dtList = new ArrayList<MenuGroup>();
     private Activity context;
     private LayoutInflater inflater;
     public CategorySpinnerAdapter(Activity context) {
@@ -25,7 +23,7 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
-    public CategorySpinnerAdapter(Activity context, List<ProductCategory> data) {
+    public CategorySpinnerAdapter(Activity context, List<MenuGroup> data) {
      
         this.context = context;
         this.dtList = data;
@@ -41,7 +39,7 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         return dtList.size();
     }
     
-    public void set(List<ProductCategory> list) {
+    public void set(List<MenuGroup> list) {
     	dtList = list;
         notifyDataSetChanged();
     }
@@ -49,23 +47,23 @@ public class CategorySpinnerAdapter extends BaseAdapter {
     public int indexOf(String code) {
     	int index = -1;
     	for(int i = 0;i < dtList.size();i++) {
-			if(code.equals(dtList.get(i).getCategoryID()))
+			if(code.equals(dtList.get(i).getId()))
 				index = i;
 		}
     	return index;
     }
     
-    public void remove(ProductCategory user) {
+    public void remove(MenuGroup user) {
     	dtList.remove(user);
         notifyDataSetChanged();
     }
     
-    public void add(ProductCategory user) {
+    public void add(MenuGroup user) {
     	dtList.add(user);
         notifyDataSetChanged();
     }
     
-    public void insert(ProductCategory user, int index) {
+    public void insert(MenuGroup user, int index) {
     	dtList.add(index, user);
         notifyDataSetChanged();
     }
@@ -95,9 +93,9 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         	 holder=(ViewHolder)vi.getTag();
         }
         
-        final ProductCategory category = (ProductCategory) getItem(position);
+        final MenuGroup category = (MenuGroup) getItem(position);
 
-        holder.title.setText( category.getCategoryName());
+        holder.title.setText( category.getName());
 
         return vi;
     }
@@ -119,8 +117,8 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         	 holder=(ViewHolder)vi.getTag();
         }
         
-        final ProductCategory category = (ProductCategory) getItem(position);
-        holder.title.setText(category.getCategoryName());
+        final MenuGroup category = (MenuGroup) getItem(position);
+        holder.title.setText(category.getName());
 
         return vi;
 	}

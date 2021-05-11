@@ -15,33 +15,33 @@ import java.util.Date;
 import static com.foa.pos.sqlite.DbSchema.COL_PRODUCT_CATEGORY_CODE;
 import static com.foa.pos.sqlite.DbSchema.COL_PRODUCT_CATEGORY_NAME;
 
-public class ProductDataSource {
+public class MenuItemDataSource {
 	private SQLiteDatabase db;
-	public ProductDataSource(SQLiteDatabase db)
+	public MenuItemDataSource(SQLiteDatabase db)
 	{
 		this.db = db;
 	}
 	
 	public long truncate()
 	{
-		return db.delete(DbSchema.TBL_PRODUCT,null,null);
+		return db.delete(DbSchema.TBL_MENU_ITEM,null,null);
 	}
 	
 	public MenuItem get(String code) {
 		 
 		MenuItem item = new MenuItem();
 		 
-		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_PRODUCT  +
-						       " Where " + DbSchema.COL_PRODUCT_CODE + " = '"+code+"'";
+		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_MENU_ITEM +
+						       " Where " + DbSchema.COL_MENU_ITEM_ID + " = '"+code+"'";
 		
 		Cursor c = db.rawQuery(selectQuery, null);
 	
 		if (c.moveToFirst()) {
 			do {
 			
-				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_ID)));
 				item.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-				item.setCategoryId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
+				item.setGroupId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
 				item.setCategoryName(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_DESCRIPTION)));
 				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
@@ -80,7 +80,7 @@ public class ProductDataSource {
 		ArrayList<String> where = new ArrayList<String>();
 
 
-		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_PRODUCT;
+		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_MENU_ITEM;
 		if(!isAll)
 			where.add(DbSchema.COL_PRODUCT_STATUS + " = 1 ");
 		if(keyword != null && !keyword.equals(""))
@@ -95,9 +95,9 @@ public class ProductDataSource {
 		if (c.moveToFirst()) {
 			do {
 				MenuItem item = new MenuItem();
-				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CODE)));
+				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_ID)));
 				item.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_NAME)));
-				item.setCategoryId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
+				item.setGroupId(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_CODE)));
 				item.setCategoryName(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_DESCRIPTION)));
 				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_PRODUCT_PRICE)));
@@ -125,9 +125,9 @@ public class ProductDataSource {
 	public long insert(MenuItem item)
 	{
 		ContentValues values = new ContentValues();
-		values.put(DbSchema.COL_PRODUCT_CODE, item.getId());
+		values.put(DbSchema.COL_MENU_ITEM_ID, item.getId());
 		values.put(DbSchema.COL_PRODUCT_NAME, item.getName());
-		values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getCategoryId());
+		values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getGroupId());
 		values.put(DbSchema.COL_PRODUCT_DESCRIPTION, item.getDescription());
 		values.put(DbSchema.COL_PRODUCT_PRICE, item.getPrice());
 		values.put(DbSchema.COL_PRODUCT_DISCOUNT,item.getDiscount());
@@ -141,20 +141,20 @@ public class ProductDataSource {
 		values.put(DbSchema.COL_PRODUCT_UPDATED_ON,  Helper.dateformat.format(new Date()));
 	//	values.put(DbSchema.COL_PRODUCT_SYCN_ON, Shared.dateformat.format(item.getSycnOn()));
 		
-		return db.insert(DbSchema.TBL_PRODUCT, null, values);
+		return db.insert(DbSchema.TBL_MENU_ITEM, null, values);
 	}
 	
 	public long update(MenuItem item, String lastCode)
 	{
 		ContentValues values = new ContentValues();
 		if(item.getId() != null)
-			values.put(DbSchema.COL_PRODUCT_CODE, item.getId());
+			values.put(DbSchema.COL_MENU_ITEM_ID, item.getId());
 		
 		if(item.getName() != null)
 			values.put(DbSchema.COL_PRODUCT_NAME, item.getName());
 		
-		if(item.getCategoryId() != null)
-			values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getCategoryId());
+		if(item.getGroupId() != null)
+			values.put(DbSchema.COL_PRODUCT_CATEGORY_CODE, item.getGroupId());
 		
 		if(item.getDescription() != null)
 			values.put(DbSchema.COL_PRODUCT_DESCRIPTION, item.getDescription());
@@ -176,7 +176,7 @@ public class ProductDataSource {
 
 		values.put(DbSchema.COL_PRODUCT_UPDATED_ON, Helper.dateformat.format(new Date()));
 		
-		return db.update(DbSchema.TBL_PRODUCT, values, DbSchema.COL_PRODUCT_CODE+"= '"+lastCode+"' ", null);
+		return db.update(DbSchema.TBL_MENU_ITEM, values, DbSchema.COL_MENU_ITEM_ID +"= '"+lastCode+"' ", null);
 	}
 
 	public String getIdByName(String name) {
@@ -198,14 +198,14 @@ public class ProductDataSource {
 	
 	public int delete(String code)
 	{
-		return db.delete(DbSchema.TBL_PRODUCT, DbSchema.COL_PRODUCT_CODE + "= '" + code + "'", null);
+		return db.delete(DbSchema.TBL_MENU_ITEM, DbSchema.COL_MENU_ITEM_ID + "= '" + code + "'", null);
 	}
 	
 	public boolean cekCode(String code) {
 		 
 		boolean has = false;
-		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_PRODUCT  +
-						      " Where lower(" + DbSchema.COL_PRODUCT_CODE + ") = '"+code.toLowerCase()+"'";
+		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_MENU_ITEM +
+						      " Where lower(" + DbSchema.COL_MENU_ITEM_ID + ") = '"+code.toLowerCase()+"'";
 		 
 		Cursor c = db.rawQuery(selectQuery, null);
 		if(c.getCount() > 0)
@@ -217,7 +217,7 @@ public class ProductDataSource {
 	public boolean cekName(String name) {
 		 
 		boolean has = false;
-		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_PRODUCT  +
+		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_MENU_ITEM +
 						      " Where lower(" + DbSchema.COL_PRODUCT_NAME + ") = '"+name.toLowerCase()+"'";
 		 
 		Cursor c = db.rawQuery(selectQuery, null);

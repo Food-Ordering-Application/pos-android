@@ -4,17 +4,17 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.foa.pos.model.ProductCategory;
+import com.foa.pos.model.MenuGroup;
 import com.foa.pos.sqlite.DbSchema;
 
 import java.util.ArrayList;
 
 import static com.foa.pos.sqlite.DbSchema.COL_PRODUCT_CATEGORY_CODE;
 
-public class ProductCategoryDataSource {
+public class MenuGroupDataSource {
 	
 	private SQLiteDatabase db;
-	public ProductCategoryDataSource(SQLiteDatabase db)
+	public MenuGroupDataSource(SQLiteDatabase db)
 	{
 		this.db = db;
 	}
@@ -24,9 +24,9 @@ public class ProductCategoryDataSource {
 		return db.delete(DbSchema.TBL_PRODUCT_CATEGORY,null,null);
 	}
 	
-	public ProductCategory get(String code) {
+	public MenuGroup get(String code) {
 		 
-		ProductCategory item = new ProductCategory();
+		MenuGroup item = new MenuGroup();
 		 
 		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_PRODUCT_CATEGORY  +
 						       " Where " + COL_PRODUCT_CATEGORY_CODE + " = '"+code+"'";
@@ -36,8 +36,8 @@ public class ProductCategoryDataSource {
 		if (c.moveToFirst()) {
 			do {
 			
-				item.setCategoryID(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_CODE)));
-				item.setCategoryName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_NAME)));
+				item.setId(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_CODE)));
+				item.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_NAME)));
 				
 			} while (c.moveToNext());
 		}
@@ -45,17 +45,17 @@ public class ProductCategoryDataSource {
 	}
 	
 
-	public ArrayList<ProductCategory> getAll() {
+	public ArrayList<MenuGroup> getAll() {
 		 
-		ArrayList<ProductCategory> items = new ArrayList<ProductCategory>();
+		ArrayList<MenuGroup> items = new ArrayList<MenuGroup>();
 		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_PRODUCT_CATEGORY ;
 		Cursor c = db.rawQuery(selectQuery, null);
 	
 		if (c.moveToFirst()) {
 			do {
-				ProductCategory item = new ProductCategory();
-				item.setCategoryID(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_CODE)));
-				item.setCategoryName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_NAME)));
+				MenuGroup item = new MenuGroup();
+				item.setId(c.getString(c.getColumnIndex(COL_PRODUCT_CATEGORY_CODE)));
+				item.setName(c.getString(c.getColumnIndex(DbSchema.COL_PRODUCT_CATEGORY_NAME)));
 				items.add(item);
 			} while (c.moveToNext());
 		}
@@ -63,20 +63,20 @@ public class ProductCategoryDataSource {
 		return items;
 	}
 	
-	public long insert(ProductCategory item)
+	public long insert(MenuGroup item)
 	{
 		ContentValues values = new ContentValues();
-		values.put(COL_PRODUCT_CATEGORY_CODE, item.getCategoryID());
-		values.put(DbSchema.COL_PRODUCT_CATEGORY_NAME, item.getCategoryName());
+		values.put(COL_PRODUCT_CATEGORY_CODE, item.getId());
+		values.put(DbSchema.COL_PRODUCT_CATEGORY_NAME, item.getName());
 		
 		return db.insert(DbSchema.TBL_PRODUCT_CATEGORY, null, values);
 	}
 	
-	public long update(ProductCategory item, String lastCode)
+	public long update(MenuGroup item, String lastCode)
 	{
 		ContentValues values = new ContentValues();
-		values.put(COL_PRODUCT_CATEGORY_CODE, item.getCategoryID());
-		values.put(DbSchema.COL_PRODUCT_CATEGORY_NAME, item.getCategoryName());
+		values.put(COL_PRODUCT_CATEGORY_CODE, item.getId());
+		values.put(DbSchema.COL_PRODUCT_CATEGORY_NAME, item.getName());
 		
 		return db.update(DbSchema.TBL_PRODUCT_CATEGORY, values, COL_PRODUCT_CATEGORY_CODE+"= '"+lastCode+"' ", null);
 	}
@@ -117,7 +117,7 @@ public class ProductCategoryDataSource {
 	public boolean cekAvailable(String code) {
 		 
 		boolean has = false;
-		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_PRODUCT  +
+		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_MENU_ITEM +
 						      " Where lower(" + DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_CODE + ") = '"+code.toLowerCase()+"'";
 		 
 		Cursor c = db.rawQuery(selectQuery, null);

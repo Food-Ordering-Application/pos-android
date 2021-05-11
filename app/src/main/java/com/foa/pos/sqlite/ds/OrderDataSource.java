@@ -48,7 +48,7 @@ public class OrderDataSource {
 				
 				
 				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_PRODUCT_NAME+",c."+DbSchema.COL_PRODUCT_CATEGORY_NAME+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
-											" LEFT JOIN " +  DbSchema.TBL_PRODUCT +  " p ON p." +  DbSchema.COL_PRODUCT_CODE + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
+											" LEFT JOIN " +  DbSchema.TBL_MENU_ITEM +  " p ON p." +  DbSchema.COL_MENU_ITEM_ID + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT_CATEGORY +  " c ON c." +  DbSchema.COL_PRODUCT_CATEGORY_CODE + " = p." + DbSchema.COL_PRODUCT_CATEGORY_CODE +
 											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+id+"'";
 				Cursor cDetail = db.rawQuery(selectQueryDetail, null);
@@ -113,7 +113,7 @@ public class OrderDataSource {
 				
 				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_PRODUCT_NAME+",c."+DbSchema.COL_PRODUCT_CATEGORY_NAME+" as "+ DbSchema.COL_PRODUCT_PRODUCT_CATEGORY_NAME
 						+"  FROM " + DbSchema.TBL_PRODUCT_ORDER_DETAIL  + " o " +
-											" LEFT JOIN " +  DbSchema.TBL_PRODUCT +  " p ON p." +  DbSchema.COL_PRODUCT_CODE + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
+											" LEFT JOIN " +  DbSchema.TBL_MENU_ITEM +  " p ON p." +  DbSchema.COL_MENU_ITEM_ID + " = o." + DbSchema.COL_PRODUCT_ORDER_DETAIL_PRODUCT_CODE +
 											" LEFT JOIN " +  DbSchema.TBL_PRODUCT_CATEGORY +  " c ON c." +  DbSchema.COL_PRODUCT_CATEGORY_CODE + " = p." + DbSchema.COL_PRODUCT_CATEGORY_CODE +
 											" WHERE " +DbSchema.COL_PRODUCT_ORDER_DETAIL_ORDER_CODE + " = '"+item.getId()+"'";
 				Cursor cDetail = db.rawQuery(selectQueryDetail, null);

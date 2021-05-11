@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
@@ -18,17 +17,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.foa.pos.R;
-import com.foa.pos.model.ProductCategory;
 import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
+import com.foa.pos.sqlite.ds.MenuGroupDataSource;
 import com.foa.pos.utils.Constants;
-import com.foa.pos.utils.Helper;
 
 import java.util.List;
 
 public class CategoryListAdapter extends BaseAdapter {
 
-    private List<ProductCategory> dtList;
+    private List<MenuGroup> dtList;
     private FragmentActivity context;
     private LayoutInflater inflater;
     private String itemID;
@@ -38,7 +35,7 @@ public class CategoryListAdapter extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public CategoryListAdapter(FragmentActivity context, List<ProductCategory> data) {
+    public CategoryListAdapter(FragmentActivity context, List<MenuGroup> data) {
 
         this.context = context;
         this.dtList = data;
@@ -62,22 +59,22 @@ public class CategoryListAdapter extends BaseAdapter {
         return dtList.size();
     }
 
-    public void set(List<ProductCategory> list) {
+    public void set(List<MenuGroup> list) {
         dtList = list;
         notifyDataSetChanged();
     }
 
-    public void remove(ProductCategory user) {
+    public void remove(MenuGroup user) {
         dtList.remove(user);
         notifyDataSetChanged();
     }
 
-    public void add(ProductCategory user) {
+    public void add(MenuGroup user) {
         dtList.add(user);
         notifyDataSetChanged();
     }
 
-    public void insert(ProductCategory user, int index) {
+    public void insert(MenuGroup user, int index) {
         dtList.add(index, user);
         notifyDataSetChanged();
     }
@@ -107,15 +104,15 @@ public class CategoryListAdapter extends BaseAdapter {
             holder = (ViewHolder) vi.getTag();
         }
 
-        final ProductCategory category = (ProductCategory) getItem(position);
+        final MenuGroup category = (MenuGroup) getItem(position);
 
-        holder.title.setText(category.getCategoryName());
+        holder.title.setText(category.getName());
 
         holder.edit.setOnClickListener(v -> {
             // TODO Auto-generated method stub
             Fragment fragment = new Fragment();
             Bundle arguments = new Bundle();
-            arguments.putString(Constants.ARG_CATEGORY_ID, category.getCategoryID());
+            arguments.putString(Constants.ARG_CATEGORY_ID, category.getId());
 
             if (itemID != null)
                 arguments.putString(Constants.ARG_ITEM_ID, itemID);
@@ -136,9 +133,9 @@ public class CategoryListAdapter extends BaseAdapter {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
                     SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
-                    ProductCategoryDataSource ds = new ProductCategoryDataSource(db);
-                    if (!ds.cekAvailable(category.getCategoryID())) {
-                        ds.delete(category.getCategoryID());
+                    MenuGroupDataSource ds = new MenuGroupDataSource(db);
+                    if (!ds.cekAvailable(category.getId())) {
+                        ds.delete(category.getId());
                         dtList.remove(position);
                         notifyDataSetChanged();
                     } else {

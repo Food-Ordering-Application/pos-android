@@ -33,10 +33,9 @@ import com.foa.pos.R;
 import com.foa.pos.adapter.CategorySpinnerAdapter;
 import com.foa.pos.dummy.MasterContent;
 import com.foa.pos.model.MenuItem;
-import com.foa.pos.model.ProductCategory;
 import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.ProductCategoryDataSource;
-import com.foa.pos.sqlite.ds.ProductDataSource;
+import com.foa.pos.sqlite.ds.MenuGroupDataSource;
+import com.foa.pos.sqlite.ds.MenuItemDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 
@@ -130,7 +129,7 @@ public class ProductAddFragment extends Fragment {
 	{
 		
 		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-		ProductCategoryDataSource catds = new ProductCategoryDataSource(db);
+		MenuGroupDataSource catds = new MenuGroupDataSource(db);
 		adapter.set(catds.getAll());
 		
 		if (getArguments().containsKey(Constants.ARG_PRODUCT_ID)) {
@@ -139,7 +138,7 @@ public class ProductAddFragment extends Fragment {
 			subtitle.setText(getString(R.string.edit));
 			
 			
-	        ProductDataSource ds = new ProductDataSource(db);
+	        MenuItemDataSource ds = new MenuItemDataSource(db);
 	        
 	        MenuItem dt =  ds.get(lastCode);
 	        txtName.setText(dt.getName());
@@ -167,7 +166,7 @@ public class ProductAddFragment extends Fragment {
 	        	icon.setImageResource(R.drawable.ic_noimage_square);
 	        }
 	        
-	        spinnerCategory.setSelection( adapter.indexOf(dt.getCategoryId()));
+	        spinnerCategory.setSelection( adapter.indexOf(dt.getGroupId()));
 	        lastName = dt.getName();
 	        
 		}
@@ -185,8 +184,8 @@ public class ProductAddFragment extends Fragment {
 			String description = txtDescription.getText().toString();
 			String discount = txtDiscount.getText().toString();
 			
-			ProductCategory cat =   (ProductCategory) spinnerCategory.getSelectedItem();
-			String category = cat.getCategoryID();
+			MenuGroup cat =   (MenuGroup) spinnerCategory.getSelectedItem();
+			String category = cat.getId();
 			
 			if(name.equals("") || price.equals("") || description.equals("") || category == null)
 			{
@@ -223,7 +222,7 @@ public class ProductAddFragment extends Fragment {
 			
 			
 			SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-			ProductDataSource ds = new ProductDataSource(db);
+			MenuItemDataSource ds = new MenuItemDataSource(db);
 	        
 			MenuItem data = new MenuItem();
 			
@@ -236,7 +235,7 @@ public class ProductAddFragment extends Fragment {
 			data.setPrice(Long.parseLong(price));
 			data.setDiscount(discount.equals("") ? 0 : Long.parseLong(discount));
 			data.setDescription(description);
-			data.setCategoryId(category);
+			data.setGroupId(category);
 			if(isEdit)
 			{
 				if(!lastName.equals(name))

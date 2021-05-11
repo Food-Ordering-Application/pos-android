@@ -16,7 +16,7 @@ import com.foa.pos.adapter.ProductListAdapter;
 import com.foa.pos.dummy.MasterContent;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.ProductDataSource;
+import com.foa.pos.sqlite.ds.MenuItemDataSource;
 import com.foa.pos.utils.Constants;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class ProductListFragment extends Fragment implements OnClickListener {
 	private void popolateAdapter()
 	{
 		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-        ProductDataSource ds = new ProductDataSource(db);
+        MenuItemDataSource ds = new MenuItemDataSource(db);
         dtlist = ds.getAll();
      
 		adapter.set(dtlist);
