@@ -178,10 +178,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 					case Constants.STATUS_CODE_SUCCESS:
 						ResponseAdapter<MenuData> res = response.body();
 						if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-
 							loading.dismiss();
-							res.getData().getMenuGroups();
-
+							saveMenuToLocal(res.getData().getMenuGroups());
 
 						}else{
 							Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
@@ -210,6 +208,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		for (MenuGroup menuGroup: menuGroups) {
 			menuGroupDS.insert(menuGroup);
 			for (MenuItem menuItem : menuGroup.getMenuItems()) {
+				menuItem.setGroupId(menuGroup.getId());
 				menuItemDS.insert(menuItem);
 			}
 		}
