@@ -90,8 +90,12 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
         String totalPay = tvTotalPay.getText().toString();
         switch (data){
             case "B":
-                tvTotalPay.setText( totalPay.substring(0,totalPay.length()-1)
-                );
+                if (totalPay.length()>1){
+                    tvTotalPay.setText( totalPay.substring(0,totalPay.length()-1));
+                }else{
+                    tvTotalPay.setText("0");
+                }
+
                 break;
             case "C":
                 tvTotalPay.setText(String.valueOf(0));

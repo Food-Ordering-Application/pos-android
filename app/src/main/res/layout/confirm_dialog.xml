@@ -35,7 +35,6 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@color/primaryColor"
                     android:paddingLeft="16dp"
                     android:paddingTop="10dp"
                     android:paddingRight="16dp"

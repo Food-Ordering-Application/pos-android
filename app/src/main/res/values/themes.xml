@@ -58,8 +58,13 @@
     </style>
 
     <style name="NumPadButtonNumber">
-        <item name="android:layout_width">80dp</item>
-        <item name="android:layout_height">80dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:backgroundTint">@color/teritaryColor</item>
+        <item name="buttonStyle">@drawable/numpad_button_style</item>
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">90dp</item>
+        <item name="android:layout_marginTop">-10dp</item>
+        <item name="android:layout_marginRight">2dp</item>
     </style>
 
     <style name="Theme.POS.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

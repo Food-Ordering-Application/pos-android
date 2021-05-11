@@ -177,10 +177,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:baselineAligned="false"
-            android:weightSum="5">
+            android:baselineAligned="false">
             <LinearLayout
-                android:layout_weight="4"
+                android:layout_weight=".1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -190,23 +189,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="100dp"
+                    android:layout_marginBottom="50dp"
                     />
-                <Button
-                    android:id="@+id/paymentCash"
-                    android:text="Tiền mặt"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="20dp"/>
-                <Button
-                    android:text="Zalo pay"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="20dp"/>
-                <Button
-                    android:text="Thẻ ATM"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="20dp"/>
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:layout_gravity="center">
+                    <Button
+                        android:id="@+id/paymentCash"
+                        android:text="Tiền mặt"
+                        android:layout_width="200dp"
+                        android:layout_height="120dp"
+                        android:layout_margin="5dp"/>
+                    <Button
+                        android:text="Zalo pay"
+                        android:layout_width="200dp"
+                        android:layout_height="120dp"
+                        android:layout_margin="5dp"/>
+                    <Button
+                        android:text="Thẻ ATM"
+                        android:layout_width="200dp"
+                        android:layout_height="120dp"
+                        android:layout_margin="5dp"/>
+                </GridLayout>
+
                 <ListView
                     android:visibility="gone"
                     android:layout_marginStart="50dp"
@@ -217,16 +224,15 @@
 
             </LinearLayout>
             <LinearLayout
-                android:layout_weight="1"
+                android:layout_weight=".1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical" >
+                android:gravity="center" >
                 <fragment
                     android:id="@+id/fragment_numpad"
                     android:name="com.foa.pos.NumPadFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="40dp"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
