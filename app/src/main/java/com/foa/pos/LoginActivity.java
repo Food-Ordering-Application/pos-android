@@ -21,6 +21,7 @@ import com.foa.pos.network.entity.LoginBody;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.MenuData;
 import com.foa.pos.network.response.ResponseAdapter;
+import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.MenuGroupDataSource;
 import com.foa.pos.sqlite.ds.MenuItemDataSource;
@@ -67,7 +68,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		//temp
 		Helper.initialize(getBaseContext());
 		Helper.write(Constants.MERCHANT_ID, "20c2c064-2457-4525-b7e4-7c2c10564e86");
-		Helper.write(Constants.RESTAURANT_ID, "dea72dac-6bcd-4bd8-b3a8-70565b36e0d5");
+		Helper.write(Constants.RESTAURANT_ID, "75d1fd95-9699-4f21-85e6-480def4d8bbb");
 
 		btnSaleOffline.setOnClickListener(v -> goNext());
 //		if (Helper.read(Constants.CASHIER_ID)!= null){
@@ -103,7 +104,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		loading.show();
 		Call<ResponseAdapter<LoginData>> responseCall = RetrofitClient.getInstance().getAppService()
-				.login(new LoginBody(username, password,Helper.read(Constants.RESTAURANT_ID)));
+				.login(new LoginBody(username, password,"07902d33-8f88-4c90-9781-e6382ad000f9"));
 		responseCall.enqueue(new Callback<ResponseAdapter<LoginData>>() {
 			@Override
 			public void onResponse(Call<ResponseAdapter<LoginData>> call, Response<ResponseAdapter<LoginData>> response) {
@@ -113,7 +114,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
 						LoginSession.getInstance().setStaffLogin(res.getData());
 						RetrofitClient.getInstance().setAuthorizationHeader(res.getData().getBearerAccessToken());
-						loading.dismiss();
+													loading.dismiss();
 						btnLogin.setEnabled(false);
 						YoYo.with(Techniques.FadeOutDown).interpolate(new OvershootInterpolator()).duration(500).withListener(new AnimatorListener() {
 							@Override
@@ -169,8 +170,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 	public void getMenuData(){
 		loading.show();
+		String restauntId = Helper.read(Constants.RESTAURANT_ID);
 		Call<ResponseAdapter<MenuData>> responseCall = RetrofitClient.getInstance().getAppService()
-				.getMenuByRestaurantId(Helper.read(Constants.RESTAURANT_ID));
+				.getMenuByRestaurantId(restauntId);
 		responseCall.enqueue(new Callback<ResponseAdapter<MenuData>>() {
 			@Override
 			public void onResponse(Call<ResponseAdapter<MenuData>> call, Response<ResponseAdapter<MenuData>> response) {
@@ -194,13 +196,13 @@ public class LoginActivity extends Activity implements OnClickListener {
 			@Override
 			public void onFailure(Call<ResponseAdapter<MenuData>> call, Throwable t) {
 				Log.e("Login Error", t.getMessage());
-				Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
 
 			}
 		});
 	}
 
 	private void saveMenuToLocal(List<MenuGroup> menuGroups){
+		DatabaseManager.initializeInstance(new DatabaseHelper(this));
 		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 		MenuItemDataSource menuItemDS = new MenuItemDataSource(db);
 		MenuGroupDataSource menuGroupDS = new MenuGroupDataSource(db);

@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.foa.pos.R;
+import com.foa.pos.model.MenuGroup;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -34,6 +34,7 @@ import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
 import com.foa.pos.model.IDataResultCallback;
+import com.foa.pos.model.MenuGroup;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
@@ -123,7 +124,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         toolbar.setOnMenuItemClickListener(this);
 
         //Init sqlite data source
-        DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         ProductDS = new MenuItemDataSource(db);
         OrderDS = new OrderDataSource(db);

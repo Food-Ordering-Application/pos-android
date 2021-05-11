@@ -61,7 +61,6 @@ public interface AppService {
     );
 
 
-    @FormUrlEncoded
     @GET("/restaurant/{restaurantId}/get-menu-information")
     Call<ResponseAdapter<MenuData>> getMenuByRestaurantId (
             @Path("restaurantId") String restaurantId

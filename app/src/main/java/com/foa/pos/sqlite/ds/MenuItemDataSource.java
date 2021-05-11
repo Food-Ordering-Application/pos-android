@@ -71,7 +71,7 @@ public class MenuItemDataSource {
 		return getAll(false,keyword,categoryid);
 	}
 	
-	public ArrayList<MenuItem> getAll(boolean isAll, String keyword, String categoryid) {
+	public ArrayList<MenuItem> getAll(boolean isAll, String keyword, String menuGroupId) {
 		 
 		ArrayList<MenuItem> items = new ArrayList<MenuItem>();
 
@@ -80,11 +80,11 @@ public class MenuItemDataSource {
 
 		String selectQuery = " SELECT  *  FROM " + DbSchema.TBL_MENU_ITEM;
 		if(!isAll)
-			where.add(DbSchema.COL_MENU_ITEM_STATUS + " = 1 ");
+			//where.add(DbSchema.COL_MENU_ITEM_STATUS + " = 1 ");
 		if(keyword != null && !keyword.equals(""))
 			where.add(DbSchema.COL_MENU_ITEM_NAME + " like '%" + keyword + "%' ");
-		if(categoryid != null && !categoryid.equals(""))
-			where.add(DbSchema.COL_MENU_GROUP_ID + " = '" + categoryid + "' ");
+		if(menuGroupId != null && !menuGroupId.equals(""))
+			where.add(DbSchema.COL_MENU_GROUP_ID + " = '" + menuGroupId + "' ");
 
 		if(where.size() != 0)
 			selectQuery += " where " + TextUtils.join(" AND ",where);

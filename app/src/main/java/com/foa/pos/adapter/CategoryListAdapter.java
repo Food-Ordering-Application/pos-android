@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.foa.pos.R;
+import com.foa.pos.model.MenuGroup;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.MenuGroupDataSource;
 import com.foa.pos.utils.Constants;

@@ -32,6 +32,7 @@ import androidx.fragment.app.Fragment;
 import com.foa.pos.R;
 import com.foa.pos.adapter.CategorySpinnerAdapter;
 import com.foa.pos.dummy.MasterContent;
+import com.foa.pos.model.MenuGroup;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.MenuGroupDataSource;

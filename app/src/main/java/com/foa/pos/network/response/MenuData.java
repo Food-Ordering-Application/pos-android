@@ -1,7 +1,6 @@
 package com.foa.pos.network.response;
 
-import android.view.Menu;
-
+import com.foa.pos.model.Menu;
 import com.foa.pos.model.MenuGroup;
 import com.google.gson.annotations.SerializedName;
 

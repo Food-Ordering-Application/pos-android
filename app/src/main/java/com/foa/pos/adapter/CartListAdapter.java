@@ -170,10 +170,10 @@ public class CartListAdapter extends BaseAdapter {
             int newQuantity = orderItem.getQuantity() - 1;
             orderItem.setQuantity(newQuantity);
 
-            updateOrderItemQuantityOnline(orderItem);
+            //updateOrderItemQuantityOnline(orderItem);
             //updateOrderItemQuantity(orderItem);
-//            debouncer.debounce(CartListAdapter.class, () ->
-//                    updateOrderItemQuantityOnline(orderItem), 1000, TimeUnit.MILLISECONDS);
+            debouncer.debounce(CartListAdapter.class, () ->
+                    updateOrderItemQuantityOnline(orderItem), 1000, TimeUnit.MILLISECONDS);
 
             long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
             long subtotal = (orderItem.getPrice() * orderItem.getQuantity()) - discount;
@@ -193,9 +193,9 @@ public class CartListAdapter extends BaseAdapter {
             // TODO Auto-generated method stub
             orderItem.setQuantity(orderItem.getQuantity() + 1);
             //updateOrderItemQuantity(orderItem);
-            updateOrderItemQuantityOnline(orderItem);
-//            debouncer.debounce(CartListAdapter.class, () ->
-//                    updateOrderItemQuantityOnline(orderItem), 1000, TimeUnit.MILLISECONDS);
+            //updateOrderItemQuantityOnline(orderItem);
+            debouncer.debounce(CartListAdapter.class, () ->
+                    updateOrderItemQuantityOnline(orderItem), 1000, TimeUnit.MILLISECONDS);
 
             long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
             long subtotal = (orderItem.getPrice() * orderItem.getQuantity()) - discount;
@@ -254,17 +254,20 @@ public class CartListAdapter extends BaseAdapter {
                     }
                 }
                 if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-                    resultCallback.onSuccess(true);
+                    Log.e("[OrderFragment][Api udapte order item qty]", "call");
+
+
                     ResponseAdapter<OrderData> res = response.body();
                     assert res != null;
-                    if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
                         listener.onChange(res.getData().getOrder());
                     } else {
-                        Log.e("[Order fragment]", "Create order fail");
+                        resultCallback.onSuccess(false);
+                        Log.e("[Order fragment]", "Update order item qty");
                     }
                 } else {
                     resultCallback.onSuccess(false);
-                    Log.e("[Order fragment]", "Create order fail");
                 }
 
             }

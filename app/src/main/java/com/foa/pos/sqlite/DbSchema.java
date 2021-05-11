@@ -51,7 +51,7 @@ public interface DbSchema {
 				+ COL_MENU_ITEM_IMAGE + " TEXT"
 			+ ");";
 	
-	String TBL_ORDER = "order";
+	String TBL_ORDER = "order_pos";
 	String COL_ORDER = "order_id";
 	String COL_ORDER_ORDERED_ON = "ordered_on";
 	String COL_ORDER_UPDATED_ON = "updated_on";
