@@ -175,6 +175,9 @@ public final class Helper
 	public static String formatMoney(long monney){
 		return decimalformat.format(monney)+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL);
 	}
+	public static String formatMoney(String monney){
+		return monney+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL);
+	}
 
 	public static Date plusMinutes(Date date, int minute) {
 		GregorianCalendar cal = new GregorianCalendar();
@@ -233,6 +236,11 @@ public final class Helper
 	public static void showFailNotification(Context context,LoadingDialog loading,LinearLayout wrapper,String message){
 		loading.dismiss();
 		YoYo.with(Techniques.Shake).duration(700).playOn(wrapper);
+		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+	}
+
+	public static void showFailNotification(Context context,LoadingDialog loading,String message){
+		loading.dismiss();
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 

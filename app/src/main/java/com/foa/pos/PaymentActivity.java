@@ -2,6 +2,7 @@ package com.foa.pos;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -11,17 +12,22 @@ import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.utils.Constants;
+import com.foa.pos.utils.Helper;
+import com.foa.pos.utils.OrderSession;
 import com.foa.pos.widget.CustomConfirm;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import okio.Timeout;
 
 public class PaymentActivity extends AppCompatActivity implements NumPadFragment.OnNumpadClick {
 
@@ -34,7 +40,6 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
     private TextView txtAmount;
     private TextView txtGrantTotal;
     private TextView tvTotalPay;
-
     private Button paymentCash;
 
     @Override
@@ -46,21 +51,14 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
         context = this;
         init();
 
-        if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                orderId= null;
-            } else {
-                orderId= extras.getString(Constants.CURRENT_ORDER_ID);
-            }
-        } else {
-            orderId= (String) savedInstanceState.getSerializable("STRING_I_NEED");
-        }
+        currentOrder= OrderSession.getInstance();
+
 
         DatabaseManager.initializeInstance(new DatabaseHelper(this));
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
-        currentOrder = DS.getOrderById(orderId);
+
+
         txtGrantTotal.setText(String.valueOf(currentOrder.getSubTotal()));
         txtAmount.setText(String.valueOf(currentOrder.getSubTotal()));
         tvTotalPay.setText(String.valueOf(currentOrder.getSubTotal()));
@@ -88,26 +86,31 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
     @Override
     public void onReceiveData(String data) {
         String totalPay = tvTotalPay.getText().toString();
+        String newTotalPay;
         switch (data){
             case "B":
                 if (totalPay.length()>1){
-                    tvTotalPay.setText( totalPay.substring(0,totalPay.length()-1));
+                    newTotalPay =  totalPay.substring(0,totalPay.length()-1);
                 }else{
-                    tvTotalPay.setText("0");
+                    newTotalPay = "0";
                 }
 
                 break;
             case "C":
-                tvTotalPay.setText(String.valueOf(0));
+                newTotalPay = "0";
                 break;
             default:
                 if(isFirstClick){
-                    tvTotalPay.setText(data);
+                    newTotalPay = data;
                     isFirstClick = false;
                 }else{
-                    tvTotalPay.setText( tvTotalPay.getText()+data);
+                    if (totalPay.equals("0")){
+                        newTotalPay = data;
+                    }else
+                        newTotalPay = tvTotalPay.getText()+data;
                 }
         }
+        tvTotalPay.setText(newTotalPay);
     }
 
     private OnClickListener paymentOnClick = new OnClickListener() {
@@ -116,8 +119,20 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
 
             CustomConfirm con = new CustomConfirm(context, currentOrder);
             con.setConfirmListener(result -> {
-
                 Toast.makeText(context, "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                OrderSession.clearInstance();
+                new CountDownTimer(2000,1000){
+
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        startActivity(new Intent(PaymentActivity.this, MainActivity.class));
+                    }
+                };
             });
             con.show();
         }

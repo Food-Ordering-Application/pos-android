@@ -75,7 +75,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 //			goNext();
 //		}
 
-		getMenuData();
+
 
 	}
 
@@ -112,7 +112,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 					case Constants.STATUS_CODE_SUCCESS:
 						ResponseAdapter<LoginData> res = response.body();
 					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-						LoginSession.getInstance().setStaffLogin(res.getData());
+						LoginSession.setInstance(res.getData());
 						RetrofitClient.getInstance().setAuthorizationHeader(res.getData().getBearerAccessToken());
 													loading.dismiss();
 						btnLogin.setEnabled(false);
@@ -168,54 +168,5 @@ public class LoginActivity extends Activity implements OnClickListener {
 		});
 	}
 
-	public void getMenuData(){
-		loading.show();
-		String restauntId = Helper.read(Constants.RESTAURANT_ID);
-		Call<ResponseAdapter<MenuData>> responseCall = RetrofitClient.getInstance().getAppService()
-				.getMenuByRestaurantId(restauntId);
-		responseCall.enqueue(new Callback<ResponseAdapter<MenuData>>() {
-			@Override
-			public void onResponse(Call<ResponseAdapter<MenuData>> call, Response<ResponseAdapter<MenuData>> response) {
-				switch (response.code()) {
-					case Constants.STATUS_CODE_SUCCESS:
-						ResponseAdapter<MenuData> res = response.body();
-						if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-							loading.dismiss();
-							saveMenuToLocal(res.getData().getMenuGroups());
-
-						}else{
-							Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
-						}
-						break;
-					default:
-						Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
-				}
-
-			}
-
-			@Override
-			public void onFailure(Call<ResponseAdapter<MenuData>> call, Throwable t) {
-				Log.e("Login Error", t.getMessage());
-
-			}
-		});
-	}
-
-	private void saveMenuToLocal(List<MenuGroup> menuGroups){
-		DatabaseManager.initializeInstance(new DatabaseHelper(this));
-		SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
-		MenuItemDataSource menuItemDS = new MenuItemDataSource(db);
-		MenuGroupDataSource menuGroupDS = new MenuGroupDataSource(db);
-
-		for (MenuGroup menuGroup: menuGroups) {
-			menuGroupDS.insert(menuGroup);
-			for (MenuItem menuItem : menuGroup.getMenuItems()) {
-				menuItem.setGroupId(menuGroup.getId());
-				menuItemDS.insert(menuItem);
-			}
-		}
-
-
-	}
 
 }

@@ -23,7 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.POS"
         android:windowSoftInputMode="adjustPan">
-        <activity android:name=".VerifyAppActivity">
+        <activity android:name=".VerifyAppActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|adjustResize">
 
         </activity>
         <activity
@@ -42,6 +44,9 @@
             android:label="@string/title_activity_login"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan|adjustResize">
+
+        </activity>
+        <activity android:name=".SplashActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

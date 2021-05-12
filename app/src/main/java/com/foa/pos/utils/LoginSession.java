@@ -15,7 +15,7 @@ public class LoginSession {
         return staffLogin;
     }
 
-    public void setStaffLogin(LoginData staffLogin){
+    public static void setInstance(LoginData staffLogin){
         LoginSession.staffLogin = staffLogin;
     }
 }

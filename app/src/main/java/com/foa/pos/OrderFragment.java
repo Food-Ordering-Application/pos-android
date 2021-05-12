@@ -53,6 +53,7 @@ import com.foa.pos.sqlite.ds.MenuItemDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
+import com.foa.pos.utils.OrderSession;
 import com.foa.pos.widget.PickToppingDialog;
 
 import java.io.IOException;
@@ -106,6 +107,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         loginData = LoginSession.getInstance();
+
     }
 
 
@@ -337,7 +339,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             createOrderAndFirstOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
                                 @Override
                                 public void onSuccess(boolean success, Order order) {
-                                    Helper.write(Constants.CURRENT_ORDER_ID,order.getId());
                                     cartAdapter.set(order.getOrderItems());
                                 }
 
@@ -466,7 +467,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
             //showCheckout();
             Intent intent = new Intent(getActivity(), PaymentActivity.class);
-            intent.putExtra(Constants.CURRENT_ORDER_ID, currentOrder.getId());
+            OrderSession.setInstance(currentOrder);
             startActivity(intent);
         }
     };

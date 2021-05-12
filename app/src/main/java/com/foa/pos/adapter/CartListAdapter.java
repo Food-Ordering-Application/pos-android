@@ -26,6 +26,7 @@ import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Debouncer;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
+import com.foa.pos.utils.OrderSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class CartListAdapter extends BaseAdapter {
     private OrderDataSource OrderDS;
     private boolean isPayment = false;
     private LoginData loginData;
+    private Order currentOrder;
 
     private final Debouncer debouncer = new Debouncer();
 
@@ -55,6 +57,7 @@ public class CartListAdapter extends BaseAdapter {
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         OrderDS = new OrderDataSource(db);
         loginData = LoginSession.getInstance();
+        currentOrder = OrderSession.getInstance();
     }
 
     private class ViewHolder {
@@ -210,7 +213,7 @@ public class CartListAdapter extends BaseAdapter {
 
     private void updateOrderItemQuantityOnline(OrderItem orderItem) {
         if (loginData != null) {
-            updateOrderItemQuantityOnline(Helper.read(Constants.CURRENT_ORDER_ID),orderItem.getId(), orderItem.getQuantity(), new IResultCallback() {
+            updateOrderItemQuantityOnline(currentOrder.getId(),orderItem.getId(), orderItem.getQuantity(), new IResultCallback() {
                 @Override
                 public void onSuccess(boolean success) {
                     if (success) {
