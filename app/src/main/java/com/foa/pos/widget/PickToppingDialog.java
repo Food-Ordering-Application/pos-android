@@ -31,6 +31,7 @@ import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -45,6 +46,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	private ListView toppingListView;
 	private LinearLayout toppingsGroupContainer;
 	private ProgressBar progressBar;
+	private List<MenuItemToppingGroup> menuItemToppingGroup;
 
 	private PickToppingListener listener;
 	LoginData loginData;
@@ -53,14 +55,19 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		super(context);
 		this.context = context;
 	}
-	public PickToppingDialog(Context context, MenuItem product) {
+	public PickToppingDialog(Context context, MenuItem menuItem) {
 		super(context);
 		this.context = context;
-		this.menuItem = product;
+		this.menuItem = menuItem;
+		this.menuItemToppingGroup = new ArrayList<>();
+	}
+
+	public void setMenuItemToppingGroup(List<MenuItemToppingGroup> menuItemToppingGroup) {
+		this.menuItemToppingGroup = menuItemToppingGroup;
 	}
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -77,21 +84,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		nameTextView.setText(menuItem.getName());
 		priceTextView.setText(Helper.formatMoney(menuItem.getPrice()));
 		toppingsGroupContainer  = findViewById(R.id.toppingsGroupContainer);
-		if (loginData!=null){
-			getToppingsByMenuItemId("625db543-fec1-4ca9-8b19-abfb0adf9e7d", new IResultCallback() {
-				@Override
-				public void onSuccess(boolean success) {
 
-				}
-
-				@Override
-				public void onError() {
-
-				}
-			});
-		}else{
-
-		}
 
 		//toppingsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> btnOk.setEnabled(true));
 
@@ -101,6 +94,10 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	}
 
 	private void addRadioButtons(List<MenuItemToppingGroup> menuItemToppingGroup) {
+		if (menuItemToppingGroup.size()==0) {
+
+			return;
+		}
 		toppingsGroupContainer.setOrientation(LinearLayout.VERTICAL);
 		for (int i = 0; i < menuItemToppingGroup.size(); i++) {
 			MenuItemToppingGroup currentMenuItemToppingGroup = menuItemToppingGroup.get(i);
@@ -169,41 +166,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
         void onFinish(int result);
     }
 
-	private void getToppingsByMenuItemId(String menuItemId, IResultCallback resultCallback) {
-		Call<ResponseAdapter<ToppingGroupData>> responseCall = RetrofitClient.getInstance().getAppService()
-				.getToppingsByMenuItemId(menuItemId);
-		responseCall.enqueue(new Callback<ResponseAdapter<ToppingGroupData>>() {
-			@Override
-			public void onResponse(Call<ResponseAdapter<ToppingGroupData>> call, Response<ResponseAdapter<ToppingGroupData>> response) {
-				if (response.errorBody() != null) {
-					try {
-						Log.e("[PickToppingDialog][Api error]", response.errorBody().string());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-					resultCallback.onSuccess(true);
-					ResponseAdapter<ToppingGroupData> res = response.body();
-					assert res != null;
-					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-						addRadioButtons(res.getData().getMenuItemToppingGroup());
-					} else {
-						Log.e("[Order fragment]", "Create order fail");
-					}
-				} else {
-					resultCallback.onSuccess(false);
-					Log.e("[Order fragment]", "Create order fail");
-				}
 
-			}
-
-			@Override
-			public void onFailure(Call<ResponseAdapter<ToppingGroupData>> call, Throwable t) {
-				Log.e("Login Error", t.getMessage());
-			}
-		});
-	}
     
 
 }

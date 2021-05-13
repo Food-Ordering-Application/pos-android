@@ -37,7 +37,6 @@ public class OrdersFragment extends Fragment {
         detailLayout = root.findViewById(R.id.bgOrderDetail);
 
         Helper.initialize(getActivity().getBaseContext());
-        DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
         final OrdersGridViewAdapter adapter = new OrdersGridViewAdapter(getActivity(), DS.getAllOrder());

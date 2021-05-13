@@ -66,9 +66,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		loading = new LoadingDialog(this);
 
 		//temp
-		Helper.initialize(getBaseContext());
-		Helper.write(Constants.MERCHANT_ID, "20c2c064-2457-4525-b7e4-7c2c10564e86");
-		Helper.write(Constants.RESTAURANT_ID, "75d1fd95-9699-4f21-85e6-480def4d8bbb");
+
 
 		btnSaleOffline.setOnClickListener(v -> goNext());
 //		if (Helper.read(Constants.CASHIER_ID)!= null){
@@ -80,7 +78,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
 
 	private void goNext(){
-		startActivity( new Intent(LoginActivity.this,MainActivity.class));
+		Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
 	}
 
 

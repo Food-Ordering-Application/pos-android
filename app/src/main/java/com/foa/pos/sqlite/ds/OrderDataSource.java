@@ -23,12 +23,7 @@ public class OrderDataSource {
 	public Order getOrderById(String id) {
 		 
 		Order order = new Order();
-		 
-//		String selectQuery = 	" SELECT  o.*,u."+DbSchema.COL_USER_NAME+"  FROM " + DbSchema.TBL_ORDER   + " o " +
-//								" LEFT JOIN " +  DbSchema.TBL_USER +  " u ON u." +  DbSchema.COL_USER_CODE + " = o." + DbSchema.COL_ORDER_CASHIER_ID +
-//								" Where " +DbSchema.COL_ORDER + " = '"+id+"'";
 		String selectQuery = 	" SELECT *  FROM " + DbSchema.TBL_ORDER + " Where " +DbSchema.COL_ORDER + " = '"+id+"'";
-		
 		Cursor c = db.rawQuery(selectQuery, null);
 	
 		if (c.moveToFirst()) {
@@ -198,8 +193,6 @@ public class OrderDataSource {
 
 		return 1;
 	}
-
-
 
 	public long updateOutSoldOrderItem(String orderItemId, boolean isOutOfSold)
 	{

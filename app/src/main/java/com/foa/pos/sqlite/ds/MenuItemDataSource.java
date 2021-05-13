@@ -61,8 +61,7 @@ public class MenuItemDataSource {
 		}
 		return item;
 	}
-	
-	
+
 	public ArrayList<MenuItem> getAll() {
 		return getAll(true,null,null);
 	}
@@ -184,9 +183,9 @@ public class MenuItemDataSource {
 		return "";
 	}
 	
-	public int delete(String code)
+	public int delete(String id)
 	{
-		return db.delete(DbSchema.TBL_MENU_ITEM, DbSchema.COL_MENU_ITEM_ID + "= '" + code + "'", null);
+		return db.delete(DbSchema.TBL_MENU_ITEM, DbSchema.COL_MENU_ITEM_ID + "= '" + id + "'", null);
 	}
 	
 	public boolean cekCode(String code) {

@@ -153,7 +153,6 @@ public class DeliveryGridViewAdapter extends ArrayAdapter<Order> {
             EditOrderItemDialog dialog = new EditOrderItemDialog(context,item);
             dialog.setOutOfProductListener(result -> {
                 if (result){
-                    DatabaseManager.initializeInstance(new DatabaseHelper(context));
                     SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
                     OrderDataSource DS = new OrderDataSource(db);
                     DS.updateOutSoldOrderItem(item.getId(),result);

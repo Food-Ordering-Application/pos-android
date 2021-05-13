@@ -11,25 +11,12 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.foa.pos.R;
-import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.Order;
-import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.response.LoginData;
-import com.foa.pos.network.response.OrderData;
-import com.foa.pos.network.response.ResponseAdapter;
-import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
-import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.LoginSession;
-
-import java.io.IOException;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class CustomConfirm extends Dialog implements View.OnClickListener{
 	private Order order;
@@ -121,7 +108,6 @@ public class CustomConfirm extends Dialog implements View.OnClickListener{
 				if (loginData!=null){
 
 				}else{
-					DatabaseManager.initializeInstance(new DatabaseHelper(context));
 					SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
 					OrderDataSource DS = new OrderDataSource(db);
 					DS.updateOrderStatus(order.getId(),1);

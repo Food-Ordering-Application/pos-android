@@ -53,8 +53,6 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
 
         currentOrder= OrderSession.getInstance();
 
-
-        DatabaseManager.initializeInstance(new DatabaseHelper(this));
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
 

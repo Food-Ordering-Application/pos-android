@@ -34,7 +34,9 @@ import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
 import com.foa.pos.model.IDataResultCallback;
+import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.MenuGroup;
+import com.foa.pos.model.MenuItemToppingGroup;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
@@ -45,6 +47,7 @@ import com.foa.pos.network.entity.SendOrderItem;
 import com.foa.pos.network.response.OrderData;
 import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.network.response.LoginData;
+import com.foa.pos.network.response.ToppingGroupData;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
@@ -99,6 +102,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     private Order currentOrder = null;
     private ArrayList<OrderItem> orderItemsList = new ArrayList<>();
+    private List<MenuItemToppingGroup> menuItemToppingGroups  = new ArrayList<>();
 
     private LoginData loginData;
 
@@ -329,7 +333,36 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             // TODO Auto-generated method stub
 
             MenuItem menuItem = (MenuItem) menuAdapter.getItem(position);
+
             PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(), menuItem);
+
+            if (!menuAdapter.isSelected(menuItem.getId())) {
+                if (loginData!=null){
+                    getToppingsByMenuItemId(menuItem.getId(), new IResultCallback() {
+                        @Override
+                        public void onSuccess(boolean success) {
+                            if (menuItemToppingGroups.size()>0){
+                                pickToppingDialog.setMenuItemToppingGroup(menuItemToppingGroups);
+                                pickToppingDialog.show();
+                            }
+
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+                }
+            } else {
+                menuAdapter.setSelection(menuItem.getId());
+                cartAdapter.removeByID(menuItem.getId());
+                if (cartAdapter.getCount() == 0) {
+                    OrderSession.clearInstance();
+                    currentOrder = null;
+                }
+            }
+
             pickToppingDialog.setPickToppingistener(result -> {
                 menuAdapter.setSelection(menuItem.getId());
                 if (menuAdapter.isSelected(menuItem.getId())) {
@@ -339,7 +372,11 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                             createOrderAndFirstOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
                                 @Override
                                 public void onSuccess(boolean success, Order order) {
-                                    cartAdapter.set(order.getOrderItems());
+                                    if (success){
+                                        cartAdapter.set(order.getOrderItems());
+                                    }else{
+                                        Toast.makeText(getActivity(), "That bai", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
 
                                 @Override
@@ -355,15 +392,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
                 }
             });
-            if (!menuAdapter.isSelected(menuItem.getId())) {
-                pickToppingDialog.show();
-            } else {
-                menuAdapter.setSelection(menuItem.getId());
-                cartAdapter.removeByID(menuItem.getId());
-                if (cartAdapter.getCount() == 0) {
-                    currentOrder = null;
-                }
-            }
+
         }
     };
 
@@ -490,4 +519,40 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
         }
     };
+
+    private void getToppingsByMenuItemId(String menuItemId, IResultCallback resultCallback) {
+        Call<ResponseAdapter<ToppingGroupData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .getToppingsByMenuItemId(menuItemId);
+        responseCall.enqueue(new Callback<ResponseAdapter<ToppingGroupData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<ToppingGroupData>> call, Response<ResponseAdapter<ToppingGroupData>> response) {
+                if (response.errorBody() != null) {
+                    try {
+                        Log.e("[PickToppingDialog][Api error]", response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    resultCallback.onSuccess(true);
+                    ResponseAdapter<ToppingGroupData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        menuItemToppingGroups = res.getData().getMenuItemToppingGroup();
+                    } else {
+                        Log.e("[Order fragment]", "Create order fail");
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                    Log.e("[Order fragment]", "Create order fail");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<ToppingGroupData>> call, Throwable t) {
+                Log.e("Login Error", t.getMessage());
+            }
+        });
+    }
 }

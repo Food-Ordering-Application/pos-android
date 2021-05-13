@@ -41,7 +41,6 @@ public class DeliveryFragment extends Fragment {
         init();
         setGroupButtonListenter();
         //get data
-        DatabaseManager.initializeInstance(new DatabaseHelper(getActivity()));
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
         //set adapter

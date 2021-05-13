@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
@@ -45,14 +46,21 @@ public class SplashActivity extends AppCompatActivity {
         syncStatus = findViewById(R.id.syncStatusTextView);
         TryAgain = findViewById(R.id.TryAgainButton);
 
+        Helper.initialize(this);
+        Helper.write(Constants.MERCHANT_ID, "20c2c064-2457-4525-b7e4-7c2c10564e86");
+        Helper.write(Constants.RESTAURANT_ID, "75d1fd95-9699-4f21-85e6-480def4d8bbb");
+
         getMenuData();
 
-        TryAgain.setOnClickListener(v -> getMenuData());
+        TryAgain.setOnClickListener(v -> {
+            TryAgain.setEnabled(false);
+            getMenuData();
+        });
+
     }
 
 
     public void getMenuData(){
-        Helper.initialize(this);
         String restauntId = Helper.read(Constants.RESTAURANT_ID);
         Call<ResponseAdapter<MenuData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .getMenuByRestaurantId(restauntId);
@@ -65,8 +73,9 @@ public class SplashActivity extends AppCompatActivity {
                         ResponseAdapter<MenuData> res = response.body();
                         if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
                             saveMenuToLocal(res.getData().getMenuGroups());
-                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-
+                            Intent intent = new Intent(SplashActivity.this,LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                         }
                         break;
                     default:
@@ -91,6 +100,9 @@ public class SplashActivity extends AppCompatActivity {
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         MenuItemDataSource menuItemDS = new MenuItemDataSource(db);
         MenuGroupDataSource menuGroupDS = new MenuGroupDataSource(db);
+
+        menuItemDS.truncate();
+        menuGroupDS.truncate();
 
         for (MenuGroup menuGroup: menuGroups) {
             menuGroupDS.insert(menuGroup);
