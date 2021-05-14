@@ -48,6 +48,7 @@ import com.foa.pos.network.response.OrderData;
 import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.ToppingGroupData;
+import com.foa.pos.service.OrderService;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
@@ -105,6 +106,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private List<MenuItemToppingGroup> menuItemToppingGroups  = new ArrayList<>();
 
     private LoginData loginData;
+    private OrderService orderService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
         initFindView();
         initLayout();
+
+        orderService = new OrderService();
 
         //Toolbar setting
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
@@ -338,21 +342,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
             if (!menuAdapter.isSelected(menuItem.getId())) {
                 if (loginData!=null){
-                    getToppingsByMenuItemId(menuItem.getId(), new IResultCallback() {
-                        @Override
-                        public void onSuccess(boolean success) {
-                            if (menuItemToppingGroups.size()>0){
-                                pickToppingDialog.setMenuItemToppingGroup(menuItemToppingGroups);
-                                pickToppingDialog.show();
-                            }
-
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
+                    pickToppingDialog.show();
                 }
             } else {
                 menuAdapter.setSelection(menuItem.getId());
@@ -367,23 +357,42 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 menuAdapter.setSelection(menuItem.getId());
                 if (menuAdapter.isSelected(menuItem.getId())) {
                     if (loginData != null) {
-                        if (cartAdapter.getCount()==0){
-                            OrderItem orderItem = Helper.createSendOrderItem(menuItem);
-                            createOrderAndFirstOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
+                        OrderItem orderItem = Helper.createSendOrderItem(menuItem);
+                        cartAdapter.add(orderItem);
+                        if (cartAdapter.getCount()==1){
+                            orderService.createOrderAndFirstOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
                                 @Override
                                 public void onSuccess(boolean success, Order order) {
                                     if (success){
+                                        currentOrder = order;
+                                        OrderSession.setInstance(order);
                                         cartAdapter.set(order.getOrderItems());
                                     }else{
                                         Toast.makeText(getActivity(), "That bai", Toast.LENGTH_SHORT).show();
                                     }
                                 }
-
                                 @Override
                                 public void onError() {
 
                                 }
                             });
+                        }else{
+                            orderService.addOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
+                                @Override
+                                public void onSuccess(boolean success, Order order) {
+                                    if (success){
+                                        currentOrder = order;
+                                        cartAdapter.set(order.getOrderItems());
+                                    }else{
+                                        Toast.makeText(getActivity(), "That bai", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                @Override
+                                public void onError() {
+
+                                }
+                            });
+
                         }
 
                     } else {
@@ -421,46 +430,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     }
 
 
-    private void createOrderAndFirstOrderItemOnline(OrderItem orderItem, IDataResultCallback<Order> resultCallback) {
 
-        final SendOrderItem sendOrderItem = orderItem.createSendOrderItem();
-        Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .createOrderAndAddFirstOrderItem(
-                        new NewOrderBody(sendOrderItem, Helper.read(Constants.RESTAURANT_ID),
-                                "", loginData.getStaff().getId()));
-        responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
-            @Override
-            public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
-                if (response.errorBody() != null) {
-                    try {
-                        Log.e("[OrderFragment][Api error]", response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (response.code() == Constants.STATUS_CODE_CREATED) {
-
-                    ResponseAdapter<OrderData> res = response.body();
-                    assert res != null;
-                    if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
-                        currentOrder = res.getData().getOrder();
-                        resultCallback.onSuccess(true, currentOrder);
-                    } else {
-                        Log.e("[Order fragment]", "Create order fail");
-                    }
-                } else {
-                    resultCallback.onSuccess(false, null);
-                    Log.e("[Order fragment]", "Create order fail");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
-                Log.e("Login Error", t.getMessage());
-            }
-        });
-    }
 
     private final TextWatcher keywordOnchange = new TextWatcher() {
 
@@ -496,7 +466,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             }
             //showCheckout();
             Intent intent = new Intent(getActivity(), PaymentActivity.class);
-            OrderSession.setInstance(currentOrder);
             startActivity(intent);
         }
     };
@@ -520,39 +489,4 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
     };
 
-    private void getToppingsByMenuItemId(String menuItemId, IResultCallback resultCallback) {
-        Call<ResponseAdapter<ToppingGroupData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .getToppingsByMenuItemId(menuItemId);
-        responseCall.enqueue(new Callback<ResponseAdapter<ToppingGroupData>>() {
-            @Override
-            public void onResponse(Call<ResponseAdapter<ToppingGroupData>> call, Response<ResponseAdapter<ToppingGroupData>> response) {
-                if (response.errorBody() != null) {
-                    try {
-                        Log.e("[PickToppingDialog][Api error]", response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-                    resultCallback.onSuccess(true);
-                    ResponseAdapter<ToppingGroupData> res = response.body();
-                    assert res != null;
-                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-                        menuItemToppingGroups = res.getData().getMenuItemToppingGroup();
-                    } else {
-                        Log.e("[Order fragment]", "Create order fail");
-                    }
-                } else {
-                    resultCallback.onSuccess(false);
-                    Log.e("[Order fragment]", "Create order fail");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseAdapter<ToppingGroupData>> call, Throwable t) {
-                Log.e("Login Error", t.getMessage());
-            }
-        });
-    }
 }

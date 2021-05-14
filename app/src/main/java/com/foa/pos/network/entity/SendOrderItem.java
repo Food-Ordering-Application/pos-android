@@ -12,14 +12,17 @@ public class SendOrderItem {
     private String menuItemId;
     @SerializedName("price")
     private long price;
+    @SerializedName("name")
+    private String name;
     @SerializedName("quantity")
     private int quantity;
     @SerializedName("orderItemToppings")
     private List<OrderItemTopping> orderItemToppings;
 
-    public SendOrderItem(String menuItemId, long price, int quantity, List<OrderItemTopping> orderItemToppings) {
+    public SendOrderItem(String menuItemId, long price, String name, int quantity, List<OrderItemTopping> orderItemToppings) {
         this.menuItemId = menuItemId;
         this.price = price;
+        this.name = name;
         this.quantity = quantity;
         this.orderItemToppings = orderItemToppings;
     }
@@ -30,6 +33,14 @@ public class SendOrderItem {
 
     public void setMenuItemId(String menuItemId) {
         this.menuItemId = menuItemId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getPrice() {

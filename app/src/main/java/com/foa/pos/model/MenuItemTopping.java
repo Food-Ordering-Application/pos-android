@@ -1,5 +1,6 @@
 package com.foa.pos.model;
 
+import com.foa.pos.model.enums.StockState;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class MenuItemTopping {
     private long price;
     @SerializedName("menuItemToppings")
     private List<MenuItemToppingCustom> menuItemToppingCustomList;
+    private int radioButtonId;
 
     public MenuItemTopping(String id, String name, String description, int maxQuantity, int index, boolean isActive, long price, List<MenuItemToppingCustom> menuItemToppingCustomList) {
         this.id = id;
@@ -98,14 +100,15 @@ public class MenuItemTopping {
         this.menuItemToppingCustomList = menuItemToppingCustomList;
     }
 
-    public static List<MenuItemTopping> getSampleList(){
-        List<MenuItemTopping> toppingList = new ArrayList<>();
-        List<MenuItemToppingCustom> customPriceList = new ArrayList<>();
-        customPriceList.add(new MenuItemToppingCustom("123",6000));
-        toppingList.add(new MenuItemTopping("123","Tran chau","",5,1,true,
-                5000,customPriceList));
-        toppingList.add(new MenuItemTopping("124","Hat dau","",5,1,true,
-                7000,customPriceList));
-        return toppingList;
+    public int getRadioButtonId() {
+        return radioButtonId;
+    }
+
+    public void setRadioButtonId(int radioButtonId) {
+        this.radioButtonId = radioButtonId;
+    }
+
+    public OrderItemTopping createOrderItemTopping(){
+        return new OrderItemTopping("",id,name,price,1, StockState.IN_STOCK);
     }
 }

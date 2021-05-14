@@ -257,6 +257,7 @@ public final class Helper
 	public static OrderItem createSendOrderItem(MenuItem product){
 		OrderItem orderItem = new OrderItem();
 		orderItem.setMenuItemId(product.getId());
+		orderItem.setMenuItemName(product.getName());
 		orderItem.setQuantity(1);
 		orderItem.setPrice(product.getPrice());
 		orderItem.setOrderItemToppings(new ArrayList<>());

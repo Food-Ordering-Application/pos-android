@@ -123,7 +123,7 @@ public class OrderItem {
 	public SendOrderItem createSendOrderItem(){
 		List<OrderItemTopping> orderItemTopping = new ArrayList<>();
 		//orderItemTopping.add(new OrderItemTopping(null,"123-123",5000,1,StockState.IN_STOCK));
-		return new SendOrderItem(menuItemId,price,quantity, orderItemTopping);
+		return new SendOrderItem(menuItemId,price,menuItemName,quantity, orderItemTopping);
 	}
 }
 

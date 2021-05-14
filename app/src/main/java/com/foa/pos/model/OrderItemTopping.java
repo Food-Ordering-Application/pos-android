@@ -9,6 +9,8 @@ public class OrderItemTopping {
     private String id;
     @SerializedName("menuItemToppingId")
     private String menuItemToppingId;
+    @SerializedName("name")
+    private String name;
     @SerializedName("price")
     private long price;
     @SerializedName("quantity")
@@ -16,9 +18,10 @@ public class OrderItemTopping {
     @SerializedName("state")
     private StockState state;
 
-    public OrderItemTopping(String id, String menuItemToppingId, long price, int quantity, StockState state) {
+    public OrderItemTopping(String id, String menuItemToppingId, String name, long price, int quantity, StockState state) {
         this.id = id;
         this.menuItemToppingId = menuItemToppingId;
+        this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.state = state;

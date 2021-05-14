@@ -40,11 +40,11 @@ public interface AppService {
             @Body NewOrderBody newOrder
     );
 
-    @FormUrlEncoded
-    @POST("/add-new-item")
-    Call<OrderData> addOrderItem (
-            @Field("sendItem") SendOrderItem sendItem,
-            @Field("orderId") String orderId
+
+    @PATCH("/order/{orderId}/add-new-item")
+    Call<ResponseAdapter<OrderData>> addOrderItem (
+            @Path("orderId") String orderId,
+            @Body SendOrderItem sendItem
     );
 
 

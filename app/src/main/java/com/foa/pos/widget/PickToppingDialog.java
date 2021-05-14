@@ -22,6 +22,7 @@ import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.MenuItemTopping;
 import com.foa.pos.model.MenuItemToppingGroup;
+import com.foa.pos.model.OrderItemTopping;
 import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.ResponseAdapter;
@@ -46,24 +47,20 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	private ListView toppingListView;
 	private LinearLayout toppingsGroupContainer;
 	private ProgressBar progressBar;
-	private List<MenuItemToppingGroup> menuItemToppingGroup;
+	private List<RadioGroup> menuItemToppingGroupRadioButton;
 
 	private PickToppingListener listener;
-	LoginData loginData;
+	private LoginData loginData;
+	private boolean enableOkButton;
+	List<MenuItemToppingGroup> menuItemToppingGroup;
+	List<OrderItemTopping> orderItemToppings;
 
-	public PickToppingDialog(Context context) {
-		super(context);
-		this.context = context;
-	}
 	public PickToppingDialog(Context context, MenuItem menuItem) {
 		super(context);
 		this.context = context;
 		this.menuItem = menuItem;
-		this.menuItemToppingGroup = new ArrayList<>();
-	}
-
-	public void setMenuItemToppingGroup(List<MenuItemToppingGroup> menuItemToppingGroup) {
-		this.menuItemToppingGroup = menuItemToppingGroup;
+		this.menuItemToppingGroupRadioButton = new ArrayList<>();
+		this.orderItemToppings = new ArrayList<>();
 	}
 	
 	@Override
@@ -84,13 +81,54 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		nameTextView.setText(menuItem.getName());
 		priceTextView.setText(Helper.formatMoney(menuItem.getPrice()));
 		toppingsGroupContainer  = findViewById(R.id.toppingsGroupContainer);
+		btnOk.setEnabled(false);
 
-
-		//toppingsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> btnOk.setEnabled(true));
-
-		btnOk.setEnabled(true);
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
+
+		getToppingsByMenuItemId(menuItem.getId(), new IResultCallback() {
+			@Override
+			public void onSuccess(boolean success) {
+				progressBar.setVisibility(View.GONE);
+				toppingsGroupContainer.setVisibility(View.VISIBLE);
+				checkEnableOkButton();
+			}
+
+			@Override
+			public void onError() {
+
+			}
+		});
+
+
+	}
+
+	private void checkEnableOkButton(){
+		for (RadioGroup toppingGroup: menuItemToppingGroupRadioButton) {
+			toppingGroup.setOnCheckedChangeListener((group, checkedId) -> {
+				addToOrderItemToppingList(toppingGroup.getCheckedRadioButtonId());
+				for (RadioGroup item : menuItemToppingGroupRadioButton) {
+					if(item.getCheckedRadioButtonId()== -1){
+						btnOk.setEnabled(false);
+						return;
+					}else{
+
+					}
+				}
+				btnOk.setEnabled(true);
+			});
+		}
+
+	}
+
+	private void addToOrderItemToppingList(int radioButtonId){
+		for (MenuItemToppingGroup toppingGroup : menuItemToppingGroup) {
+			for (MenuItemTopping toppingItem : toppingGroup.getToppingItems()) {
+				if(toppingItem.getRadioButtonId()==radioButtonId) {
+					orderItemToppings.add(toppingItem.createOrderItemTopping());
+				}
+			}
+		}
 	}
 
 	private void addRadioButtons(List<MenuItemToppingGroup> menuItemToppingGroup) {
@@ -118,6 +156,10 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 			groupTitle.setPadding(5,5,5,5);
 
 			RadioGroup toppingItemsRadioGroup = new RadioGroup(context);
+			menuItemToppingGroupRadioButton.add(toppingItemsRadioGroup);
+			toppingItemsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+
+			});
 			toppingItemsRadioGroup.setId(View.generateViewId());
 			toppingItemsRadioGroup.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
 			toppingItemsRadioGroup.setOrientation(LinearLayout.VERTICAL);
@@ -129,13 +171,13 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 				RadioButton rdbtn = new RadioButton(context);
 				MenuItemTopping currentMenuItemTopping = currentMenuItemToppingGroup.getToppingItems().get(j);
 				rdbtn.setId(View.generateViewId());
+				currentMenuItemTopping.setRadioButtonId(rdbtn.getId());
 				rdbtn.setText(currentMenuItemTopping.getName() + "  -  "+ currentMenuItemTopping.getPrice() +"đ");
 				rdbtn.setPadding(20, 10, 20, 10);
 				rdbtn.setGravity(Gravity.CENTER);
 				toppingItemsRadioGroup.addView(rdbtn);
 			}
-			toppingsGroupContainer.setVisibility(View.VISIBLE);
-			progressBar.setVisibility(View.GONE);
+
 		}
 
 	}
@@ -150,7 +192,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		case R.id.btnDoneTopping:
 			dismiss();
 			if(listener != null)
-				listener.onFinish(1);
+				//listener.onFinish();
 			break;	
 		default:
 			break;
@@ -163,10 +205,43 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
     }
 
     public interface PickToppingListener {
-        void onFinish(int result);
+        void onFinish(List<MenuItemTopping> toppingGroups);
     }
 
+	private void getToppingsByMenuItemId(String menuItemId, IResultCallback resultCallback) {
+		Call<ResponseAdapter<ToppingGroupData>> responseCall = RetrofitClient.getInstance().getAppService()
+				.getToppingsByMenuItemId(menuItemId);
+		responseCall.enqueue(new Callback<ResponseAdapter<ToppingGroupData>>() {
+			@Override
+			public void onResponse(Call<ResponseAdapter<ToppingGroupData>> call, Response<ResponseAdapter<ToppingGroupData>> response) {
+				if (response.errorBody() != null) {
+					try {
+						Log.e("[PickToppingDialog][Api error]", response.errorBody().string());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+					ResponseAdapter<ToppingGroupData> res = response.body();
+					assert res != null;
+					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+						menuItemToppingGroup = res.getData().getMenuItemToppingGroup();
+						addRadioButtons(menuItemToppingGroup);
+						resultCallback.onSuccess(true);
+					} else {
+						Log.e("[Order fragment]", "Create order fail");
+					}
+				} else {
+					resultCallback.onSuccess(false);
+					Log.e("[Order fragment]", "Create order fail");
+				}
 
-    
+			}
 
+			@Override
+			public void onFailure(Call<ResponseAdapter<ToppingGroupData>> call, Throwable t) {
+				Log.e("Login Error", t.getMessage());
+			}
+		});
+	}
 }

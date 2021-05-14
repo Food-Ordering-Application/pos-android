@@ -95,6 +95,41 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
+    public void getToppingData(){
+        String restauntId = Helper.read(Constants.RESTAURANT_ID);
+        Call<ResponseAdapter<MenuData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .getMenuByRestaurantId(restauntId);
+        syncStatus.setText("... Đang tải menu ...");
+        responseCall.enqueue(new Callback<ResponseAdapter<MenuData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<MenuData>> call, Response<ResponseAdapter<MenuData>> response) {
+                switch (response.code()) {
+                    case Constants.STATUS_CODE_SUCCESS:
+                        ResponseAdapter<MenuData> res = response.body();
+                        if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                            saveMenuToLocal(res.getData().getMenuGroups());
+                            Intent intent = new Intent(SplashActivity.this,LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                        break;
+                    default:
+                        syncStatus.setText("Lỗi: Đồng bộ thất bại");
+                        syncStatus.setTextColor(Color.RED);
+                        TryAgain.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<MenuData>> call, Throwable t) {
+                syncStatus.setText("Lỗi: Đồng bộ thất bại");
+                syncStatus.setTextColor(Color.RED);
+                TryAgain.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     private void saveMenuToLocal(List<MenuGroup> menuGroups){
         DatabaseManager.initializeInstance(new DatabaseHelper(this));
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
