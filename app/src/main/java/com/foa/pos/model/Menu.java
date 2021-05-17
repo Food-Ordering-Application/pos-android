@@ -3,7 +3,7 @@ package com.foa.pos.model;
 import com.google.gson.annotations.SerializedName;
 
 public class Menu {
-    @SerializedName("id")
+    @SerializedName("menuId")
     private String id;
     @SerializedName("name")
     private String name;

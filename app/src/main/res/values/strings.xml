@@ -45,7 +45,6 @@
     <string name="logout_confirmation">are you sure want to logout?</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
-    <string name="logout_success">logout successfully</string>
     <string name="status">status</string>
     <string name="description">description</string>
     <string name="price">price</string>

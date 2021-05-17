@@ -56,10 +56,9 @@ public class PaymentActivity extends AppCompatActivity implements NumPadFragment
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
 
-
-        txtGrantTotal.setText(String.valueOf(currentOrder.getSubTotal()));
-        txtAmount.setText(String.valueOf(currentOrder.getSubTotal()));
-        tvTotalPay.setText(String.valueOf(currentOrder.getSubTotal()));
+        txtGrantTotal.setText(String.valueOf(currentOrder.getGrandTotal()));
+        txtAmount.setText(String.valueOf(currentOrder.getGrandTotal()));
+        tvTotalPay.setText(String.valueOf(currentOrder.getGrandTotal()));
 
         cartAdapter = new CartListAdapter(this);
         cartAdapter.setIsPayment(true);

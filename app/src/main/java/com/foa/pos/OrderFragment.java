@@ -4,15 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,22 +31,13 @@ import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
 import com.foa.pos.model.IDataResultCallback;
-import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.MenuGroup;
-import com.foa.pos.model.MenuItemToppingGroup;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Promotion;
-import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.entity.NewOrderBody;
-import com.foa.pos.network.entity.SendOrderItem;
-import com.foa.pos.network.response.OrderData;
-import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.network.response.LoginData;
-import com.foa.pos.network.response.ToppingGroupData;
 import com.foa.pos.service.OrderService;
-import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.sqlite.ds.MenuGroupDataSource;
@@ -59,22 +47,15 @@ import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
 import com.foa.pos.utils.OrderSession;
 import com.foa.pos.widget.PickToppingDialog;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickListener {
     private View root;
 
     private RelativeLayout menuWrapper;
     private RelativeLayout cartWrapper;
-    private RelativeLayout checkOutContainer;
 
     private GridView menuGrid;
     private ListView menuList;
@@ -89,22 +70,11 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private TextView txtTotal;
     private TextView txtGrandTotal;
     private EditText txtKeyword;
-    private EditText txtPayment;
-    private TextView txtChange;
     private TextView txtEmpty;
-
     private Button btnOrder;
     private ImageButton btnToggleList;
-
     private MenuItemDataSource ProductDS;
     private OrderDataSource OrderDS;
-
-    private long total = 0;
-
-    private Order currentOrder = null;
-    private ArrayList<OrderItem> orderItemsList = new ArrayList<>();
-    private List<MenuItemToppingGroup> menuItemToppingGroups  = new ArrayList<>();
-
     private LoginData loginData;
     private OrderService orderService;
 
@@ -186,10 +156,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         txtTotal = root.findViewById(R.id.tvTotal);
         txtGrandTotal = root.findViewById(R.id.tvTotalPay);
         txtKeyword = root.findViewById(R.id.editText1);
-        txtChange = root.findViewById(R.id.textView8);
         btnOrder = root.findViewById(R.id.btnOrder);
         btnToggleList = root.findViewById(R.id.imageView2);
-        checkOutContainer = root.findViewById(R.id.checkOutContainer);
         promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
         cartList = root.findViewById(R.id.listView1);
     }
@@ -276,18 +244,9 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 //        }
 //    };
 
-    private long updateStatistic(List<OrderItem> orderItems) {
-        long mtotal = 0;
-        for (int i = 0; i < orderItems.size(); i++) {
-            long sub = (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity());
-            long discount = sub * (orderItems.get(i).getDiscount() / 100);
-            long subtotal = sub - discount;
-            mtotal += subtotal;
-        }
-        txtTotal.setText(Helper.formatMoney(mtotal));
-        txtGrandTotal.setText(Helper.formatMoney(mtotal));
-
-        return mtotal;
+    private void updateStatistic(Order order) {
+        txtTotal.setText(Helper.formatMoney(order.getGrandTotal()));
+        txtGrandTotal.setText(Helper.formatMoney(order.getGrandTotal()));
     }
 
     private final PromotionListAdapter.OnItemClickListener promotionOnItemClick = new PromotionListAdapter.OnItemClickListener() {
@@ -309,18 +268,16 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             menuAdapter.setSelection(result);
             if (cartAdapter.getCount() == 0) {
                 txtEmpty.setVisibility(View.VISIBLE);
-                currentOrder = null;
-            } else
+            } else{
                 txtEmpty.setVisibility(View.GONE);
+            }
+
         }
 
         @Override
         public void onChange(Order currentOrder) {
-            // TODO Auto-generated method stub
-            List<OrderItem> list = currentOrder.getOrderItems();
-            total = updateStatistic(list);
             if (loginData == null) {
-                OrderDS.updateSumaryOrderInfo(currentOrder.getId(), total, total);
+                OrderDS.updateSumaryOrderInfo(currentOrder.getId(), currentOrder.getGrandTotal(), currentOrder.getGrandTotal());
             }
 
             if (cartAdapter.getCount() == 0)
@@ -341,32 +298,29 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             PickToppingDialog pickToppingDialog = new PickToppingDialog(getActivity(), menuItem);
 
             if (!menuAdapter.isSelected(menuItem.getId())) {
-                if (loginData!=null){
                     pickToppingDialog.show();
-                }
             } else {
                 menuAdapter.setSelection(menuItem.getId());
                 cartAdapter.removeByID(menuItem.getId());
                 if (cartAdapter.getCount() == 0) {
                     OrderSession.clearInstance();
-                    currentOrder = null;
                 }
             }
 
-            pickToppingDialog.setPickToppingistener(result -> {
+            pickToppingDialog.setPickToppingistener(orderItemToppingList -> {
                 menuAdapter.setSelection(menuItem.getId());
                 if (menuAdapter.isSelected(menuItem.getId())) {
+                    OrderItem orderItem = Helper.createSendOrderItem(menuItem,orderItemToppingList);
                     if (loginData != null) {
-                        OrderItem orderItem = Helper.createSendOrderItem(menuItem);
                         cartAdapter.add(orderItem);
                         if (cartAdapter.getCount()==1){
                             orderService.createOrderAndFirstOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
                                 @Override
                                 public void onSuccess(boolean success, Order order) {
                                     if (success){
-                                        currentOrder = order;
                                         OrderSession.setInstance(order);
                                         cartAdapter.set(order.getOrderItems());
+                                        updateStatistic(order);
                                     }else{
                                         Toast.makeText(getActivity(), "That bai", Toast.LENGTH_SHORT).show();
                                     }
@@ -381,8 +335,9 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                                 @Override
                                 public void onSuccess(boolean success, Order order) {
                                     if (success){
-                                        currentOrder = order;
+                                        OrderSession.setInstance(order);
                                         cartAdapter.set(order.getOrderItems());
+                                        updateStatistic(order);
                                     }else{
                                         Toast.makeText(getActivity(), "That bai", Toast.LENGTH_SHORT).show();
                                     }
@@ -396,7 +351,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                         }
 
                     } else {
-                        updateOrderOffline(currentOrder, menuItem);
+                        updateOrderOffline(OrderSession.getInstance(), menuItem);
                     }
 
                 }
@@ -419,11 +374,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             OrderDS.insertOrder(currentOrder);
         }
         OrderItem orderItem = Helper.createOrderItem(product, cartAdapter.getCount());
-
-        orderItemsList.add(orderItem);
         currentOrder.addOrderItemPrice(orderItem.getPrice() * orderItem.getQuantity());
+        OrderSession.setInstance(currentOrder);
+        updateStatistic(currentOrder);
         cartAdapter.add(orderItem);
-
         //update data
         OrderDS.insertOrderItem(orderItem);
         OrderDS.updateSumaryOrderInfo(currentOrder.getId(), currentOrder.getSubTotal(), currentOrder.getSubTotal());

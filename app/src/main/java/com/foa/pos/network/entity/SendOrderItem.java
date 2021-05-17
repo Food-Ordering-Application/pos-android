@@ -1,10 +1,8 @@
 package com.foa.pos.network.entity;
 
-import com.foa.pos.model.MenuItemTopping;
 import com.foa.pos.model.OrderItemTopping;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SendOrderItem {

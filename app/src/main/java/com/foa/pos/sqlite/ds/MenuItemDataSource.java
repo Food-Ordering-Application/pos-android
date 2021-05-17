@@ -50,9 +50,7 @@ public class MenuItemDataSource {
 				item.setUpdatedBy(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_BY)));
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
-				try {  
-				    item.setCreatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_CREATED_ON))));
-				    item.setUpdatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_ON))));
+				try {
 				    item.setSycnOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
 				} catch (Exception e) {
 				}
@@ -103,9 +101,7 @@ public class MenuItemDataSource {
 				item.setUpdatedBy(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_BY)));
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
-				try {  
-				    item.setCreatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_CREATED_ON))));
-				    item.setUpdatedOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_ON))));
+				try {
 				    item.setSycnOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
 				} catch (Exception e) {
 				}
@@ -129,10 +125,9 @@ public class MenuItemDataSource {
 		values.put(DbSchema.COL_MENU_ITEM_CREATED_BY, "Device");
 		values.put(DbSchema.COL_MENU_ITEM_UPDATED_BY, "Device");
 		values.put(DbSchema.COL_MENU_ITEM_STATUS, item.getStatus());
+		values.put(DbSchema.COL_MENU_ITEM_IS_ACTIVE, item.isActive()?1:0);
+		values.put(DbSchema.COL_MENU_ITEM_INDEX, item.getIndex());
 		values.put(DbSchema.COL_MENU_ITEM_IMAGE, item.getImage());
-		values.put(DbSchema.COL_MENU_ITEM_CREATED_ON,  Helper.dateformat.format(new Date()));
-		values.put(DbSchema.COL_MENU_ITEM_UPDATED_ON,  Helper.dateformat.format(new Date()));
-	//	values.put(DbSchema.COL_PRODUCT_SYCN_ON, Shared.dateformat.format(item.getSycnOn()));
 		
 		return db.insert(DbSchema.TBL_MENU_ITEM, null, values);
 	}
@@ -160,8 +155,6 @@ public class MenuItemDataSource {
 
 		values.put(DbSchema.COL_MENU_ITEM_PRICE, item.getPrice());
 		values.put(DbSchema.COL_MENU_ITEM_DISCOUNT, item.getDiscount());
-
-		values.put(DbSchema.COL_MENU_ITEM_UPDATED_ON, Helper.dateformat.format(new Date()));
 		
 		return db.update(DbSchema.TBL_MENU_ITEM, values, DbSchema.COL_MENU_ITEM_ID +"= '"+lastCode+"' ", null);
 	}

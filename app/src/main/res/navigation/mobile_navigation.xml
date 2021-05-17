@@ -22,9 +22,5 @@
         android:name="com.foa.pos.OrdersFragment"
         android:label="Đơn hàng"
         tools:layout="@layout/fragment_orders" />
-    <fragment
-        android:id="@+id/navigation_setting"
-        android:name="com.foa.pos.SettingFragment"
-        android:label="Cài đặt"
-        tools:layout="@layout/activity_master_twopane" />
+
 </navigation>

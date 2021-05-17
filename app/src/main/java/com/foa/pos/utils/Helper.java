@@ -20,6 +20,7 @@ import com.foa.pos.R;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
+import com.foa.pos.model.OrderItemTopping;
 import com.foa.pos.widget.LoadingDialog;
 
 import java.io.File;
@@ -254,13 +255,13 @@ public final class Helper
 		//orderItem.setOrderItemToppings(new ArrayList<>());
 		return orderItem;
 	}
-	public static OrderItem createSendOrderItem(MenuItem product){
+	public static OrderItem createSendOrderItem(MenuItem product, List<OrderItemTopping> orderItemToppingList){
 		OrderItem orderItem = new OrderItem();
 		orderItem.setMenuItemId(product.getId());
 		orderItem.setMenuItemName(product.getName());
 		orderItem.setQuantity(1);
 		orderItem.setPrice(product.getPrice());
-		orderItem.setOrderItemToppings(new ArrayList<>());
+		orderItem.setOrderItemToppings(orderItemToppingList);
 		return orderItem;
 	}
 }

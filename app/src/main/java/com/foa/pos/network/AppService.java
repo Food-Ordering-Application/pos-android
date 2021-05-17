@@ -1,14 +1,21 @@
 package com.foa.pos.network;
 
+import com.foa.pos.model.Menu;
+import com.foa.pos.model.MenuGroup;
+import com.foa.pos.model.MenuItem;
+import com.foa.pos.model.MenuItemTopping;
+import com.foa.pos.model.ToppingGroup;
+import com.foa.pos.model.ToppingItem;
+import com.foa.pos.network.entity.AddNewOrderItemBody;
 import com.foa.pos.network.entity.LoginBody;
 import com.foa.pos.network.entity.NewOrderBody;
-import com.foa.pos.network.entity.SendOrderItem;
+import com.foa.pos.network.entity.RemoveOrderItemBody;
 import com.foa.pos.network.entity.UpdateQuantityBody;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.MenuData;
 import com.foa.pos.network.response.OrderData;
 import com.foa.pos.network.response.ResponseAdapter;
-import com.foa.pos.network.response.ToppingGroupData;
+import com.foa.pos.network.response.RestaurantServiceData;
 import com.foa.pos.network.response.VerifyAppResponse;
 
 import retrofit2.Call;
@@ -44,7 +51,7 @@ public interface AppService {
     @PATCH("/order/{orderId}/add-new-item")
     Call<ResponseAdapter<OrderData>> addOrderItem (
             @Path("orderId") String orderId,
-            @Body SendOrderItem sendItem
+            @Body AddNewOrderItemBody body
     );
 
 
@@ -54,21 +61,41 @@ public interface AppService {
             @Body UpdateQuantityBody body
     );
 
-    @FormUrlEncoded
-    @PATCH("/remove-orditem")
+    @PATCH("/order/{orderId}/remove-orditem")
     Call<ResponseAdapter<OrderData>> removeOrderItem (
-            @Field("orderItemId") String orderItemId
+            @Path("orderId") String orderId,
+            @Body RemoveOrderItemBody body
+    );
+//
+//    @FormUrlEncoded
+//    @POST("/restaurant/get-menu-item-topping-info")
+//    Call<ResponseAdapter<ToppingGroupData>> getToppingsByMenuItemId (
+//            @Field("menuItemId") String menuItemId
+//    );
+
+    @GET("/user/pos/menu")
+    Call<ResponseAdapter<MenuData>> getMenuId (
+
+    );
+    @GET("/user/pos/menu/{menuId}/menu-item")
+    Call<ResponseAdapter<RestaurantServiceData<MenuItem>>> getMenuItems (
+            @Path("menuId") String menuId
+    );
+    @GET("/user/pos/menu/{menuId}/menu-group")
+    Call<ResponseAdapter<RestaurantServiceData<MenuGroup>>> getMenuGroups (
+            @Path("menuId") String menuId
+    );
+    @GET("/user/pos/menu/{menuId}/topping-item")
+    Call<ResponseAdapter<RestaurantServiceData<ToppingItem>>> getToppingItems(
+            @Path("menuId") String menuId
+    );
+    @GET("/user/pos/menu/{menuId}/topping-group")
+    Call<ResponseAdapter<RestaurantServiceData<ToppingGroup>>> getToppingGroups(
+            @Path("menuId") String menuId
+    );
+    @GET("/user/pos/menu/{menuId}/menu-item-topping")
+    Call<ResponseAdapter<RestaurantServiceData<MenuItemTopping>>> getMenuItemsTopping(
+            @Path("menuId") String menuId
     );
 
-
-    @GET("/restaurant/{restaurantId}/get-menu-information")
-    Call<ResponseAdapter<MenuData>> getMenuByRestaurantId (
-            @Path("restaurantId") String restaurantId
-    );
-
-    @FormUrlEncoded
-    @POST("/restaurant/get-menu-item-topping-info")
-    Call<ResponseAdapter<ToppingGroupData>> getToppingsByMenuItemId (
-            @Field("menuItemId") String menuItemId
-    );
 }

@@ -17,6 +17,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.utils.LoginSession;
+import com.foa.pos.utils.OrderSession;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,13 +39,18 @@ public class MainActivity extends AppCompatActivity {
 		NavigationView navigationView = findViewById(R.id.nav_view);
 
 		mAppBarConfiguration = new AppBarConfiguration.Builder(
-				R.id.navigation_order, R.id.navigation_delivery, R.id.navigation_manaorder,R.id.navigation_setting)
+				R.id.navigation_order, R.id.navigation_delivery, R.id.navigation_manaorder)
 				.setOpenableLayout(drawer)
 				.build();
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);
 		navigationView.bringToFront();
+
+		navigationView.getMenu().findItem(R.id.navigation_logout).setOnMenuItemClickListener(menuItem -> {
+			logout();
+			return true;
+		});
 	}
 
 	@Override
@@ -61,28 +68,12 @@ public class MainActivity extends AppCompatActivity {
 	
 	private void logout()
 	{
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(com.foa.pos.MainActivity.this);
-        alertDialog.setTitle(getString(R.string.confirmation));
-        alertDialog.setMessage(getString(R.string.logout_confirmation));
-        alertDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            	SesID = null;
-            	Toast.makeText(com.foa.pos.MainActivity.this,getString(R.string.logout_success), Toast.LENGTH_SHORT).show();
-        		Intent intent = new Intent(com.foa.pos.MainActivity.this, LoginActivity.class);
-        		startActivity(intent);
-        		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        		finish();
-            }
-        });
- 
-        alertDialog.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            	dialog.cancel();
-            }
-        });
- 
-        alertDialog.show();
-
+		LoginSession.clearInstance();
+		OrderSession.clearInstance();
+		Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		finish();
 	}
 
 }

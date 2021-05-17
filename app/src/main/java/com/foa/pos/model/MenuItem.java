@@ -10,7 +10,7 @@ public class MenuItem {
 	private String id;
 	@SerializedName("name")
 	private String name;
-	@SerializedName("groupId")
+	@SerializedName("menuGroupId")
 	private String groupId;
 	private String categoryName;
 	@SerializedName("description")
@@ -28,7 +28,7 @@ public class MenuItem {
 	@SerializedName("imageUrl")
 	private String image;
 	@SerializedName("index")
-	private int index;
+	private float index;
 	@SerializedName("isActive")
 	private boolean isActive;
 
@@ -161,5 +161,21 @@ public class MenuItem {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public float getIndex() {
+		return index;
+	}
+
+	public void setIndex(float index) {
+		this.index = index;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean active) {
+		isActive = active;
 	}
 }

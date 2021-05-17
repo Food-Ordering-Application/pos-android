@@ -30,7 +30,6 @@ public class RetrofitClient {
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 .create();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        Helper.initialize(Helper.getContext());
         httpClient.addInterceptor(chain -> {
             Request request = chain.request().newBuilder().addHeader("Authorization", accessToken).build();
             return chain.proceed(request);

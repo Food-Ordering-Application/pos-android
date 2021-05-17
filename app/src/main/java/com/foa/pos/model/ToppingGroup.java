@@ -4,19 +4,24 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class MenuItemToppingGroup {
+public class ToppingGroup {
     @SerializedName("id")
     private String id;
+    @SerializedName("menuId")
+    private String menuId;
     @SerializedName("name")
     private String name;
     @SerializedName("index")
-    private int index;
+    private float index;
     @SerializedName("isActive")
     private boolean isActive;
     @SerializedName("toppingItems")
-    private List<MenuItemTopping> toppingItems;
+    private List<ToppingItem> toppingItems;
 
-    public MenuItemToppingGroup(String id, String name, int index, boolean isActive, List<MenuItemTopping> toppingItems) {
+    public ToppingGroup() {
+    }
+
+    public ToppingGroup(String id, String name, int index, boolean isActive, List<ToppingItem> toppingItems) {
         this.id = id;
         this.name = name;
         this.index = index;
@@ -40,11 +45,11 @@ public class MenuItemToppingGroup {
         this.name = name;
     }
 
-    public int getIndex() {
+    public float getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public void setIndex(float index) {
         this.index = index;
     }
 
@@ -56,11 +61,11 @@ public class MenuItemToppingGroup {
         isActive = active;
     }
 
-    public List<MenuItemTopping> getToppingItems() {
+    public List<ToppingItem> getToppingItems() {
         return toppingItems;
     }
 
-    public void setToppingItems(List<MenuItemTopping> toppingItems) {
+    public void setToppingItems(List<ToppingItem> toppingItems) {
         this.toppingItems = toppingItems;
     }
 }

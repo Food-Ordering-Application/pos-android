@@ -1,39 +1,25 @@
 package com.foa.pos.model;
 
-import com.foa.pos.model.enums.StockState;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MenuItemTopping {
     @SerializedName("id")
     private String id;
-    @SerializedName("name")
-    private String name;
-    @SerializedName("description")
-    private String description;
-    @SerializedName("maxQuantity")
-    private int maxQuantity;
-    @SerializedName("index")
-    private int index;
-    @SerializedName("isActive")
-    private boolean isActive;
-    @SerializedName("price")
-    private long price;
-    @SerializedName("menuItemToppings")
-    private List<MenuItemToppingCustom> menuItemToppingCustomList;
-    private int radioButtonId;
+    @SerializedName("menuId")
+    private String menuId;
+    @SerializedName("menuItemId")
+    private String menuItemId;
+    @SerializedName("toppingItemId")
+    private String toppingItemId;
+    @SerializedName("customPrice")
+    private long customPrice;
 
-    public MenuItemTopping(String id, String name, String description, int maxQuantity, int index, boolean isActive, long price, List<MenuItemToppingCustom> menuItemToppingCustomList) {
+    public MenuItemTopping(String id, String menuId, String menuItemId, String toppingItemId, long customPrice) {
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.maxQuantity = maxQuantity;
-        this.index = index;
-        this.isActive = isActive;
-        this.price = price;
-        this.menuItemToppingCustomList = menuItemToppingCustomList;
+        this.menuId = menuId;
+        this.menuItemId = menuItemId;
+        this.toppingItemId = toppingItemId;
+        this.customPrice = customPrice;
     }
 
     public String getId() {
@@ -44,71 +30,35 @@ public class MenuItemTopping {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getMenuId() {
+        return menuId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMenuId(String menuId) {
+        this.menuId = menuId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMenuItemId() {
+        return menuItemId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMenuItemId(String menuItemId) {
+        this.menuItemId = menuItemId;
     }
 
-    public int getMaxQuantity() {
-        return maxQuantity;
+    public String getToppingItemId() {
+        return toppingItemId;
     }
 
-    public void setMaxQuantity(int maxQuantity) {
-        this.maxQuantity = maxQuantity;
+    public void setToppingItemId(String toppingItemId) {
+        this.toppingItemId = toppingItemId;
     }
 
-    public int getIndex() {
-        return index;
+    public long getCustomPrice() {
+        return customPrice;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public long getPrice() {
-        return price;
-    }
-
-    public void setPrice(long price) {
-        this.price = price;
-    }
-
-    public List<MenuItemToppingCustom> getMenuItemToppingCustomList() {
-        return menuItemToppingCustomList;
-    }
-
-    public void setMenuItemToppingCustomList(List<MenuItemToppingCustom> menuItemToppingCustomList) {
-        this.menuItemToppingCustomList = menuItemToppingCustomList;
-    }
-
-    public int getRadioButtonId() {
-        return radioButtonId;
-    }
-
-    public void setRadioButtonId(int radioButtonId) {
-        this.radioButtonId = radioButtonId;
-    }
-
-    public OrderItemTopping createOrderItemTopping(){
-        return new OrderItemTopping("",id,name,price,1, StockState.IN_STOCK);
+    public void setCustomPrice(long customPrice) {
+        this.customPrice = customPrice;
     }
 }

@@ -46,7 +46,7 @@ public class OrderDataSource {
 				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_MENU_ITEM_NAME +",c."+DbSchema.COL_MENU_GROUP_NAME +"  FROM " + DbSchema.TBL_ORDER_ITEM + " o " +
 											" LEFT JOIN " +  DbSchema.TBL_MENU_ITEM +  " p ON p." +  DbSchema.COL_MENU_ITEM_ID + " = o." + DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID +
 											" LEFT JOIN " +  DbSchema.TBL_MENU_GROUP +  " c ON c." +  DbSchema.COL_MENU_GROUP_ID + " = p." + DbSchema.COL_MENU_GROUP_ID +
-											" WHERE " +DbSchema.COL__ORDER_ITEM_ORDER_ID + " = '"+id+"'";
+											" WHERE " +DbSchema.COL_ORDER_ITEM_ORDER_ID + " = '"+id+"'";
 				Cursor cDetail = db.rawQuery(selectQueryDetail, null);
 				
 				ArrayList<OrderItem> details = new ArrayList<OrderItem>();
@@ -56,7 +56,7 @@ public class OrderDataSource {
 						OrderItem orderItem = new OrderItem();
 						orderItem.setId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_ID)));
 						orderItem.setMenuItemName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_MENU_ITEM_NAME)));
-						orderItem.setOrderId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL__ORDER_ITEM_ORDER_ID)));
+						orderItem.setOrderId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_ORDER_ID)));
 						orderItem.setMenuItemId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID)));
 						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_QTY)));
 						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_DISCOUNT)));
@@ -111,7 +111,7 @@ public class OrderDataSource {
 						+"  FROM " + DbSchema.TBL_ORDER_ITEM + " o " +
 											" LEFT JOIN " +  DbSchema.TBL_MENU_ITEM +  " p ON p." +  DbSchema.COL_MENU_ITEM_ID + " = o." + DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID +
 											" LEFT JOIN " +  DbSchema.TBL_MENU_GROUP +  " c ON c." +  DbSchema.COL_MENU_GROUP_ID + " = p." + DbSchema.COL_MENU_GROUP_ID +
-											" WHERE " +DbSchema.COL__ORDER_ITEM_ORDER_ID + " = '"+item.getId()+"'";
+											" WHERE " +DbSchema.COL_ORDER_ITEM_ORDER_ID + " = '"+item.getId()+"'";
 				Cursor cDetail = db.rawQuery(selectQueryDetail, null);
 				
 				ArrayList<OrderItem> details = new ArrayList<>();
@@ -120,7 +120,7 @@ public class OrderDataSource {
 						OrderItem orderItem = new OrderItem();
 						orderItem.setId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_ID)));
 						orderItem.setMenuItemName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_MENU_ITEM_NAME)));
-						orderItem.setOrderId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL__ORDER_ITEM_ORDER_ID)));
+						orderItem.setOrderId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_ORDER_ID)));
 						orderItem.setMenuItemId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID)));
 						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_QTY)));
 						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_DISCOUNT)));
@@ -153,7 +153,7 @@ public class OrderDataSource {
 		for (OrderItem detail : item.getOrderItems()) {
 			ContentValues valuesDetails = new ContentValues();
 			valuesDetails.put(DbSchema.COL_ORDER_ITEM_ID, detail.getId());
-			valuesDetails.put(DbSchema.COL__ORDER_ITEM_ORDER_ID, detail.getOrderId());
+			valuesDetails.put(DbSchema.COL_ORDER_ITEM_ORDER_ID, detail.getOrderId());
 			valuesDetails.put(DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID, detail.getMenuItemId());
 			valuesDetails.put(DbSchema.COL_ORDER_ITEM_PRICE, detail.getPrice());
 			valuesDetails.put(DbSchema.COL_ORDER_ITEM_QTY,detail.getQuantity());
@@ -183,7 +183,7 @@ public class OrderDataSource {
 	public long insertOrderItem(OrderItem item){
 		ContentValues valuesDetails = new ContentValues();
 		valuesDetails.put(DbSchema.COL_ORDER_ITEM_ID, item.getId());
-		valuesDetails.put(DbSchema.COL__ORDER_ITEM_ORDER_ID, item.getOrderId());
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_ORDER_ID, item.getOrderId());
 		valuesDetails.put(DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID, item.getMenuItemId());
 		valuesDetails.put(DbSchema.COL_ORDER_ITEM_PRICE, item.getPrice());
 		valuesDetails.put(DbSchema.COL_ORDER_ITEM_QTY,item.getQuantity());
@@ -226,7 +226,7 @@ public class OrderDataSource {
 	
 	public int delete(String code)
 	{
-		db.delete(DbSchema.TBL_ORDER_ITEM, DbSchema.COL__ORDER_ITEM_ORDER_ID + "= '" + code + "'", null);
+		db.delete(DbSchema.TBL_ORDER_ITEM, DbSchema.COL_ORDER_ITEM_ORDER_ID + "= '" + code + "'", null);
 		db.delete(DbSchema.TBL_ORDER, DbSchema.COL_ORDER + "= '" + code + "'", null);
 		return 1;
 	}

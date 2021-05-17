@@ -3,7 +3,6 @@ package com.foa.pos;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,17 +13,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.foa.pos.model.MenuItem;
-import com.foa.pos.model.MenuGroup;
 import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.entity.LoginBody;
 import com.foa.pos.network.response.LoginData;
-import com.foa.pos.network.response.MenuData;
 import com.foa.pos.network.response.ResponseAdapter;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
-import com.foa.pos.sqlite.ds.MenuGroupDataSource;
-import com.foa.pos.sqlite.ds.MenuItemDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
@@ -33,8 +27,6 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +54,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 		btnSaleOffline = findViewById(R.id.OfflineSaleModeButton);
 		txtusername = (EditText) findViewById(R.id.txtUserName);
 		txtpassword = (EditText) findViewById(R.id.txtPassword);
-
+		Helper.initialize(this);
+		DatabaseManager.initializeInstance(new DatabaseHelper(this));
 		loading = new LoadingDialog(this);
 
 		//temp
@@ -81,6 +74,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		Intent intent = new Intent(LoginActivity.this,MainActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
+		finish();
 	}
 
 
@@ -104,7 +98,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		loading.show();
 		Call<ResponseAdapter<LoginData>> responseCall = RetrofitClient.getInstance().getAppService()
-				.login(new LoginBody(username, password,"07902d33-8f88-4c90-9781-e6382ad000f9"));
+				.login(new LoginBody(username, password,"75d1fd95-9699-4f21-85e6-480def4d8bbb"));
 		responseCall.enqueue(new Callback<ResponseAdapter<LoginData>>() {
 			@Override
 			public void onResponse(Call<ResponseAdapter<LoginData>> call, Response<ResponseAdapter<LoginData>> response) {
@@ -131,7 +125,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 							public void onAnimationEnd(Animator arg0) {
 								// TODO Auto-generated method stub
 
-								Intent intent = new Intent(com.foa.pos.LoginActivity.this, com.foa.pos.MainActivity.class);
+								Intent intent = new Intent(com.foa.pos.LoginActivity.this, com.foa.pos.SplashActivity.class);
 								startActivity(intent);
 								overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 								finish();

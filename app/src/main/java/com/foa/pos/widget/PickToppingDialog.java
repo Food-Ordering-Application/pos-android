@@ -2,6 +2,7 @@ package com.foa.pos.widget;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,13 +21,15 @@ import android.widget.TextView;
 import com.foa.pos.R;
 import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.MenuItem;
-import com.foa.pos.model.MenuItemTopping;
-import com.foa.pos.model.MenuItemToppingGroup;
+import com.foa.pos.model.ToppingItem;
+import com.foa.pos.model.ToppingGroup;
 import com.foa.pos.model.OrderItemTopping;
 import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.ResponseAdapter;
-import com.foa.pos.network.response.ToppingGroupData;
+import com.foa.pos.sqlite.DatabaseHelper;
+import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.sqlite.ds.MenuItemToppingDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
@@ -52,8 +55,10 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	private PickToppingListener listener;
 	private LoginData loginData;
 	private boolean enableOkButton;
-	List<MenuItemToppingGroup> menuItemToppingGroup;
+	List<ToppingGroup> toppingGroup;
 	List<OrderItemTopping> orderItemToppings;
+
+	MenuItemToppingDataSource menuItemToppingDS;
 
 	public PickToppingDialog(Context context, MenuItem menuItem) {
 		super(context);
@@ -86,44 +91,37 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
 
-		getToppingsByMenuItemId(menuItem.getId(), new IResultCallback() {
-			@Override
-			public void onSuccess(boolean success) {
-				progressBar.setVisibility(View.GONE);
-				toppingsGroupContainer.setVisibility(View.VISIBLE);
-				checkEnableOkButton();
-			}
+		SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
+		menuItemToppingDS = new MenuItemToppingDataSource(db);
 
-			@Override
-			public void onError() {
-
-			}
-		});
-
-
+		addRadioButtons(menuItemToppingDS.getToppingGroupByMenuId(menuItem.getId()));
+		progressBar.setVisibility(View.GONE);
+		toppingsGroupContainer.setVisibility(View.VISIBLE);
 	}
 
 	private void checkEnableOkButton(){
+
 		for (RadioGroup toppingGroup: menuItemToppingGroupRadioButton) {
 			toppingGroup.setOnCheckedChangeListener((group, checkedId) -> {
 				addToOrderItemToppingList(toppingGroup.getCheckedRadioButtonId());
+				boolean isEnable=true;
+				orderItemToppings = new ArrayList<>();
 				for (RadioGroup item : menuItemToppingGroupRadioButton) {
 					if(item.getCheckedRadioButtonId()== -1){
-						btnOk.setEnabled(false);
-						return;
+						isEnable = false;
 					}else{
-
+						addToOrderItemToppingList(item.getCheckedRadioButtonId());
 					}
 				}
-				btnOk.setEnabled(true);
+				btnOk.setEnabled(isEnable);
 			});
 		}
 
 	}
 
 	private void addToOrderItemToppingList(int radioButtonId){
-		for (MenuItemToppingGroup toppingGroup : menuItemToppingGroup) {
-			for (MenuItemTopping toppingItem : toppingGroup.getToppingItems()) {
+		for (ToppingGroup toppingGroup : toppingGroup) {
+			for (ToppingItem toppingItem : toppingGroup.getToppingItems()) {
 				if(toppingItem.getRadioButtonId()==radioButtonId) {
 					orderItemToppings.add(toppingItem.createOrderItemTopping());
 				}
@@ -131,14 +129,14 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		}
 	}
 
-	private void addRadioButtons(List<MenuItemToppingGroup> menuItemToppingGroup) {
-		if (menuItemToppingGroup.size()==0) {
+	private void addRadioButtons(List<ToppingGroup> toppingGroup) {
+		if (toppingGroup.size()==0) {
 
 			return;
 		}
 		toppingsGroupContainer.setOrientation(LinearLayout.VERTICAL);
-		for (int i = 0; i < menuItemToppingGroup.size(); i++) {
-			MenuItemToppingGroup currentMenuItemToppingGroup = menuItemToppingGroup.get(i);
+		for (int i = 0; i < toppingGroup.size(); i++) {
+			ToppingGroup currentToppingGroup = toppingGroup.get(i);
 			LinearLayout groupContainer = new LinearLayout(context);
 			groupContainer.setId(View.generateViewId());
 			groupContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -152,7 +150,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 			params.setMargins(0,10,0,5);
 			groupTitle.setLayoutParams(params);
 			groupTitle.setBackgroundResource(R.color.line_gray);
-			groupTitle.setText(currentMenuItemToppingGroup.getName());
+			groupTitle.setText(currentToppingGroup.getName());
 			groupTitle.setPadding(5,5,5,5);
 
 			RadioGroup toppingItemsRadioGroup = new RadioGroup(context);
@@ -167,9 +165,9 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 			groupContainer.addView(groupTitle);
 			groupContainer.addView(toppingItemsRadioGroup);
 
-			for (int j = 0; j < currentMenuItemToppingGroup.getToppingItems().size(); j++) {
+			for (int j = 0; j < currentToppingGroup.getToppingItems().size(); j++) {
 				RadioButton rdbtn = new RadioButton(context);
-				MenuItemTopping currentMenuItemTopping = currentMenuItemToppingGroup.getToppingItems().get(j);
+				ToppingItem currentMenuItemTopping = currentToppingGroup.getToppingItems().get(j);
 				rdbtn.setId(View.generateViewId());
 				currentMenuItemTopping.setRadioButtonId(rdbtn.getId());
 				rdbtn.setText(currentMenuItemTopping.getName() + "  -  "+ currentMenuItemTopping.getPrice() +"đ");
@@ -192,7 +190,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		case R.id.btnDoneTopping:
 			dismiss();
 			if(listener != null)
-				//listener.onFinish();
+				listener.onFinish(orderItemToppings);
 			break;	
 		default:
 			break;
@@ -205,43 +203,43 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
     }
 
     public interface PickToppingListener {
-        void onFinish(List<MenuItemTopping> toppingGroups);
+        void onFinish(List<OrderItemTopping> toppingGroups);
     }
 
-	private void getToppingsByMenuItemId(String menuItemId, IResultCallback resultCallback) {
-		Call<ResponseAdapter<ToppingGroupData>> responseCall = RetrofitClient.getInstance().getAppService()
-				.getToppingsByMenuItemId(menuItemId);
-		responseCall.enqueue(new Callback<ResponseAdapter<ToppingGroupData>>() {
-			@Override
-			public void onResponse(Call<ResponseAdapter<ToppingGroupData>> call, Response<ResponseAdapter<ToppingGroupData>> response) {
-				if (response.errorBody() != null) {
-					try {
-						Log.e("[PickToppingDialog][Api error]", response.errorBody().string());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-					ResponseAdapter<ToppingGroupData> res = response.body();
-					assert res != null;
-					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-						menuItemToppingGroup = res.getData().getMenuItemToppingGroup();
-						addRadioButtons(menuItemToppingGroup);
-						resultCallback.onSuccess(true);
-					} else {
-						Log.e("[Order fragment]", "Create order fail");
-					}
-				} else {
-					resultCallback.onSuccess(false);
-					Log.e("[Order fragment]", "Create order fail");
-				}
-
-			}
-
-			@Override
-			public void onFailure(Call<ResponseAdapter<ToppingGroupData>> call, Throwable t) {
-				Log.e("Login Error", t.getMessage());
-			}
-		});
-	}
+//	private void getToppingsByMenuItemId(String menuItemId, IResultCallback resultCallback) {
+//		Call<ResponseAdapter<ToppingGroupData>> responseCall = RetrofitClient.getInstance().getAppService()
+//				.getToppingsByMenuItemId(menuItemId);
+//		responseCall.enqueue(new Callback<ResponseAdapter<ToppingGroupData>>() {
+//			@Override
+//			public void onResponse(Call<ResponseAdapter<ToppingGroupData>> call, Response<ResponseAdapter<ToppingGroupData>> response) {
+//				if (response.errorBody() != null) {
+//					try {
+//						Log.e("[PickToppingDialog][Api error]", response.errorBody().string());
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//				if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+//					ResponseAdapter<ToppingGroupData> res = response.body();
+//					assert res != null;
+//					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+//						toppingGroup = res.getData().getMenuItemToppingGroup();
+//						addRadioButtons(toppingGroup);
+//						resultCallback.onSuccess(true);
+//					} else {
+//						Log.e("[Order fragment]", "Create order fail");
+//					}
+//				} else {
+//					resultCallback.onSuccess(false);
+//					Log.e("[Order fragment]", "Create order fail");
+//				}
+//
+//			}
+//
+//			@Override
+//			public void onFailure(Call<ResponseAdapter<ToppingGroupData>> call, Throwable t) {
+//				Log.e("Login Error", t.getMessage());
+//			}
+//		});
+//	}
 }

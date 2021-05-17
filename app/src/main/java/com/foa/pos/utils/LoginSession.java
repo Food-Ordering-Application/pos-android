@@ -9,13 +9,14 @@ public class LoginSession {
     }
 
     public static LoginData getInstance(){
-        if (staffLogin == null){
-            staffLogin  = new LoginData();
-        }
         return staffLogin;
     }
 
     public static void setInstance(LoginData staffLogin){
         LoginSession.staffLogin = staffLogin;
+    }
+
+    public static void clearInstance(){
+        LoginSession.staffLogin = null;
     }
 }

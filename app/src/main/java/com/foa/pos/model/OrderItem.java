@@ -14,7 +14,7 @@ public class OrderItem {
 	private String orderId;
 	@SerializedName( "menuItemId" )
 	private String menuItemId;
-	@SerializedName( "menuItemName" )
+	@SerializedName( "name" )
 	private String menuItemName;
 	@SerializedName( "quantity" )
 	private int quantity;
@@ -26,9 +26,12 @@ public class OrderItem {
 	private StockState stockState;
 	@SerializedName( "orderItemToppings" )
 	private List<OrderItemTopping> orderItemToppings;
-
 	private String note;
 	private long subTotal;
+
+	public OrderItem() {
+		this.orderItemToppings = new ArrayList<>();
+	}
 
 	public String getId() {
 		return id;
@@ -121,9 +124,7 @@ public class OrderItem {
 	}
 
 	public SendOrderItem createSendOrderItem(){
-		List<OrderItemTopping> orderItemTopping = new ArrayList<>();
-		//orderItemTopping.add(new OrderItemTopping(null,"123-123",5000,1,StockState.IN_STOCK));
-		return new SendOrderItem(menuItemId,price,menuItemName,quantity, orderItemTopping);
+		return new SendOrderItem(menuItemId,price,menuItemName,quantity, orderItemToppings);
 	}
 }
 
