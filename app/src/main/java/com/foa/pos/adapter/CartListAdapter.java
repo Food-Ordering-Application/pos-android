@@ -65,6 +65,7 @@ public class CartListAdapter extends BaseAdapter {
 
     private class ViewHolder {
         TextView name;
+        TextView toppingNames;
         TextView price;
         TextView qty;
         ImageButton btnMinus;
@@ -145,6 +146,7 @@ public class CartListAdapter extends BaseAdapter {
             holder = new ViewHolder();
 
             holder.name = vi.findViewById(R.id.tvCartProductName);
+            holder.toppingNames = vi.findViewById(R.id.tvTopping);
             holder.price = vi.findViewById(R.id.tvProductPrice);
             holder.qty = vi.findViewById(R.id.tvTotal);
             holder.btnMinus = vi.findViewById(R.id.btnSubQuantityCartItem);
@@ -162,6 +164,9 @@ public class CartListAdapter extends BaseAdapter {
 
         final OrderItem orderItem = (OrderItem) getItem(position);
         holder.name.setText(orderItem.getMenuItemName());
+        String toppingNames = "";
+        orderItem.getOrderItemToppings().forEach(item-> toppingNames.concat(item.getName()+"\n"));
+        holder.toppingNames.setText(toppingNames);
         holder.price.setText(Helper.decimalformat.format(orderItem.getQuantity() * orderItem.getPrice()) + " " + Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
         holder.qty.setText(String.valueOf(orderItem.getQuantity()));
         if (orderItem.getQuantity() == 1) {

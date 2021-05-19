@@ -95,6 +95,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		menuItemToppingDS = new MenuItemToppingDataSource(db);
 
 		addRadioButtons(menuItemToppingDS.getToppingGroupByMenuId(menuItem.getId()));
+		checkEnableOkButton();
 		progressBar.setVisibility(View.GONE);
 		toppingsGroupContainer.setVisibility(View.VISIBLE);
 	}

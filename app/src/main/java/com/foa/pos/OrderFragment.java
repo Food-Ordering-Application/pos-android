@@ -35,6 +35,7 @@ import com.foa.pos.model.MenuGroup;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.MenuItem;
+import com.foa.pos.model.OrderItemTopping;
 import com.foa.pos.model.Promotion;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.service.OrderService;
@@ -42,6 +43,7 @@ import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.sqlite.ds.MenuGroupDataSource;
 import com.foa.pos.sqlite.ds.MenuItemDataSource;
+import com.foa.pos.sqlite.ds.OrderItemToppingDataSource;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
@@ -75,6 +77,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private ImageButton btnToggleList;
     private MenuItemDataSource ProductDS;
     private OrderDataSource OrderDS;
+    private OrderItemToppingDataSource OrderToppingsDS;
     private LoginData loginData;
     private OrderService orderService;
 
@@ -107,6 +110,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         ProductDS = new MenuItemDataSource(db);
         OrderDS = new OrderDataSource(db);
+        OrderToppingsDS = new OrderItemToppingDataSource(db);
 
         //Set menu
         menuAdapter = new ProductGridAdapter(requireActivity());
@@ -311,8 +315,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 menuAdapter.setSelection(menuItem.getId());
                 if (menuAdapter.isSelected(menuItem.getId())) {
                     OrderItem orderItem = Helper.createSendOrderItem(menuItem,orderItemToppingList);
+                    cartAdapter.add(orderItem);
                     if (loginData != null) {
-                        cartAdapter.add(orderItem);
                         if (cartAdapter.getCount()==1){
                             orderService.createOrderAndFirstOrderItemOnline(orderItem, new IDataResultCallback<Order>() {
                                 @Override
@@ -351,7 +355,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                         }
 
                     } else {
-                        updateOrderOffline(OrderSession.getInstance(), menuItem);
+                        updateOrderOffline(OrderSession.getInstance(), menuItem, orderItemToppingList);
                     }
 
                 }
@@ -360,7 +364,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         }
     };
 
-    private void updateOrderOffline(Order currentOrder, MenuItem product) {
+    private void updateOrderOffline(Order currentOrder, MenuItem product, List<OrderItemTopping> orderItemToppings) {
         if (cartAdapter.getCount() == 0) {
             Date dt = new Date();
             currentOrder = new Order();
@@ -381,6 +385,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         //update data
         OrderDS.insertOrderItem(orderItem);
         OrderDS.updateSumaryOrderInfo(currentOrder.getId(), currentOrder.getSubTotal(), currentOrder.getSubTotal());
+        OrderToppingsDS.insertMany(orderItemToppings);
     }
 
 
