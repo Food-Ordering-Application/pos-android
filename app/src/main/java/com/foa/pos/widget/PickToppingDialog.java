@@ -66,6 +66,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		this.menuItem = menuItem;
 		this.menuItemToppingGroupRadioButton = new ArrayList<>();
 		this.orderItemToppings = new ArrayList<>();
+		this.toppingGroup = new ArrayList<>();
 	}
 	
 	@Override
@@ -93,8 +94,8 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 
 		SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
 		menuItemToppingDS = new MenuItemToppingDataSource(db);
-
-		addRadioButtons(menuItemToppingDS.getToppingGroupByMenuId(menuItem.getId()));
+		toppingGroup = menuItemToppingDS.getToppingGroupByMenuId(menuItem.getId());
+		addRadioButtons(toppingGroup);
 		checkEnableOkButton();
 		progressBar.setVisibility(View.GONE);
 		toppingsGroupContainer.setVisibility(View.VISIBLE);

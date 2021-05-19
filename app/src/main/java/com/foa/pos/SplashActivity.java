@@ -71,7 +71,7 @@ public class SplashActivity extends AppCompatActivity {
         statusMessage = findViewById(R.id.statusMessage);
 
         restaurantService = new RestaurantService();
-
+        DatabaseManager.initializeInstance(new DatabaseHelper(this));
         db =  DatabaseManager.getInstance().openDatabase();
 
         Helper.initialize(this);
@@ -127,7 +127,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onSuccess(boolean success, MenuData Data) {
                 menuId = Data.getMenuId();
                 getMenuAndToppingData(Data.getMenuId());
-                checkSyncStatus();
+
             }
 
             @Override
@@ -145,6 +145,7 @@ public class SplashActivity extends AppCompatActivity {
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+            finish();
         }else {
             loadedView();
         }
@@ -169,7 +170,6 @@ public class SplashActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        loadedView();
 
         LoggerHelper.CheckAndLogInfo(this,"Finished all threads");
     }
@@ -193,6 +193,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (success) {
                     isMenuGroupSuccess = true;
                     saveMenuGroupToLocal(Data);
+                    checkSyncStatus();
                 }
             }
 
@@ -209,6 +210,8 @@ public class SplashActivity extends AppCompatActivity {
                 if (success){
                     isMenuItemSuccess = true;
                     saveMenuItemToLocal(Data);
+                    checkSyncStatus();
+
                 }
 
             }
@@ -227,6 +230,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (success) {
                     isToppingItemSuccess = true;
                     saveToppingItemToLocal(Data);
+                    checkSyncStatus();
                 }
             }
 
@@ -243,6 +247,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (success) {
                     isToppingGroupSuccess = true;
                     saveToppingGroupToLocal(Data);
+                    checkSyncStatus();
                 }
             }
 
@@ -259,6 +264,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (success) {
                     isMenuItemToppingSuccess = true;
                     saveMenuItemToppingToLocal(Data);
+                    checkSyncStatus();
                 }
             }
 

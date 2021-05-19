@@ -99,7 +99,7 @@ public interface DbSchema {
 				+ COL_ORDER_ITEM_PRICE + " INTEGER,"
 				+ COL_ORDER_ITEM_QTY + " INTEGER,"
 				+ COL_ORDER_ITEM_DISCOUNT + " INTEGER,"
-				+ COL_ORDER_ITEM_STATE + " INTEGER"
+				+ COL_ORDER_ITEM_STATE + " TEXT"
 			+ ");";
 
 	String TBL_ORDER_ITEM_TOPPING = "order_item_topping";

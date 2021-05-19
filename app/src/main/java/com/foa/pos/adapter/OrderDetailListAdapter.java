@@ -94,7 +94,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
         }
         
         final OrderItem orderItem = (OrderItem) getItem(position);
-        if (orderItem.getStockState()==StockState.IN_STOCK){
+        if (orderItem.getStockState()==StockState.OUT_OF_STOCK){
             holder.layoutOrderItem.setBackgroundResource(R.color.line_gray);
         }
 

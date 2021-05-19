@@ -30,7 +30,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -91,36 +90,24 @@ public final class Helper
 		return instance.getBaseContext();
 	}
 	
-	public static String getUserID()
-	{
-		return getMD5("U" + System.currentTimeMillis());
-	}
-	
 	public static String getOrderID()
 	{
 		return getMD5("O" + System.currentTimeMillis());
 	}
 	
-	public static String getOrderDetailID(int i)
+	public static String getOrderItemID(int i)
 	{
 		if(i != 0)
-			return getMD5("DO" + System.currentTimeMillis());
+			return getMD5("OI" + System.currentTimeMillis());
 		else
-			return getMD5("DO" + System.currentTimeMillis()+i);
+			return getMD5("OI" + System.currentTimeMillis()+i);
 	}
-	public static String getCashierID()
+	public static String getOrderToppingId(int i)
 	{
-		return getMD5("K" + System.currentTimeMillis());
-	}
-	
-	public static String getCategoryID()
-	{
-		return getMD5("C" + System.currentTimeMillis());
-	}
-	
-	public static String getProductID()
-	{
-		return getMD5("P" + System.currentTimeMillis());
+		if(i != 0)
+			return getMD5("OT" + System.currentTimeMillis());
+		else
+			return getMD5("OT" + System.currentTimeMillis()+i);
 	}
 	
 	public static String getMD5(String input) {
@@ -245,11 +232,12 @@ public final class Helper
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 
-	public static OrderItem createOrderItem(MenuItem product, int pos){
+	public static OrderItem createOrderItem(MenuItem product, int pos, String orderId){
 		OrderItem orderItem = new OrderItem();
-		orderItem.setId(Helper.getOrderDetailID(pos));
+		orderItem.setId(Helper.getOrderItemID(pos));
 		orderItem.setMenuItemId(product.getId());
 		orderItem.setMenuItemName(product.getName());
+		orderItem.setOrderId(orderId);
 		orderItem.setQuantity(1);
 		orderItem.setPrice(product.getPrice());
 		//orderItem.setOrderItemToppings(new ArrayList<>());

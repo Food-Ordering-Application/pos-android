@@ -53,7 +53,12 @@ public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
 		btnOk.setEnabled(false);
 		outOfProductSwitch.setChecked(preIsOutOfSod== StockState.OUT_OF_STOCK);
 		outOfProductSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-			btnOk.setEnabled(isChecked != preIsOutOfSod.equals(StockState.IN_STOCK));
+			if (isChecked){
+				btnOk.setEnabled(preIsOutOfSod.equals(StockState.IN_STOCK));
+			}else{
+				btnOk.setEnabled(preIsOutOfSod.equals(StockState.OUT_OF_STOCK));
+			}
+
 		});
 
 		btnOk.setEnabled(false);

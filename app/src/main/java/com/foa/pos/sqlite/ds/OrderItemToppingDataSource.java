@@ -67,24 +67,6 @@ public class OrderItemToppingDataSource {
 		return items;
 	}
 	
-	public long insertMany(List<OrderItemTopping> orderItemToppings)
-	{
-		long success = -1;
-		for (OrderItemTopping item :orderItemToppings) {
-			ContentValues values = new ContentValues();
-			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_ID, item.getId());
-			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_TOPPING_ID, item.getMenuItemToppingId());
-			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_ORDER_ITEM_ID, item.getId());
-			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_PRICE, item.getPrice());
-			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_QTY, item.getQuantity());
-			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_STATE,item.getState().toString());
-
-			success =  db.insert(DbSchema.TBL_MENU_GROUP, null, values);
-			if (success==-1) break;
-		}
-		return success;
-	}
-	
 	public long update(MenuGroup item, String lastCode)
 	{
 		ContentValues values = new ContentValues();

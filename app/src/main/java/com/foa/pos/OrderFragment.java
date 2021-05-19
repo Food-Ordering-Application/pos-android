@@ -52,6 +52,8 @@ import com.foa.pos.widget.PickToppingDialog;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickListener {
     private View root;
@@ -106,32 +108,9 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         toolbar.inflateMenu(R.menu.right_layout_menu);
         toolbar.setOnMenuItemClickListener(this);
 
-        //Init sqlite data source
-        SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
-        ProductDS = new MenuItemDataSource(db);
-        OrderDS = new OrderDataSource(db);
-        OrderToppingsDS = new OrderItemToppingDataSource(db);
 
-        //Set menu
-        menuAdapter = new ProductGridAdapter(requireActivity());
-        menuGrid.setAdapter(menuAdapter);
-        menuList.setAdapter(menuAdapter);
-        menuAdapter.set(ProductDS.getAll("", ""));
 
-        //Set category radio group button
-        MenuGroupDataSource catds = new MenuGroupDataSource(db);
-        ArrayList<MenuGroup> catList = catds.getAll();
-        MenuGroup ct = new MenuGroup();
-        ct.setId("");
-        ct.setName("All");
-        catList.add(0, ct);
-        radioGroup = root.findViewById(R.id.categoryGroup);
-        addRadioButtons(radioGroup, catList);
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            RadioButton item = root.findViewById(checkedId);
-            String cateName = item.getText().toString();
-            menuAdapter.set(ProductDS.getAll(txtKeyword.getText().toString(), ProductDS.getIdByName(cateName)));
-        });
+
 
         //Set cart
         cartAdapter = new CartListAdapter(requireActivity());
@@ -151,6 +130,40 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(() -> {
+            SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
+            ProductDS = new MenuItemDataSource(db);
+            OrderDS = new OrderDataSource(db);
+            OrderToppingsDS = new OrderItemToppingDataSource(db);
+
+            //Set menu
+            menuAdapter = new ProductGridAdapter(requireActivity());
+            menuGrid.setAdapter(menuAdapter);
+            menuList.setAdapter(menuAdapter);
+            menuAdapter.set(ProductDS.getAll("", ""));
+
+            //Set category radio group button
+            MenuGroupDataSource catds = new MenuGroupDataSource(db);
+            ArrayList<MenuGroup> catList = catds.getAll();
+            MenuGroup ct = new MenuGroup();
+            ct.setId("");
+            ct.setName("All");
+            catList.add(0, ct);
+            addRadioButtons(radioGroup, catList);
+            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                RadioButton item = root.findViewById(checkedId);
+                String cateName = item.getText().toString();
+                menuAdapter.set(ProductDS.getAll(txtKeyword.getText().toString(), ProductDS.getIdByName(cateName)));
+            });
+
+        });
+        executorService.shutdown();
+    }
+
     private void initFindView() {
         menuWrapper = root.findViewById(R.id.bgMenu);
         cartWrapper = root.findViewById(R.id.bgCart);
@@ -164,6 +177,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         btnToggleList = root.findViewById(R.id.imageView2);
         promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
         cartList = root.findViewById(R.id.listView1);
+        radioGroup = root.findViewById(R.id.categoryGroup);
     }
 
     private void initListener() {
@@ -365,7 +379,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     };
 
     private void updateOrderOffline(Order currentOrder, MenuItem product, List<OrderItemTopping> orderItemToppings) {
-        if (cartAdapter.getCount() == 0) {
+        int size = cartAdapter.getCount();
+        if (cartAdapter.getCount() == 1) {
             Date dt = new Date();
             currentOrder = new Order();
             currentOrder.setId(Helper.getOrderID());
@@ -377,16 +392,24 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             //udpate data
             OrderDS.insertOrder(currentOrder);
         }
-        OrderItem orderItem = Helper.createOrderItem(product, cartAdapter.getCount());
+        OrderItem orderItem = Helper.createOrderItem(product, cartAdapter.getCount(), currentOrder.getId());
+        orderItem.setOrderItemToppings(setOrderItemToppingIds(orderItemToppings));
         currentOrder.addOrderItemPrice(orderItem.getPrice() * orderItem.getQuantity());
         OrderSession.setInstance(currentOrder);
         updateStatistic(currentOrder);
-        cartAdapter.add(orderItem);
         //update data
         OrderDS.insertOrderItem(orderItem);
         OrderDS.updateSumaryOrderInfo(currentOrder.getId(), currentOrder.getSubTotal(), currentOrder.getSubTotal());
-        OrderToppingsDS.insertMany(orderItemToppings);
+
     }
+
+    private List<OrderItemTopping>  setOrderItemToppingIds(List<OrderItemTopping> orderItemToppings){
+        for (int i = 0; i < orderItemToppings.size() ; i++) {
+            orderItemToppings.get(i).setId(Helper.getOrderToppingId(i));
+        }
+        return orderItemToppings;
+    }
+
 
 
 

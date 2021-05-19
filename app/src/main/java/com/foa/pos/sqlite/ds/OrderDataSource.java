@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
+import com.foa.pos.model.OrderItemTopping;
 import com.foa.pos.model.enums.StockState;
 import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
@@ -87,9 +88,9 @@ public class OrderDataSource {
 		if (c.moveToFirst()) {
 
 			do {
-				if(c.getInt(c.getColumnIndex(DbSchema.COL_ORDER_STATUS))!=status){
-					continue;
-				}
+//				if(c.getInt(c.getColumnIndex(DbSchema.COL_ORDER_STATUS))!=status){
+//					continue;
+//				}
 
 				Order item = new Order();
 				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER)));
@@ -148,7 +149,7 @@ public class OrderDataSource {
 		values.put(DbSchema.COL_ORDER_CASHIER_ID, item.getCustomerId());
 		values.put(DbSchema.COL_ORDER_ORDERED_ON,  Helper.dateformat.format(item.getCreatedAt()));
 		values.put(DbSchema.COL_ORDER_UPDATED_ON,  Helper.dateformat.format(item.getUpdatedAt()));
-		db.insert(DbSchema.TBL_ORDER, null, values);
+		long success = db.insert(DbSchema.TBL_ORDER, null, values);
 		
 		for (OrderItem detail : item.getOrderItems()) {
 			ContentValues valuesDetails = new ContentValues();
@@ -158,7 +159,7 @@ public class OrderDataSource {
 			valuesDetails.put(DbSchema.COL_ORDER_ITEM_PRICE, detail.getPrice());
 			valuesDetails.put(DbSchema.COL_ORDER_ITEM_QTY,detail.getQuantity());
 			valuesDetails.put(DbSchema.COL_ORDER_ITEM_DISCOUNT, detail.getDiscount());
-			valuesDetails.put(DbSchema.COL_ORDER_ITEM_STATE,false);
+			valuesDetails.put(DbSchema.COL_ORDER_ITEM_STATE,StockState.IN_STOCK.toString());
 			db.insert(DbSchema.TBL_ORDER_ITEM, null, valuesDetails);
 		}
 		
@@ -180,27 +181,41 @@ public class OrderDataSource {
 
 	//------------------- ORDER ITEM -----------------//
 
-	public long insertOrderItem(OrderItem item){
+	public long insertOrderItem(OrderItem orderItem){
 		ContentValues valuesDetails = new ContentValues();
-		valuesDetails.put(DbSchema.COL_ORDER_ITEM_ID, item.getId());
-		valuesDetails.put(DbSchema.COL_ORDER_ITEM_ORDER_ID, item.getOrderId());
-		valuesDetails.put(DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID, item.getMenuItemId());
-		valuesDetails.put(DbSchema.COL_ORDER_ITEM_PRICE, item.getPrice());
-		valuesDetails.put(DbSchema.COL_ORDER_ITEM_QTY,item.getQuantity());
-		valuesDetails.put(DbSchema.COL_ORDER_ITEM_DISCOUNT, item.getDiscount());
-		valuesDetails.put(DbSchema.COL_ORDER_ITEM_STATE,false);
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_ID, orderItem.getId());
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_ORDER_ID, orderItem.getOrderId());
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID, orderItem.getMenuItemId());
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_PRICE, orderItem.getPrice());
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_QTY,orderItem.getQuantity());
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_DISCOUNT, orderItem.getDiscount());
+		valuesDetails.put(DbSchema.COL_ORDER_ITEM_STATE,StockState.IN_STOCK.toString());
 		db.insert(DbSchema.TBL_ORDER_ITEM, null, valuesDetails);
 
-		return 1;
+		long success = -1;
+		for (OrderItemTopping item :orderItem.getOrderItemToppings()) {
+			ContentValues values = new ContentValues();
+			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_ID, item.getId());
+			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_TOPPING_ID, item.getMenuItemToppingId());
+			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_ORDER_ITEM_ID, orderItem.getId());
+			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_PRICE, item.getPrice());
+			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_QTY, item.getQuantity());
+			values.put(DbSchema.COL_ORDER_ITEM_TOPPING_STATE,item.getState().toString());
+
+			success =  db.insert(DbSchema.TBL_ORDER_ITEM_TOPPING, null, values);
+			if (success==-1) break;
+		}
+		return success;
 	}
 
 	public long updateOutSoldOrderItem(String orderItemId, boolean isOutOfSold)
 	{
 		ContentValues values = new ContentValues();
 
-		values.put(DbSchema.COL_ORDER_ITEM_STATE, isOutOfSold ? 1:0);
+		values.put(DbSchema.COL_ORDER_ITEM_STATE, isOutOfSold ? StockState.OUT_OF_STOCK.toString():StockState.IN_STOCK.toString());
 
-		return db.update(DbSchema.TBL_ORDER_ITEM, values, DbSchema.COL_ORDER_ITEM_ID +"= '"+orderItemId+"' ", null);
+		long success =  db.update(DbSchema.TBL_ORDER_ITEM, values, DbSchema.COL_ORDER_ITEM_ID +"= '"+orderItemId+"' ", null);
+		return success;
 	}
 
 	public int deleteOrderItem(String orderItemId)
