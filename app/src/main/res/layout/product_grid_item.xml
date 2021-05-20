@@ -10,7 +10,7 @@
         <TextView
             android:id="@+id/tvCartProductName"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="90dp"
             android:layout_marginStart="8dp"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
@@ -18,7 +18,7 @@
             android:layout_above="@+id/productImage"
             android:text="Tên món ăn"
             android:textColor="@color/black"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"/>
         <RelativeLayout
             android:id="@+id/productImage"
@@ -35,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_noimage_square"
+                android:src="@drawable/setting"
                 />
 
             <ImageView

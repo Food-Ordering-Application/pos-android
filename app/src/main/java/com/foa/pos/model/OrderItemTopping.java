@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 public class OrderItemTopping {
     @SerializedName("id")
     private String id;
-    @SerializedName("menuItemToppingId")
+    @SerializedName("toppingItemId")
     private String menuItemToppingId;
     @SerializedName("name")
     private String name;

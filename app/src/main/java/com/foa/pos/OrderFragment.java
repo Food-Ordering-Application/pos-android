@@ -48,6 +48,7 @@ import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
 import com.foa.pos.utils.OrderSession;
+import com.foa.pos.widget.PaymentDialog;
 import com.foa.pos.widget.PickToppingDialog;
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,6 +209,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         return false;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void addRadioButtons(RadioGroup radioGroup, List<MenuGroup> categoryList) {
         radioGroup.setOrientation(LinearLayout.HORIZONTAL);
         //
@@ -216,7 +218,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             rdbtn.setId(View.generateViewId());
             rdbtn.setText(categoryList.get(i).getName());
             rdbtn.setBackgroundResource(R.drawable.radio_button_selector);
-            rdbtn.setTextColor(R.drawable.radio_button_selector_text);
             rdbtn.setPadding(50, 30, 50, 30);
             rdbtn.setGravity(Gravity.CENTER);
             rdbtn.setButtonDrawable(android.R.color.transparent);
@@ -395,6 +396,8 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         OrderItem orderItem = Helper.createOrderItem(product, cartAdapter.getCount(), currentOrder.getId());
         orderItem.setOrderItemToppings(setOrderItemToppingIds(orderItemToppings));
         currentOrder.addOrderItemPrice(orderItem.getPrice() * orderItem.getQuantity());
+        currentOrder.addOrderItem(orderItem);
+        currentOrder.addOrderItemPrice(orderItem.getPrice());
         OrderSession.setInstance(currentOrder);
         updateStatistic(currentOrder);
         //update data
@@ -446,9 +449,16 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 Toast.makeText(getActivity(), "Chọn ít nhất 1 chọn sản phẩm", Toast.LENGTH_SHORT).show();
                 return;
             }
-            //showCheckout();
-            Intent intent = new Intent(getActivity(), PaymentActivity.class);
-            startActivity(intent);
+
+            PaymentDialog paymentDialog = new PaymentDialog(getActivity());
+            paymentDialog.setPaymentListener(result -> {
+                if (result){
+                    cartAdapter.removeAll();
+                    OrderSession.setInstance(null);
+                }
+            });
+            paymentDialog.show();
+
         }
     };
 

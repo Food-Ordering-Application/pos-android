@@ -12,59 +12,67 @@
         android:id="@+id/bgOrders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/relativeLayout3"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@drawable/textbox_large">
-
-            <ImageButton
-                android:id="@+id/imageView2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="13dp"
-                android:background="@drawable/icon_state"
-                android:src="@drawable/ic_gridview" />
-
-            <View
-                android:id="@+id/sparator"
-                android:layout_width="0.5dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="13dp"
-                android:layout_toRightOf="@+id/imageView2"
-                android:background="@color/line_gray" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:gravity="end">
 
             <EditText
                 android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
                 android:layout_alignTop="@+id/imageView2"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="20dp"
                 android:layout_toRightOf="@+id/sparator"
-                android:background="@color/putih"
+                android:background="@drawable/stroke_blue"
                 android:ems="10"
                 android:hint="Tìm kiếm hoá đơn"
                 android:textColor="@color/text_gray"
                 android:textSize="15dp"/>
-
-            <ImageView
-                android:id="@+id/imageView3"
+            <TextView
+                android:text="Loại đơn"
+                android:gravity="center"
+                android:padding="5dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="20dp"
-                android:src="@drawable/ic_arrow_down"
-                android:visibility="gone" />
-
-        </RelativeLayout>
+                android:layout_height="match_parent"/>
+            <Spinner
+                android:background="@drawable/stroke_blue"
+                android:layout_width="150dp"
+                android:layout_height="50dp"/>
+            <TextView
+                android:text="Từ"
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:background="@drawable/stroke_blue"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:text="Đến"
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:background="@drawable/stroke_blue"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"/>
+            <Button
+                android:drawableLeft="@drawable/ic__search"
+                android:text="Tìm kiếm"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -235,7 +243,7 @@
                             android:id="@+id/tvTotal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -285,7 +293,7 @@
                             android:id="@+id/tvTotalPay"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textColor="@color/red"
                             android:textSize="20dp"
@@ -351,7 +359,7 @@
                             android:id="@+id/tvReceiveMoney"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textSize="16dp" />
                     </LinearLayout>
@@ -372,7 +380,7 @@
                             android:id="@+id/tvChange"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textSize="16dp" />
                     </LinearLayout>

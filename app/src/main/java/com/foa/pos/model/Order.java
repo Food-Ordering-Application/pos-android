@@ -177,6 +177,10 @@ public class Order{
 		this.orderItems = orderItems;
 	}
 
+	public void addOrderItem(OrderItem orderItems) {
+		this.orderItems.add(orderItems);
+	}
+
 	public boolean isSelected() {
 		return isSelected;
 	}
@@ -201,6 +205,7 @@ public class Order{
 
 	public void addOrderItemPrice(long orderItemPrice){
 		this.subTotal += orderItemPrice;
+		this.grandTotal = this.subTotal;
 	}
 
 }

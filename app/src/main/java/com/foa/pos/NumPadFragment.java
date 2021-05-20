@@ -11,13 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NumPadFragment extends Fragment {
 
     private View root;
-    List<Button> listNumberButton = new ArrayList<>();
     private Button numPadButton0;
     private Button numPadButton1;
     private Button numPadButton2;
@@ -33,13 +29,12 @@ public class NumPadFragment extends Fragment {
     private Button numPadButtonClear;
     private ImageButton numPadButtonBack;
 
-    OnNumpadClick onNumpadClick;
+    OnNumpadClickListener onNumpadClickListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         root =  inflater.inflate(R.layout.fragment_num_pad, container, false);
-        onNumpadClick = (OnNumpadClick) getActivity();
         init();
         setButtonClickListener();
         return root;
@@ -85,17 +80,21 @@ public class NumPadFragment extends Fragment {
     private OnClickListener buttonOnClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            onNumpadClick.onReceiveData( ((Button)v).getText().toString());
+            onNumpadClickListener.onReceiveData( ((Button)v).getText().toString());
         }
     };
     private OnClickListener backButtonOnClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            onNumpadClick.onReceiveData("B");
+            onNumpadClickListener.onReceiveData("B");
         }
     };
 
-    public interface OnNumpadClick {
+    public void setNumPadClickListener(NumPadFragment.OnNumpadClickListener listener){
+        this.onNumpadClickListener = listener;
+    }
+
+    public interface OnNumpadClickListener {
         void onReceiveData(String data);
     }
 

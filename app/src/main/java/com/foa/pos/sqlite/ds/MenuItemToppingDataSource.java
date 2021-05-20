@@ -102,9 +102,9 @@ public class MenuItemToppingDataSource {
 			ToppingGroup toppingGroup = new ToppingGroup();
 			do {
 				toppingGroup.setId(groupCursor.getString(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_ID)));
-				toppingGroup.setName(groupCursor.getString(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_ID)));
-				toppingGroup.setActive(groupCursor.getInt(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_ID))==1);
-				toppingGroup.setIndex(groupCursor.getFloat(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_ID)));
+				toppingGroup.setName(groupCursor.getString(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_NAME)));
+				toppingGroup.setActive(groupCursor.getInt(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_IS_ACTIVE))==1);
+				toppingGroup.setIndex(groupCursor.getFloat(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_INDEX)));
 				toppingGroup.setToppingItems(toppingItems.stream().filter(toppingItem -> toppingItem.getToppingGroupId().equals(toppingGroup.getId())).collect(Collectors.toList()));
 				toppingGroups.add(toppingGroup);
 			} while (groupCursor.moveToNext());

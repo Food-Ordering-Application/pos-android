@@ -201,7 +201,7 @@
                         android:textAlignment="viewEnd"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:text="0 đồng" />
+                        android:text="0 đ" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -219,7 +219,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="viewEnd"
                         android:textSize="16sp"
-                        android:text="0 đồng" />
+                        android:text="0 đ" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -239,7 +239,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="viewEnd"
                         android:textSize="16dp"
-                        android:text="0 đồng" />
+                        android:text="0 đ" />
                 </LinearLayout>
                 <View
                     android:padding="5dp"
@@ -264,7 +264,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="viewEnd"
                         android:textSize="20dp"
-                        android:text="0 đồng"
+                        android:text="0 đ"
                         android:textStyle="bold"
                         android:textColor="@color/red" />
                 </LinearLayout>
