@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="horizontal"
-    tools:context=".DeliveryFragment"
+    tools:context=".fragment.DeliveryFragment"
     >
     <LinearLayout
         android:id="@+id/bgDeliveries"

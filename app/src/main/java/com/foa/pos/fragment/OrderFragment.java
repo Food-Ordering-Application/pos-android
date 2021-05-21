@@ -1,7 +1,6 @@
-package com.foa.pos;
+package com.foa.pos.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
@@ -27,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.foa.pos.R;
 import com.foa.pos.adapter.CartListAdapter;
 import com.foa.pos.adapter.ProductGridAdapter;
 import com.foa.pos.adapter.PromotionListAdapter;
@@ -48,8 +48,8 @@ import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
 import com.foa.pos.utils.OrderSession;
-import com.foa.pos.widget.PaymentDialog;
-import com.foa.pos.widget.PickToppingDialog;
+import com.foa.pos.dialog.PaymentDialog;
+import com.foa.pos.dialog.PickToppingDialog;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -386,7 +386,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             currentOrder = new Order();
             currentOrder.setId(Helper.getOrderID());
             currentOrder.setRestaurantId(Helper.read(Constants.KEY_SETTING_BRANCH_ID, ""));
-            currentOrder.setCashierId(com.foa.pos.MainActivity.SesID);
             currentOrder.setCreatedAt(dt);
             currentOrder.setNote("");
             currentOrder.setUpdatedAt(dt);

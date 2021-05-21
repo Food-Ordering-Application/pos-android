@@ -10,7 +10,6 @@ import com.foa.pos.sqlite.DbSchema;
 import com.foa.pos.utils.Helper;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import static com.foa.pos.sqlite.DbSchema.COL_MENU_GROUP_ID;
 import static com.foa.pos.sqlite.DbSchema.COL_MENU_GROUP_NAME;
@@ -51,7 +50,7 @@ public class MenuItemDataSource {
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
 				try {
-				    item.setSycnOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
+				    item.setSycnOn( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
 				} catch (Exception e) {
 				}
 			
@@ -102,7 +101,7 @@ public class MenuItemDataSource {
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
 				try {
-				    item.setSycnOn( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
+				    item.setSycnOn( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
 				} catch (Exception e) {
 				}
 				

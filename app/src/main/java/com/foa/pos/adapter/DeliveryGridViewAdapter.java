@@ -21,11 +21,10 @@ import androidx.annotation.Nullable;
 import com.foa.pos.R;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
-import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
 import com.foa.pos.utils.Helper;
-import com.foa.pos.widget.EditOrderItemDialog;
+import com.foa.pos.dialog.EditOrderItemDialog;
 
 import java.util.List;
 import java.util.Random;

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.os.Environment;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,34 +15,30 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.foa.pos.R;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.OrderItemTopping;
-import com.foa.pos.widget.LoadingDialog;
+import com.foa.pos.dialog.LoadingDialog;
 
-import java.io.File;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 public final class Helper
 {
 	private static ContextWrapper instance;
 	private static SharedPreferences pref;
-	public static String SERVER_URL = "http://10.0.2.2:8000";
 	
-	public static SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-	public static SimpleDateFormat dateformatID = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	public static SimpleDateFormat dateTimeformat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	public static DecimalFormat decimalformat = new DecimalFormat("#.###");
 	public static void initialize(Context base)
@@ -58,7 +53,7 @@ public final class Helper
 	{
 		SharedPreferences.Editor editor = pref.edit();
 		editor.putString(key, value);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public static String read(String key)
@@ -75,14 +70,7 @@ public final class Helper
 	{
 		SharedPreferences.Editor editor = pref.edit();
 		editor.clear();
-		editor.commit();
-	}
-	
-	public static void clear(String key)
-	{
-		SharedPreferences.Editor editor = pref.edit();
-		editor.remove(key);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public static Context getContext()
@@ -92,55 +80,19 @@ public final class Helper
 	
 	public static String getOrderID()
 	{
-		return getMD5("O" + System.currentTimeMillis());
+		return UUID.randomUUID().toString();
 	}
 	
 	public static String getOrderItemID(int i)
 	{
-		if(i != 0)
-			return getMD5("OI" + System.currentTimeMillis());
-		else
-			return getMD5("OI" + System.currentTimeMillis()+i);
+		return UUID.randomUUID().toString();
 	}
+
 	public static String getOrderToppingId(int i)
 	{
-		if(i != 0)
-			return getMD5("OT" + System.currentTimeMillis());
-		else
-			return getMD5("OT" + System.currentTimeMillis()+i);
+		return UUID.randomUUID().toString();
 	}
-	
-	public static String getMD5(String input) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] messageDigest = md.digest(input.getBytes());
-            BigInteger number = new BigInteger(1, messageDigest);
-            String hashtext = number.toString(16);
-            // Now we need to zero pad it if you actually want the full 32 chars.
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-            return hashtext;
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-	 
-	public static String getAppDir()
-	{
-		File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator  + instance.getResources().getString(R.string.app_name));
-		if(!f.exists())
-			f.mkdir();
-		
-		return f.getAbsolutePath();
-	}
-	
-	public static float scaleFactor(int w)
-    {
-       return 512f / w;
-    }
-	
+
 	public static int getDisplayWidth()
 	{
 		 WindowManager wm = (WindowManager) instance.getSystemService(Context.WINDOW_SERVICE);
@@ -161,11 +113,11 @@ public final class Helper
 	}
 
 	public static String formatMoney(long monney){
-		return decimalformat.format(monney)+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL);
+		Locale localeVN = new Locale("vi", "VN");
+		NumberFormat currencyVN = NumberFormat.getCurrencyInstance(localeVN);
+		return currencyVN.format(monney)+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL);
 	}
-	public static String formatMoney(String monney){
-		return monney+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL);
-	}
+
 
 	public static Date plusMinutes(Date date, int minute) {
 		GregorianCalendar cal = new GregorianCalendar();
@@ -200,17 +152,6 @@ public final class Helper
 		theGridView.setNumColumns(5);
 	}
 
-
-
-	public static void clearSelectedItem(List<Order> orders){
-		for (int i = 0; i < orders.size(); i++) {
-			if(orders.get(i).isSelected()){
-				orders.get(i).setSelected(false);
-				return;
-			}
-		}
-	}
-
 	public static boolean checkHasSelectedItem(List<Order> orders,Order item){
 		for (int i = 0; i < orders.size(); i++) {
 			if(item.getId()!= orders.get(i).getId() && orders.get(i).isSelected()){
@@ -224,11 +165,6 @@ public final class Helper
 	public static void showFailNotification(Context context,LoadingDialog loading,LinearLayout wrapper,String message){
 		loading.dismiss();
 		YoYo.with(Techniques.Shake).duration(700).playOn(wrapper);
-		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-	}
-
-	public static void showFailNotification(Context context,LoadingDialog loading,String message){
-		loading.dismiss();
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 

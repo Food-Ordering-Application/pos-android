@@ -1,8 +1,11 @@
 package com.foa.pos;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.Toast;
@@ -15,6 +18,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.foa.pos.receiver.NetworkReceiver;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.utils.LoginSession;
@@ -22,9 +26,8 @@ import com.foa.pos.utils.OrderSession;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
-	public static String SesID;
-	AppCompatActivity appCompatActivity = null;
 	private AppBarConfiguration mAppBarConfiguration;
+	private BroadcastReceiver networkReceiver = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,26 @@ public class MainActivity extends AppCompatActivity {
 			logout();
 			return true;
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		networkReceiver = new NetworkReceiver();
+		registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(networkReceiver);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (networkReceiver!= null)
+		unregisterReceiver(networkReceiver);
 	}
 
 	@Override

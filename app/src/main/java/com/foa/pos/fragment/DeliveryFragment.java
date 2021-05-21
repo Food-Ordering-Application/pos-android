@@ -1,4 +1,4 @@
-package com.foa.pos;
+package com.foa.pos.fragment;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.foa.pos.R;
 import com.foa.pos.adapter.DeliveryGridViewAdapter;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;

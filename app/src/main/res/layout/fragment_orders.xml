@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="50dp"
-    android:layout_marginEnd="50dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
     android:orientation="horizontal"
-    tools:context=".OrdersFragment">
+    tools:context=".fragment.OrdersFragment">
 
     <LinearLayout
         android:id="@+id/bgOrders"
@@ -17,7 +17,7 @@
         <LinearLayout
             android:id="@+id/relativeLayout3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:gravity="end">
@@ -32,7 +32,7 @@
                 android:layout_toRightOf="@+id/sparator"
                 android:background="@drawable/stroke_blue"
                 android:ems="10"
-                android:hint="Tìm kiếm hoá đơn"
+                android:hint="Tìm kiếm mã hoá đơn"
                 android:textColor="@color/text_gray"
                 android:textSize="15dp"/>
             <TextView
@@ -42,9 +42,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
             <Spinner
+                android:id="@+id/orderTypeSpinner"
                 android:background="@drawable/stroke_blue"
                 android:layout_width="150dp"
-                android:layout_height="50dp"/>
+                android:layout_height="match_parent"/>
             <TextView
                 android:text="Từ"
                 android:gravity="center"
@@ -52,8 +53,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
             <TextView
+                android:id="@+id/dateFrom"
                 android:background="@drawable/stroke_blue"
                 android:layout_width="150dp"
+                android:gravity="center"
+                android:clickable="true"
                 android:layout_height="match_parent"/>
             <TextView
                 android:text="Đến"
@@ -62,21 +66,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
             <TextView
+                android:id="@+id/dateTo"
                 android:background="@drawable/stroke_blue"
                 android:layout_width="150dp"
+                android:gravity="center"
+                android:clickable="true"
                 android:layout_height="match_parent"/>
             <Button
                 android:drawableLeft="@drawable/ic__search"
                 android:text="Tìm kiếm"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_width="150dp"
+                android:background="@color/primaryColor"
                 android:layout_height="match_parent"/>
         </LinearLayout>
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="match_parent"
+            android:calendarViewShown="true"
+            android:spinnersShown="false"
+            android:layout_weight="4"
+            android:layout_height="0dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:gravity="center_vertical"
             android:background="@color/line_gray"
             >
@@ -87,6 +101,7 @@
                 android:layout_weight="1"
                 style="@style/TalbleTitle"
                 android:gravity="start"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:paddingStart="5dp"
                 android:text="Mã đơn hàng" />
 
@@ -95,6 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
                 style="@style/TalbleTitle"
                 android:text="Tổng tiền" />
 
@@ -103,6 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
                 style="@style/TalbleTitle"
                 android:text="Thanh toán" />
 
@@ -112,6 +129,7 @@
                 android:layout_weight="1"
                 style="@style/TalbleTitle"
                 android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:text="Loại" />
 
             <TextView
@@ -119,6 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
                 style="@style/TalbleTitle"
                 android:text="Thu ngân" />
 
@@ -129,6 +148,7 @@
                 android:paddingEnd="5dp"
                 style="@style/TalbleTitle"
                 android:gravity="end"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:text="Thời gian" />
         </LinearLayout>
 

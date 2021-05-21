@@ -1,4 +1,4 @@
-package com.foa.pos.widget;
+package com.foa.pos.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

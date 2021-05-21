@@ -1,8 +1,11 @@
 package com.foa.pos;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,12 +20,13 @@ import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.entity.LoginBody;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.ResponseAdapter;
+import com.foa.pos.receiver.NetworkReceiver;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
-import com.foa.pos.widget.LoadingDialog;
+import com.foa.pos.dialog.LoadingDialog;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.nineoldandroids.animation.Animator;
@@ -42,18 +46,20 @@ public class LoginActivity extends Activity implements OnClickListener {
 	LinearLayout wrapperLogin;
 	private LoadingDialog loading;
 
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		context = this;
-		btnLogin = (Button) findViewById(R.id.btnLogin);
+		btnLogin =  findViewById(R.id.btnLogin);
 		btnLogin.setOnClickListener(this);
 
 		wrapperLogin = findViewById(R.id.loginWrapper);
 		btnSaleOffline = findViewById(R.id.OfflineSaleModeButton);
-		txtusername = (EditText) findViewById(R.id.txtUserName);
-		txtpassword = (EditText) findViewById(R.id.txtPassword);
+		txtusername = findViewById(R.id.txtUserName);
+		txtpassword = findViewById(R.id.txtPassword);
 		Helper.initialize(this);
 		DatabaseManager.initializeInstance(new DatabaseHelper(this));
 		loading = new LoadingDialog(this);
@@ -61,13 +67,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 		//temp
 
 
+
 		btnSaleOffline.setOnClickListener(v -> goNext());
 //		if (Helper.read(Constants.CASHIER_ID)!= null){
 //			goNext();
 //		}
-
-
-
 	}
 
 	private void goNext(){

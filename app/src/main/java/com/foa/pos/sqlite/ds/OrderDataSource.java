@@ -38,8 +38,8 @@ public class OrderDataSource {
 				order.setCustomerId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CASHIER_ID)));
 				
 				try {  
-				    order.setCreatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
-				    order.setUpdatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
+				    order.setCreatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
+				    order.setUpdatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
 				} catch (Exception e) {
 				}
 				
@@ -102,8 +102,8 @@ public class OrderDataSource {
 				item.setSelected(false);
 				
 				try {  
-				    item.setCreatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
-				    item.setUpdatedAt( Helper.dateformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
+				    item.setCreatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ORDERED_ON))));
+				    item.setUpdatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_ON))));
 				} catch (Exception e) {
 				}
 				
@@ -147,8 +147,8 @@ public class OrderDataSource {
 		values.put(DbSchema.COL_ORDER_DISCOUNT,item.getDiscount());
 		values.put(DbSchema.COL_ORDER_BRANCH_ID, item.getRestaurantId());
 		values.put(DbSchema.COL_ORDER_CASHIER_ID, item.getCustomerId());
-		values.put(DbSchema.COL_ORDER_ORDERED_ON,  Helper.dateformat.format(item.getCreatedAt()));
-		values.put(DbSchema.COL_ORDER_UPDATED_ON,  Helper.dateformat.format(item.getUpdatedAt()));
+		values.put(DbSchema.COL_ORDER_ORDERED_ON,  Helper.dateFormat.format(item.getCreatedAt()));
+		values.put(DbSchema.COL_ORDER_UPDATED_ON,  Helper.dateFormat.format(item.getUpdatedAt()));
 		long success = db.insert(DbSchema.TBL_ORDER, null, values);
 		
 		for (OrderItem detail : item.getOrderItems()) {

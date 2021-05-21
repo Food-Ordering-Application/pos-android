@@ -1,4 +1,4 @@
-package com.foa.pos.widget;
+package com.foa.pos.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.foa.pos.NumPadFragment;
+import com.foa.pos.fragment.NumPadFragment;
 import com.foa.pos.R;
 import com.foa.pos.model.Order;
 import com.foa.pos.utils.OrderSession;

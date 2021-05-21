@@ -277,17 +277,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true">
-                <TextView
-                    android:id="@+id/btnSave"
-                    android:layout_width="100dp"
-                    android:layout_height="60dp"
-                    android:textSize="22sp"
-                    android:text="5"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:background="@color/secondaryColor"
-                    android:textStyle="bold"/>
                 <Button
                     android:id="@+id/btnOrder"
                     android:layout_width="match_parent"

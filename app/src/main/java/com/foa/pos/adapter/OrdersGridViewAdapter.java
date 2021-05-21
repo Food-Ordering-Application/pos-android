@@ -69,9 +69,9 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
         }
 
         if(position%2==0){
-            holder.cardItem.setBackgroundResource(R.color.item_transparan);
-        }else{
             holder.cardItem.setBackgroundResource(R.color.white);
+        }else{
+            holder.cardItem.setBackgroundResource(R.color.item_transparan);
         }
 
         //Set item listener to change border

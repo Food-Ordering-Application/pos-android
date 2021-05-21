@@ -46,7 +46,7 @@ public class Promotion {
     }
 
     public String getExp() {
-        return Helper.dateformat.format(this.exp);
+        return Helper.dateFormat.format(this.exp);
     }
 
     public void setExp(Date exp) {

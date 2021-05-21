@@ -18,7 +18,7 @@ import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.response.VerifyAppResponse;
 import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
-import com.foa.pos.widget.LoadingDialog;
+import com.foa.pos.dialog.LoadingDialog;
 
 import retrofit2.Call;
 import retrofit2.Callback;

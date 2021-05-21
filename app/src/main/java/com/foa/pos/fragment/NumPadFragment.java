@@ -1,4 +1,4 @@
-package com.foa.pos;
+package com.foa.pos.fragment;
 
 import android.os.Bundle;
 
@@ -10,6 +10,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import com.foa.pos.R;
 
 public class NumPadFragment extends Fragment {
 
