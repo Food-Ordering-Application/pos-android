@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/btnSubQuantityCartItem"
         android:layout_marginLeft="16dp"
         android:text="title"
         android:textColor="@color/item"
@@ -23,8 +24,9 @@
         android:id="@+id/tvTopping"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvCartProductName"
+        android:layout_alignStart="@+id/tvCartProductName"
         android:layout_below="@+id/tvCartProductName"
+        android:layout_toStartOf="@+id/btnSubQuantityCartItem"
         android:textColor="@color/text_gray"
         android:textSize="12sp"
         android:text="Topping name" />
@@ -65,7 +67,7 @@
         android:src="@drawable/ic_add_circle_24" />
     <TextView
         android:id="@+id/tvProductPrice"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"

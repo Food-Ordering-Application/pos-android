@@ -29,10 +29,13 @@ import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoggerHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Headers;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -52,6 +55,7 @@ public class SplashActivity extends AppCompatActivity {
     Runnable getToppingItems;
     Runnable getMenuItemToppings;
 
+    Boolean isMenuIdSuccess = null;
     Boolean isMenuItemSuccess = null;
     Boolean isMenuGroupSuccess = null;
     Boolean isToppingItemSuccess = null;
@@ -60,6 +64,7 @@ public class SplashActivity extends AppCompatActivity {
 
     ProgressBar loadingProgress;
     TextView statusMessage;
+    List<MenuItem> menuItems = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,11 +83,15 @@ public class SplashActivity extends AppCompatActivity {
         Helper.write(Constants.MERCHANT_ID, "20c2c064-2457-4525-b7e4-7c2c10564e86");
         Helper.write(Constants.RESTAURANT_ID, "75d1fd95-9699-4f21-85e6-480def4d8bbb");
 
+//        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+
         getMenuData();
 
         btnTryAgain.setOnClickListener(v -> {
            loadingView();
-               executor = Executors.newFixedThreadPool(NTHREDS);
+               executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
                if (!isMenuItemSuccess){
                    isMenuItemSuccess=null;
                     getMenuGroups = () -> getMenuGroups(menuId);
@@ -107,9 +116,9 @@ public class SplashActivity extends AppCompatActivity {
                }
 
                if (!isMenuItemToppingSuccess){
-                   isMenuItemToppingSuccess=null;
+                    isMenuItemToppingSuccess=null;
                     getMenuItemToppings = () -> getMenuItemToppings(menuId);
-                   executor.execute(getMenuItemToppings);
+                    executor.execute(getMenuItemToppings);
                }
                executor.shutdown();
             try {
@@ -122,17 +131,12 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void getMenuData(){
-        restaurantService.getMenuId(new IDataResultCallback<MenuData>() {
-            @Override
-            public void onSuccess(boolean success, MenuData Data) {
-                menuId = Data.getMenuId();
-                getMenuAndToppingData(Data.getMenuId());
-
-            }
-
-            @Override
-            public void onError() {
-
+        restaurantService.getMenuId((success, data) -> {
+            if (success){
+                menuId = data.getMenuId();
+                getMenuAndToppingData(data.getMenuId());
+            }else {
+                loadedView();
             }
         });
     }
@@ -142,6 +146,13 @@ public class SplashActivity extends AppCompatActivity {
                 || isToppingItemSuccess==null || isMenuItemToppingSuccess==null) return;
         if (isMenuItemSuccess && isMenuGroupSuccess && isToppingGroupSuccess
                 && isToppingItemSuccess && isMenuItemToppingSuccess ) {
+
+//            executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//            Runnable downloadMenuItemsImage = () -> menuItems.forEach(item->{
+//                Helper.downloadImageAndSave(item.getImage(),item.getId());
+//            });
+//            executor.execute(downloadMenuItemsImage);
+
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -152,7 +163,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void getMenuAndToppingData(String menuId){
-         executor = Executors.newFixedThreadPool(NTHREDS);
+        executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
          getMenuGroups = () -> getMenuGroups(menuId);
          getMenuItems = () -> getMenuItems(menuId);
          getToppingGroups = () -> getToppingGroups(menuId);
@@ -187,90 +198,58 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void getMenuGroups(String menuId){
-        restaurantService.getMenuGroups(menuId, new IDataResultCallback<List<MenuGroup>>() {
-            @Override
-            public void onSuccess(boolean success, List<MenuGroup> Data) {
-                if (success) {
-                    isMenuGroupSuccess = true;
-                    saveMenuGroupToLocal(Data);
-                    checkSyncStatus();
-                }
-            }
-
-            @Override
-            public void onError() {
-
+        restaurantService.getMenuGroups(menuId, (success, data) -> {
+            if (success) {
+                isMenuGroupSuccess = true;
+                saveMenuGroupToLocal(data);
+                checkSyncStatus();
             }
         });
     }
     private void getMenuItems(String menuId){
-        restaurantService.getMenuItems(menuId, new IDataResultCallback<List<MenuItem>>() {
-            @Override
-            public void onSuccess(boolean success, List<MenuItem> Data) {
-                if (success){
-                    isMenuItemSuccess = true;
-                    saveMenuItemToLocal(Data);
-                    checkSyncStatus();
-
-                }
-
+        restaurantService.getMenuItems(menuId, (success, data) -> {
+            if (success){
+                isMenuItemSuccess = true;
+                menuItems = data;
+                saveMenuItemToLocal(data);
+                checkSyncStatus();
+            }else {
+                loadedView();
             }
 
-            @Override
-            public void onError() {
-
-            }
         });
     }
 
     private void getToppingItems(String menuId){
-        restaurantService.getToppingItems(menuId, new IDataResultCallback<List<ToppingItem>>() {
-            @Override
-            public void onSuccess(boolean success, List<ToppingItem> Data) {
-                if (success) {
-                    isToppingItemSuccess = true;
-                    saveToppingItemToLocal(Data);
-                    checkSyncStatus();
-                }
-            }
-
-            @Override
-            public void onError() {
-
+        restaurantService.getToppingItems(menuId, (success, data) -> {
+            if (success) {
+                isToppingItemSuccess = true;
+                saveToppingItemToLocal(data);
+                checkSyncStatus();
+            }else {
+                loadedView();
             }
         });
     }
     private void getToppingGroups(String menuId){
-        restaurantService.getToppingGroups(menuId, new IDataResultCallback<List<ToppingGroup>>() {
-            @Override
-            public void onSuccess(boolean success, List<ToppingGroup> Data) {
-                if (success) {
-                    isToppingGroupSuccess = true;
-                    saveToppingGroupToLocal(Data);
-                    checkSyncStatus();
-                }
-            }
-
-            @Override
-            public void onError() {
-
+        restaurantService.getToppingGroups(menuId, (success, data) -> {
+            if (success) {
+                isToppingGroupSuccess = true;
+                saveToppingGroupToLocal(data);
+                checkSyncStatus();
+            }else {
+                loadedView();
             }
         });
     }
     private void getMenuItemToppings(String menuId){
-        restaurantService.getMenuItemTopping(menuId, new IDataResultCallback<List<MenuItemTopping>>() {
-            @Override
-            public void onSuccess(boolean success, List<MenuItemTopping> Data) {
-                if (success) {
-                    isMenuItemToppingSuccess = true;
-                    saveMenuItemToppingToLocal(Data);
-                    checkSyncStatus();
-                }
-            }
-
-            @Override
-            public void onError() {
-
+        restaurantService.getMenuItemTopping(menuId, (success, data) -> {
+            if (success) {
+                isMenuItemToppingSuccess = true;
+                saveMenuItemToppingToLocal(data);
+                checkSyncStatus();
+            }else {
+                loadedView();
             }
         });
     }

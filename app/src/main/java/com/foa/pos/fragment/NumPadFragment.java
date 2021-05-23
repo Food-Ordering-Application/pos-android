@@ -82,13 +82,16 @@ public class NumPadFragment extends Fragment {
     private OnClickListener buttonOnClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (onNumpadClickListener!=null)
             onNumpadClickListener.onReceiveData( ((Button)v).getText().toString());
         }
     };
     private OnClickListener backButtonOnClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            onNumpadClickListener.onReceiveData("B");
+
+            if (onNumpadClickListener!=null)
+                onNumpadClickListener.onReceiveData("B");
         }
     };
 

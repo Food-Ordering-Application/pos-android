@@ -202,10 +202,4 @@ public class Order{
 		DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss - dd/MM/yy");
 		return  dateFormat.format(createdAt);
 	}
-
-	public void addOrderItemPrice(long orderItemPrice){
-		this.subTotal += orderItemPrice;
-		this.grandTotal = this.subTotal;
-	}
-
 }

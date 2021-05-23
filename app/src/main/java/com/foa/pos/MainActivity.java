@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.foa.pos.receiver.NetworkReceiver;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
+import com.foa.pos.utils.Constants;
+import com.foa.pos.utils.Helper;
 import com.foa.pos.utils.LoginSession;
 import com.foa.pos.utils.OrderSession;
 import com.google.android.material.navigation.NavigationView;
@@ -28,6 +32,7 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity {
 	private AppBarConfiguration mAppBarConfiguration;
 	private BroadcastReceiver networkReceiver = null;
+	private Button manualSyncButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
 		NavigationUI.setupWithNavController(navigationView, navController);
 		navigationView.bringToFront();
 
+		View headerView = navigationView.getHeaderView(0);
+		manualSyncButton = headerView.findViewById(R.id.manualSyncButton);
+		manualSyncButton.setOnClickListener(view -> startActivity(new Intent(MainActivity.this,SplashActivity.class)));
+
 		navigationView.getMenu().findItem(R.id.navigation_logout).setOnMenuItemClickListener(menuItem -> {
 			logout();
 			return true;
@@ -70,13 +79,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (networkReceiver!= null)
-		unregisterReceiver(networkReceiver);
-	}
-
-	@Override
 	public boolean onSupportNavigateUp() {
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 	{
 		LoginSession.clearInstance();
 		OrderSession.clearInstance();
+		Helper.clearLoginData();
 		Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 		startActivity(intent);
 		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

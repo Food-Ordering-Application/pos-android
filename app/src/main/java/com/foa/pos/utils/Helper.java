@@ -3,7 +3,11 @@ package com.foa.pos.utils;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.os.Build;
+import android.os.Environment;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +19,27 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.foa.pos.R;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
 import com.foa.pos.model.OrderItemTopping;
 import com.foa.pos.dialog.LoadingDialog;
+import com.foa.pos.model.enums.StockState;
+import com.foa.pos.network.response.LoginData;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -38,7 +53,7 @@ public final class Helper
 	private static SharedPreferences pref;
 	
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-	public static SimpleDateFormat dateTimeformat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	public static SimpleDateFormat dateTimeformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 
 	public static DecimalFormat decimalformat = new DecimalFormat("#.###");
 	public static void initialize(Context base)
@@ -55,6 +70,13 @@ public final class Helper
 		editor.putString(key, value);
 		editor.apply();
 	}
+
+	public static void remove(String key)
+	{
+		SharedPreferences.Editor editor = pref.edit();
+		editor.remove(key);
+		editor.apply();
+	}
 	
 	public static String read(String key)
 	{
@@ -66,11 +88,23 @@ public final class Helper
 		return pref.getString(key, defValue);
 	}
 	
-	public static void clear()
+	public static void clearAll()
 	{
 		SharedPreferences.Editor editor = pref.edit();
 		editor.clear();
 		editor.apply();
+	}
+
+	static public void setLoginData(LoginData loginData){
+		Helper.write(Constants.CASHIER_ID,loginData.getStaff().getId());
+		Helper.write(Constants.CASHIER_NAME,loginData.getStaff().getFullName());
+		Helper.write(Constants.BEARER_ACCESS_TOKEN,loginData.getBearerAccessToken());
+	}
+
+	static public void clearLoginData(){
+		Helper.remove(Constants.CASHIER_ID);
+		Helper.remove(Constants.CASHIER_NAME);
+		Helper.remove(Constants.BEARER_ACCESS_TOKEN);
 	}
 	
 	public static Context getContext()
@@ -83,7 +117,7 @@ public final class Helper
 		return UUID.randomUUID().toString();
 	}
 	
-	public static String getOrderItemID(int i)
+	public static String getOrderItemID()
 	{
 		return UUID.randomUUID().toString();
 	}
@@ -115,7 +149,7 @@ public final class Helper
 	public static String formatMoney(long monney){
 		Locale localeVN = new Locale("vi", "VN");
 		NumberFormat currencyVN = NumberFormat.getCurrencyInstance(localeVN);
-		return currencyVN.format(monney)+ " "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL);
+		return currencyVN.format(monney);
 	}
 
 
@@ -130,6 +164,76 @@ public final class Helper
 		cal.setTime(date);
 		cal.add(Calendar.DATE, day);
 		return cal.getTime();
+	}
+
+	public static String downloadImageAndSave(String src, String name) {
+		src = "https://picsum.photos/200/300";
+		try {
+			URL url = new URL(src);
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoInput(true);
+			connection.connect();
+			InputStream input = connection.getInputStream();
+			Bitmap myBitmap = BitmapFactory.decodeStream(input);
+			return saveImage(myBitmap,name);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static String getAppDir()
+	{
+		File f;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+			f = new File(instance.getExternalFilesDir(null).getAbsolutePath() + File.separator  + instance.getResources().getString(R.string.app_name));
+
+
+		}else {
+			f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator  + instance.getResources().getString(R.string.app_name));
+
+		}
+		if(!f.exists())
+			f.mkdir();
+		return f.getAbsolutePath();
+	}
+
+	public static float scaleFactor(int w)
+	{
+		return 512f / w;
+	}
+
+	static public String saveImage(Bitmap bitmapImage, String name)
+	{
+		String res = null;
+		if(bitmapImage != null)
+		{
+			File dest = new File(Helper.getAppDir(), name);
+
+			Bitmap bitmap = bitmapImage;
+			FileOutputStream out;
+			try {
+
+				out = new FileOutputStream(dest);
+				float scale = Helper.scaleFactor(bitmap.getWidth());
+				bitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth()*scale), (int) (bitmap.getHeight()*scale), false);
+				bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+				out.flush();
+				out.close();
+				res = dest.toString();
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return res;
+
 	}
 
 	public static void enableSplitLayout(LinearLayout leftLayout, RelativeLayout rightLayout, GridView theGridView) {
@@ -168,15 +272,19 @@ public final class Helper
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 
-	public static OrderItem createOrderItem(MenuItem product, int pos, String orderId){
+	public static OrderItem createOrderItem(MenuItem product,List<OrderItemTopping> orderItemToppings, String orderId){
 		OrderItem orderItem = new OrderItem();
-		orderItem.setId(Helper.getOrderItemID(pos));
+		orderItem.setId(Helper.getOrderItemID());
 		orderItem.setMenuItemId(product.getId());
 		orderItem.setMenuItemName(product.getName());
+		orderItem.setStockState(StockState.IN_STOCK);
 		orderItem.setOrderId(orderId);
 		orderItem.setQuantity(1);
 		orderItem.setPrice(product.getPrice());
-		//orderItem.setOrderItemToppings(new ArrayList<>());
+		for (int i = 0; i < orderItemToppings.size() ; i++) {
+			orderItemToppings.get(i).setId(Helper.getOrderToppingId(i));
+		}
+		orderItem.setOrderItemToppings(orderItemToppings);
 		return orderItem;
 	}
 	public static OrderItem createSendOrderItem(MenuItem product, List<OrderItemTopping> orderItemToppingList){
@@ -188,5 +296,8 @@ public final class Helper
 		orderItem.setOrderItemToppings(orderItemToppingList);
 		return orderItem;
 	}
+
+
+
 }
 

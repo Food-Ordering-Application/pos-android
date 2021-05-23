@@ -133,7 +133,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/body_cart"
+            android:background="@drawable/card_edge"
             android:layout_above="@+id/imageView1"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
@@ -151,20 +151,19 @@
                 android:textSize="30sp"
                 android:gravity="center"/>
 
-            <ListView
-                android:id="@+id/listView1"
+
+            <!-- summary pay-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cartListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/summaryPay"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="8dp"
+                android:layout_marginTop="6dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="2dp"
-                android:animateLayoutChanges="true"/>
+                android:layout_marginBottom="-2dp" />
 
-
-
-            <!-- summary pay-->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

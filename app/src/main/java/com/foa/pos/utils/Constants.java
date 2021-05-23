@@ -23,5 +23,6 @@ public class Constants {
     public static final String MERCHANT_ID="merchant_id";
     public static final String RESTAURANT_ID="restaurant_id";
     public static final String CASHIER_ID="cashier_id";
-    public static final String ACCESS_TOKEN="access_token";
+    public static final String CASHIER_NAME="cashier_name";
+    public static final String BEARER_ACCESS_TOKEN ="access_token";
 }

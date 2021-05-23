@@ -45,26 +45,19 @@ public class MenuItemDataSource {
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DESCRIPTION)));
 				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_PRICE)));
 				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DISCOUNT)));
-				item.setCreatedBy(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_CREATED_BY)));
-				item.setUpdatedBy(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_BY)));
+				//item.setCreatedAt(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_CREATED_BY)));
+				//item.setUpdatedAt(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_BY)));
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
-				try {
-				    item.setSycnOn( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
-				} catch (Exception e) {
-				}
 			
 			} while (c.moveToNext());
 		}
 		return item;
 	}
 
-	public ArrayList<MenuItem> getAll() {
-		return getAll(true,null,null);
-	}
 
-	public ArrayList<MenuItem> getAll(String keyword, String categoryid) {
-		return getAll(false,keyword,categoryid);
+	public ArrayList<MenuItem> getAll(String keyword, String menuGroupId) {
+		return getAll(false,keyword,menuGroupId);
 	}
 	
 	public ArrayList<MenuItem> getAll(boolean isAll, String keyword, String menuGroupId) {
@@ -96,14 +89,8 @@ public class MenuItemDataSource {
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DESCRIPTION)));
 				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_PRICE)));
 				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DISCOUNT)));
-				item.setCreatedBy(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_CREATED_BY)));
-				item.setUpdatedBy(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_BY)));
 				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
-				try {
-				    item.setSycnOn( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_SYCN_ON))));
-				} catch (Exception e) {
-				}
 				
 				items.add(item);
 			} while (c.moveToNext());
@@ -121,8 +108,6 @@ public class MenuItemDataSource {
 		values.put(DbSchema.COL_MENU_ITEM_DESCRIPTION, item.getDescription());
 		values.put(DbSchema.COL_MENU_ITEM_PRICE, item.getPrice());
 		values.put(DbSchema.COL_MENU_ITEM_DISCOUNT,item.getDiscount());
-		values.put(DbSchema.COL_MENU_ITEM_CREATED_BY, "Device");
-		values.put(DbSchema.COL_MENU_ITEM_UPDATED_BY, "Device");
 		values.put(DbSchema.COL_MENU_ITEM_STATUS, item.getStatus());
 		values.put(DbSchema.COL_MENU_ITEM_IS_ACTIVE, item.isActive()?1:0);
 		values.put(DbSchema.COL_MENU_ITEM_INDEX, item.getIndex());
@@ -131,31 +116,21 @@ public class MenuItemDataSource {
 		return db.insert(DbSchema.TBL_MENU_ITEM, null, values);
 	}
 	
-	public long update(MenuItem item, String lastCode)
+	public long update(MenuItem item, String menuItemId)
 	{
 		ContentValues values = new ContentValues();
-		if(item.getId() != null)
 			values.put(DbSchema.COL_MENU_ITEM_ID, item.getId());
-		
-		if(item.getName() != null)
 			values.put(DbSchema.COL_MENU_ITEM_NAME, item.getName());
-		
-		if(item.getGroupId() != null)
 			values.put(DbSchema.COL_MENU_GROUP_ID, item.getGroupId());
-		
-		if(item.getDescription() != null)
 			values.put(DbSchema.COL_MENU_ITEM_DESCRIPTION, item.getDescription());
-		
-		if(item.getStatus() != null)
+			values.put(DbSchema.COL_MENU_ITEM_PRICE, item.getPrice());
+			values.put(DbSchema.COL_MENU_ITEM_DISCOUNT, item.getDiscount());
 			values.put(DbSchema.COL_MENU_ITEM_STATUS, item.getStatus());
-		
-		if(item.getImage() != null)
+			values.put(DbSchema.COL_MENU_ITEM_IS_ACTIVE, item.isActive()?1:0);
+			values.put(DbSchema.COL_MENU_ITEM_INDEX, item.getIndex());
 			values.put(DbSchema.COL_MENU_ITEM_IMAGE, item.getImage());
 
-		values.put(DbSchema.COL_MENU_ITEM_PRICE, item.getPrice());
-		values.put(DbSchema.COL_MENU_ITEM_DISCOUNT, item.getDiscount());
-		
-		return db.update(DbSchema.TBL_MENU_ITEM, values, DbSchema.COL_MENU_ITEM_ID +"= '"+lastCode+"' ", null);
+		return db.update(DbSchema.TBL_MENU_ITEM, values, DbSchema.COL_MENU_ITEM_ID +"= '"+menuItemId+"' ", null);
 	}
 
 	public String getIdByName(String name) {
@@ -173,50 +148,6 @@ public class MenuItemDataSource {
 
 		}
 		return "";
-	}
-	
-	public int delete(String id)
-	{
-		return db.delete(DbSchema.TBL_MENU_ITEM, DbSchema.COL_MENU_ITEM_ID + "= '" + id + "'", null);
-	}
-	
-	public boolean cekCode(String code) {
-		 
-		boolean has = false;
-		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_MENU_ITEM +
-						      " Where lower(" + DbSchema.COL_MENU_ITEM_ID + ") = '"+code.toLowerCase()+"'";
-		 
-		Cursor c = db.rawQuery(selectQuery, null);
-		if(c.getCount() > 0)
-			has = true;
-			
-		return has;
-	}
-	
-	public boolean cekName(String name) {
-		 
-		boolean has = false;
-		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_MENU_ITEM +
-						      " Where lower(" + DbSchema.COL_MENU_ITEM_NAME + ") = '"+name.toLowerCase()+"'";
-		 
-		Cursor c = db.rawQuery(selectQuery, null);
-		if(c.getCount() > 0)
-			has = true;
-			
-		return has;
-	}
-	
-	public boolean cekAvailable(String code) {
-		 
-		boolean has = false;
-		String selectQuery = " SELECT  * FROM " + DbSchema.TBL_ORDER_ITEM +
-						      " Where lower(" + DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID + ") = '"+code.toLowerCase()+"'";
-		 
-		Cursor c = db.rawQuery(selectQuery, null);
-		if(c.getCount() > 0)
-			has = true;
-			
-		return has;
 	}
 
 }

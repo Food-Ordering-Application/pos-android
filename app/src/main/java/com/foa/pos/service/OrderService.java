@@ -27,83 +27,9 @@ import retrofit2.Response;
 
 public class OrderService {
 
-    public void createOrderAndFirstOrderItemOnline(OrderItem orderItem, IDataResultCallback<Order> resultCallback) {
-        final SendOrderItem sendOrderItem = orderItem.createSendOrderItem();
+    public static void syncOrder(Order order, IResultCallback resultCallback) {
         Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .createOrderAndAddFirstOrderItem(
-                        new NewOrderBody(sendOrderItem, Helper.read(Constants.RESTAURANT_ID),
-                                "", LoginSession.getInstance().getStaff().getId()));
-        responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
-            @Override
-            public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
-                if (response.errorBody() != null) {
-                    try {
-                        LoggerHelper.CheckAndLogInfo(this,response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (response.code() == Constants.STATUS_CODE_CREATED) {
-
-                    ResponseAdapter<OrderData> res = response.body();
-                    assert res != null;
-                    if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
-                        resultCallback.onSuccess(true, res.getData().getOrder());
-                    } else {
-                        LoggerHelper.CheckAndLogInfo(this,res.getMessage());
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
-                LoggerHelper.CheckAndLogInfo(this,t.getMessage());
-            }
-        });
-    }
-
-    public void addOrderItemOnline(OrderItem orderItem, IDataResultCallback<Order> resultCallback) {
-
-        final SendOrderItem sendOrderItem = orderItem.createSendOrderItem();
-        Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .addOrderItem(OrderSession.getInstance().getId(),new AddNewOrderItemBody(sendOrderItem));
-        responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
-            @Override
-            public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
-                if (response.errorBody() != null) {
-                    try {
-                        LoggerHelper.CheckAndLogInfo(this,response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-
-                    ResponseAdapter<OrderData> res = response.body();
-                    assert res != null;
-                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-                        resultCallback.onSuccess(true, res.getData().getOrder());
-                    } else {
-                        Log.e("[Order fragment]", "Create order fail");
-                    }
-                } else {
-                    resultCallback.onSuccess(false, null);
-                    Log.e("[Order fragment]", "Create order fail");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
-                Log.e("Login Error", t.getMessage());
-            }
-        });
-    }
-
-    public void updateOrderItemQuantityOnline(String orderId,String orderItemId, int quantity, IResultCallback resultCallback) {
-        Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .updateOrderItemQuantity(orderId, new UpdateQuantityBody(orderItemId,quantity));
+                .syncOrder(new OrderData(order));
         responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {

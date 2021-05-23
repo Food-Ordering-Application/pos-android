@@ -57,7 +57,9 @@
                 android:background="@drawable/stroke_blue"
                 android:layout_width="150dp"
                 android:gravity="center"
+                android:text="09-03-2021"
                 android:clickable="true"
+                android:drawableRight="@drawable/ic_calendar_today"
                 android:layout_height="match_parent"/>
             <TextView
                 android:text="Đến"
@@ -71,6 +73,8 @@
                 android:layout_width="150dp"
                 android:gravity="center"
                 android:clickable="true"
+                android:text="09-03-2021"
+                android:drawableRight="@drawable/ic_calendar_today"
                 android:layout_height="match_parent"/>
             <Button
                 android:drawableLeft="@drawable/ic__search"
@@ -130,7 +134,7 @@
                 style="@style/TalbleTitle"
                 android:gravity="center"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:text="Loại" />
+                android:text="Loại đơn" />
 
             <TextView
                 android:layout_width="0dp"
@@ -147,9 +151,18 @@
                 android:layout_weight="1"
                 android:paddingEnd="5dp"
                 style="@style/TalbleTitle"
-                android:gravity="end"
+                android:gravity="center"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:text="Thời gian" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="5dp"
+                style="@style/TalbleTitle"
+                android:gravity="end"
+                android:textAppearance="?android:textAppearanceMedium" />
         </LinearLayout>
 
         <ListView

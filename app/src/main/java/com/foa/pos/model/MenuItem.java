@@ -18,13 +18,11 @@ public class MenuItem {
 	@SerializedName("price")
 	private long price;
 	private long discount;
-	private Date createdOn;
-	private Date updatedOn;
-	private Date sycnOn;
-	private String createdBy;
-	private String updatedBy;
+	private Date createdAt;
+	private Date updatedAt;
+	private Date syncedAt;
 	private String merchantId;
-	private String status; // ready or no
+	private String status;
 	@SerializedName("imageUrl")
 	private String image;
 	@SerializedName("index")
@@ -32,7 +30,6 @@ public class MenuItem {
 	@SerializedName("isActive")
 	private boolean isActive;
 
-	// field for set list view selector, android only
 	private boolean selected = false;
 
 	public String getId() {
@@ -91,44 +88,28 @@ public class MenuItem {
 		this.discount = discount;
 	}
 
-	public Date getCreatedOn() {
-		return createdOn;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
-	public Date getUpdatedOn() {
-		return updatedOn;
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
-	public Date getSycnOn() {
-		return sycnOn;
+	public Date getSyncedAt() {
+		return syncedAt;
 	}
 
-	public void setSycnOn(Date sycnOn) {
-		this.sycnOn = sycnOn;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public String getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(String updatedBy) {
-		this.updatedBy = updatedBy;
+	public void setSyncedAt(Date syncedAt) {
+		this.syncedAt = syncedAt;
 	}
 
 	public String getMerchantId() {
@@ -155,14 +136,6 @@ public class MenuItem {
 		this.image = image;
 	}
 
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
 	public float getIndex() {
 		return index;
 	}
@@ -177,5 +150,13 @@ public class MenuItem {
 
 	public void setActive(boolean active) {
 		isActive = active;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 }

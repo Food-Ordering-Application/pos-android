@@ -1,11 +1,8 @@
 package com.foa.pos;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +17,8 @@ import com.foa.pos.network.RetrofitClient;
 import com.foa.pos.network.entity.LoginBody;
 import com.foa.pos.network.response.LoginData;
 import com.foa.pos.network.response.ResponseAdapter;
-import com.foa.pos.receiver.NetworkReceiver;
+import com.foa.pos.network.utils.NetworkStatus;
+import com.foa.pos.network.utils.NetworkUtils;
 import com.foa.pos.sqlite.DatabaseHelper;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.utils.Constants;
@@ -64,19 +62,26 @@ public class LoginActivity extends Activity implements OnClickListener {
 		DatabaseManager.initializeInstance(new DatabaseHelper(this));
 		loading = new LoadingDialog(this);
 
-		//temp
-
-
-
 		btnSaleOffline.setOnClickListener(v -> goNext());
-//		if (Helper.read(Constants.CASHIER_ID)!= null){
-//			goNext();
-//		}
+		String bearerAccessToken = Helper.read(Constants.BEARER_ACCESS_TOKEN);
+		if (bearerAccessToken!= null){
+			RetrofitClient.getInstance().setAuthorizationHeader(bearerAccessToken);
+			goNext();
+		}
+
 	}
 
 	private void goNext(){
-		Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent intent;
+		if(NetworkUtils.getConnectivityStatusString(context)== NetworkStatus.CONNETED){
+			intent = new Intent(LoginActivity.this,SplashActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+		}else{
+			intent = new Intent(LoginActivity.this,MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		}
+
 		startActivity(intent);
 		finish();
 	}
@@ -87,10 +92,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
-		//String username = txtusername.getText().toString();
-		//String password = txtpassword.getText().toString();
-		String username = "hoangcashier";
-		String password= "123123123";
+		String username = txtusername.getText().toString();
+		String password = txtpassword.getText().toString();
+		username = "hoangcashier";
+		password= "123123123";
 
 
 		if (username.equals("") || password.equals("")) {
@@ -110,9 +115,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 					case Constants.STATUS_CODE_SUCCESS:
 						ResponseAdapter<LoginData> res = response.body();
 					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-						LoginSession.setInstance(res.getData());
+						LoginSession.setInstance(res.getData());//Lưu vào session
+						Helper.setLoginData(res.getData());
 						RetrofitClient.getInstance().setAuthorizationHeader(res.getData().getBearerAccessToken());
-													loading.dismiss();
+
 						btnLogin.setEnabled(false);
 						YoYo.with(Techniques.FadeOutDown).interpolate(new OvershootInterpolator()).duration(500).withListener(new AnimatorListener() {
 							@Override
@@ -129,10 +135,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 							public void onAnimationEnd(Animator arg0) {
 								// TODO Auto-generated method stub
 
-								Intent intent = new Intent(com.foa.pos.LoginActivity.this, com.foa.pos.SplashActivity.class);
-								startActivity(intent);
-								overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-								finish();
+								goNext();
 							}
 
 							@Override
@@ -154,7 +157,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 					default:
 						Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
 				}
-
+				loading.dismiss();
 			}
 
 			@Override

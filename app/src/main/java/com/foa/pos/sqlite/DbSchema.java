@@ -25,9 +25,6 @@ public interface DbSchema {
 	String COL_MENU_ITEM_DESCRIPTION = "description";
 	String COL_MENU_ITEM_PRICE = "price";
 	String COL_MENU_ITEM_DISCOUNT = "discount";
-	String COL_MENU_ITEM_SYCN_ON = "sycn_on";
-	String COL_MENU_ITEM_CREATED_BY = "created_by";
-	String COL_MENU_ITEM_UPDATED_BY = "updated_by";
 	String COL_MENU_ITEM_STATUS = "status";
 	String COL_MENU_ITEM_IMAGE = "image";
 	String COL_MENU_ITEM_IS_ACTIVE = "is_active";
@@ -42,9 +39,6 @@ public interface DbSchema {
 				+ COL_MENU_ITEM_DESCRIPTION + " TEXT,"
 				+ COL_MENU_ITEM_PRICE + " INTEGER,"
 				+ COL_MENU_ITEM_DISCOUNT + " INTEGER,"
-				+ COL_MENU_ITEM_SYCN_ON + " DATETIME,"
-				+ COL_MENU_ITEM_CREATED_BY + " TEXT,"
-				+ COL_MENU_ITEM_UPDATED_BY + " TEXT,"
 				+ COL_MENU_ITEM_STATUS + " TEXT,"
 				+ COL_MENU_ITEM_IMAGE + " TEXT,"
 				+ COL_MENU_ITEM_IS_ACTIVE + " INTEGER,"
@@ -52,33 +46,31 @@ public interface DbSchema {
 			+ ");";
 	
 	String TBL_ORDER = "order_pos";
-	String COL_ORDER = "order_id";
-	String COL_ORDER_ORDERED_ON = "ordered_on";
-	String COL_ORDER_UPDATED_ON = "updated_on";
-	String COL_ORDER_SYCN_ON = "sycn_on";
+	String COL_ORDER_ID = "order_id";
+	String COL_ORDER_CREATED_AT = "create_at";
+	String COL_ORDER_UPDATED_AT = "updated_at";
+	String COL_ORDER_SYNCED_AT = "synced_at";
 	String COL_ORDER_DESCRIPTION = "description";
-	String COL_ORDER_TAX = "tax";
 	String COL_ORDER_DISCOUNT = "discount";
-	String COL_ORDER_AMOUNT = "amount";
+	String COL_ORDER_SUBTOTAL = "sub_total";
+	String COL_ORDER_GRAND_TOTAL = "grand_total";
 	String COL_ORDER_CASHIER_ID = "cashier_id";
-	String COL_ORDER_BRANCH_ID = "branch_id";
 	String COL_ORDER_STATUS = "status";
-	String COL_SUM_QTY = "sum_quantity";
 	
 	String CREATE_TBL_ORDER = "CREATE TABLE "
 			+ TBL_ORDER
 			+ "(" 
-				+ COL_ORDER + " TEXT PRIMARY KEY,"
-				+ COL_ORDER_ORDERED_ON + " DATETIME,"
-				+ COL_ORDER_UPDATED_ON + " DATETIME,"
-				+ COL_ORDER_SYCN_ON + " DATETIME,"
+				+ COL_ORDER_ID + " TEXT PRIMARY KEY,"
+
 				+ COL_ORDER_DESCRIPTION + " TEXT,"
-				+ COL_ORDER_TAX + " INTEGER,"
 				+ COL_ORDER_DISCOUNT + " INTEGER,"
-				+ COL_ORDER_AMOUNT + " INTEGER,"
+				+ COL_ORDER_SUBTOTAL + " INTEGER,"
+				+ COL_ORDER_GRAND_TOTAL + " INTEGER,"
 				+ COL_ORDER_CASHIER_ID + " TEXT,"
-				+ COL_ORDER_STATUS + " INTEGER,"
-				+ COL_ORDER_BRANCH_ID + " TEXT"
+				+ COL_ORDER_STATUS + " TEXT,"
+				+ COL_ORDER_CREATED_AT + " DATETIME,"
+				+ COL_ORDER_UPDATED_AT + " DATETIME,"
+				+ COL_ORDER_SYNCED_AT + " DATETIME"
 			+ ");";
 	
 	String TBL_ORDER_ITEM = "order_item";
@@ -88,8 +80,12 @@ public interface DbSchema {
 	String COL_ORDER_ITEM_PRICE = "price";
 	String COL_ORDER_ITEM_DISCOUNT = "discount";
 	String COL_ORDER_ITEM_QTY = "qty";
+	String COL_ORDER_ITEM_SUBTOTAL = "sub_total";
 	String COL_ORDER_ITEM_STATE = "state";
-	
+	String COL_ORDER_ITEM_CREATED_AT = "created_at";
+	String COL_ORDER_ITEM_UPDATED_AT = "updated_at";
+	String COL_ORDER_ITEM_SYNCED_AT = "synced_at";
+
 	String CREATE_TBL_ORDER_ITEM = "CREATE TABLE "
 			+ TBL_ORDER_ITEM
 			+ "(" 
@@ -99,7 +95,12 @@ public interface DbSchema {
 				+ COL_ORDER_ITEM_PRICE + " INTEGER,"
 				+ COL_ORDER_ITEM_QTY + " INTEGER,"
 				+ COL_ORDER_ITEM_DISCOUNT + " INTEGER,"
-				+ COL_ORDER_ITEM_STATE + " TEXT"
+				+ COL_ORDER_ITEM_SUBTOTAL + " INTEGER,"
+				+ COL_ORDER_ITEM_STATE + " TEXT,"
+				+ COL_ORDER_ITEM_CREATED_AT + " DATETIME,"
+				+ COL_ORDER_ITEM_UPDATED_AT + " DATETIME,"
+				+ COL_ORDER_ITEM_SYNCED_AT + " DATETIME"
+
 			+ ");";
 
 	String TBL_ORDER_ITEM_TOPPING = "order_item_topping";
@@ -109,6 +110,9 @@ public interface DbSchema {
 	String COL_ORDER_ITEM_TOPPING_PRICE = "price";
 	String COL_ORDER_ITEM_TOPPING_QTY = "qty";
 	String COL_ORDER_ITEM_TOPPING_STATE = "state";
+	String COL_ORDER_ITEM_TOPPING_CREATE_AT = "create_at";
+	String COL_ORDER_ITEM_TOPPING_UPDATED_AT = "updated_at";
+	String COL_ORDER_ITEM_TOPPING_SYNCED_AT = "synced_at";
 
 	String CREATE_TBL_ORDER_ITEM_TOPPING = "CREATE TABLE "
 			+ TBL_ORDER_ITEM_TOPPING
@@ -118,7 +122,10 @@ public interface DbSchema {
 			+ COL_ORDER_ITEM_TOPPING_ORDER_ITEM_ID + " TEXT,"
 			+ COL_ORDER_ITEM_TOPPING_PRICE + " INTEGER,"
 			+ COL_ORDER_ITEM_TOPPING_QTY + " INTEGER,"
-			+ COL_ORDER_ITEM_TOPPING_STATE + " INTEGER"
+			+ COL_ORDER_ITEM_TOPPING_STATE + " INTEGER,"
+			+ COL_ORDER_ITEM_TOPPING_CREATE_AT + " DATETIME,"
+			+ COL_ORDER_ITEM_TOPPING_UPDATED_AT + " DATETIME,"
+			+ COL_ORDER_ITEM_TOPPING_SYNCED_AT + " DATETIME"
 			+ ");";
 
 	String TBL_TOPPING_ITEM = "topping_item";

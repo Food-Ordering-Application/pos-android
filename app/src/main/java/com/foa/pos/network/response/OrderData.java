@@ -8,6 +8,10 @@ public class OrderData {
     @SerializedName("order")
     Order order;
 
+    public OrderData(Order order) {
+        this.order = order;
+    }
+
     public Order getOrder() {
         return order;
     }

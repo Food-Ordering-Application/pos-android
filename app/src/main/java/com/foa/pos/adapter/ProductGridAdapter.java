@@ -27,22 +27,9 @@ public class ProductGridAdapter extends BaseAdapter {
 
     private Activity context;
     private LayoutInflater inflater;
-    private String menu = "GRID";
 
     public ProductGridAdapter(Activity context) {
         this.context = context;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    public ProductGridAdapter(Activity context, String menu) {
-        this.context = context;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.menu = menu;
-    }
-    
-    public ProductGridAdapter(Activity context, List<MenuItem> data) {
-        this.context = context;
-        this.dtList = data;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
@@ -50,22 +37,10 @@ public class ProductGridAdapter extends BaseAdapter {
         TextView name;
         TextView price;
         ImageView image;
-        RelativeLayout selectedWrapper;
     }
  
     public int getCount() {
         return dtList.size();
-    }
-    
-    
-    public void removeSelection()
-    {
-    	
-    }
-
-    public void setMenu(String menu) {
-        this.menu = menu;
-        notifyDataSetChanged();
     }
 
     public void setSelection(String id) {
@@ -126,36 +101,27 @@ public class ProductGridAdapter extends BaseAdapter {
         ViewHolder holder;
         
         if (convertView == null) {
-            if(this.menu.equals("GRID"))
-                vi = inflater.inflate(R.layout.product_grid_item, null);
-            else
-                vi = inflater.inflate(R.layout.product_grid_list_item, null);
+            vi = inflater.inflate(R.layout.product_grid_item, null);
 
             holder = new ViewHolder();
  
-            holder.name = (TextView) vi.findViewById(R.id.tvCartProductName);
-            holder.price = (TextView) vi.findViewById(R.id.tvProductPrice);
-            holder.image = (ImageView) vi.findViewById(R.id.imageView1);
-            holder.selectedWrapper = (RelativeLayout)vi.findViewById(R.id.relativeLayout1);
+            holder.name = vi.findViewById(R.id.tvCartProductName);
+            holder.price = vi.findViewById(R.id.tvProductPrice);
+            holder.image = vi.findViewById(R.id.imageView1);
             
             vi.setTag(holder);
+
         } else {
         	 holder=(ViewHolder)vi.getTag();
         }
         
-        final MenuItem product = (MenuItem) getItem(position);
-        holder.name.setText(product.getCategoryName());
-        holder.price.setText(Helper.decimalformat.format(product.getPrice()) +" " +Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL,Constants.VAL_DEFAULT_CURRENCY_SYMBOL) );
-        
-        holder.selectedWrapper.setVisibility(View.GONE);
+        final MenuItem menuItem = (MenuItem) getItem(position);
+        holder.name.setText(menuItem.getCategoryName());
+        holder.price.setText(Helper.formatMoney((menuItem.getPrice())));
 
-        if(selected.contains(product.getId()))
-        	 holder.selectedWrapper.setVisibility(View.VISIBLE);
-
-        
-        if(product.getImage() != null)
+        if(menuItem.getImage() != null)
     	{
-        	File imgFile = new File(product.getImage());
+        	File imgFile = new File(Helper.getAppDir()+File.separator+menuItem.getId());
     		if(imgFile.exists()){
     			holder.image.setImageDrawable(Drawable.createFromPath(imgFile.getAbsolutePath()));
     		}

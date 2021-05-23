@@ -3,11 +3,13 @@
     >
 
     <item
+        android:icon="@drawable/ic_delete_grey600_36dp"
+        android:iconTint="@color/red"
         android:id="@+id/clear_cart"
         android:title="Xoá giỏ hàng"/>
-
     <item
-        android:id="@+id/exit"
-        android:title="Thoát" />
-
+        android:icon="@drawable/ic_delete_grey600_36dp"
+        android:iconTint="@color/red"
+        android:id="@+id/hold_cart"
+        android:title="Giữ đơn hàng"/>
 </menu>

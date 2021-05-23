@@ -16,10 +16,11 @@ import androidx.annotation.Nullable;
 
 import com.foa.pos.R;
 import com.foa.pos.model.Order;
+import com.foa.pos.utils.Helper;
 
 import java.util.List;
 
-public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
+public class OrdersListViewAdapter extends ArrayAdapter<Order> {
     List<Order> orders;
     private LayoutInflater layoutInflater;
     private Context context;
@@ -28,7 +29,7 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
     ListView theGridView;
     ListView orderDetailsListView;
 
-    public OrdersGridViewAdapter(Context context, List<Order> objects) {
+    public OrdersListViewAdapter(Context context, List<Order> objects) {
         super(context, 0, objects);
         this.orders = objects;
         this.context = context;
@@ -99,10 +100,25 @@ public class OrdersGridViewAdapter extends ArrayAdapter<Order> {
 //        });
 
         //set data
-        holder.orderId.setText(order.getId().substring(0,6));
-        holder.orderTime.setText(order.getStringCreatedAt());
+        holder.orderId.setText(order.getId());
+        holder.orderTime.setText(Helper.dateTimeformat.format(order.getCreatedAt()));
         holder.orderAmount.setText(String.valueOf(order.getGrandTotal()));
-        holder.orderStatus.setText("Tiền mặt");
+        String paymentType;
+        switch (order.getPaymentType()){
+            case CASH:
+                paymentType = "Tiền mặt";
+                break;
+            case COD:
+                paymentType = "Tiền mặt";
+                break;
+            case PAYPAL:
+                paymentType = "Paypal";
+                break;
+            default:
+                paymentType = "N/A";
+        }
+        holder.orderStatus.setText(paymentType);
+
 
         return convertView;
     }

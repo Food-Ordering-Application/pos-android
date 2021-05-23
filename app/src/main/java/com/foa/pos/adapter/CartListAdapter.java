@@ -1,173 +1,132 @@
 package com.foa.pos.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.foa.pos.R;
-import com.foa.pos.model.IResultCallback;
 import com.foa.pos.model.Order;
 import com.foa.pos.model.OrderItem;
-import com.foa.pos.model.OrderItemTopping;
-import com.foa.pos.network.RetrofitClient;
-import com.foa.pos.network.entity.RemoveOrderItemBody;
-import com.foa.pos.network.response.LoginData;
-import com.foa.pos.network.response.OrderData;
-import com.foa.pos.network.response.ResponseAdapter;
-import com.foa.pos.service.OrderService;
 import com.foa.pos.sqlite.DatabaseManager;
 import com.foa.pos.sqlite.ds.OrderDataSource;
-import com.foa.pos.utils.Constants;
 import com.foa.pos.utils.Debouncer;
 import com.foa.pos.utils.Helper;
-import com.foa.pos.utils.LoggerHelper;
-import com.foa.pos.utils.LoginSession;
+import com.foa.pos.utils.OrderHelper;
 import com.foa.pos.utils.OrderSession;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHolder> {
 
-public class CartListAdapter extends BaseAdapter {
-
-    private List<OrderItem> dtList = new ArrayList<>();
-    private Activity context;
-    private LayoutInflater inflater;
+    private List<OrderItem> dataList = new ArrayList<>();
     private CartListener listener;
     private OrderDataSource OrderDS;
-    private boolean isPayment = false;
-    private LoginData loginData;
-    private OrderService orderService;
 
     private final Debouncer debouncer = new Debouncer();
 
 
-    public CartListAdapter(Activity context) {
-        this.context = context;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public CartListAdapter(Activity context, List<OrderItem> orderItems) {
+        this.dataList= orderItems;
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         OrderDS = new OrderDataSource(db);
-        loginData = LoginSession.getInstance();
-        orderService = new OrderService();
+    }
+    public CartListAdapter(Activity context) {
+        SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
+        OrderDS = new OrderDataSource(db);
+    }
+    public List<OrderItem> getDataList(){
+        return dataList;
     }
 
-    private class ViewHolder {
+    public static class ViewHolder  extends RecyclerView.ViewHolder{
         TextView name;
         TextView toppingNames;
         TextView price;
         TextView qty;
         ImageButton btnMinus;
         ImageButton btnPlus;
+        public RelativeLayout layoutOrderItem;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            name = itemView.findViewById(R.id.tvCartProductName);
+            toppingNames = itemView.findViewById(R.id.tvTopping);
+            price = itemView.findViewById(R.id.tvProductPrice);
+            qty = itemView.findViewById(R.id.tvTotal);
+            btnMinus = itemView.findViewById(R.id.btnSubQuantityCartItem);
+            btnPlus = itemView.findViewById(R.id.btnPlusQuantityCartItem);
+            layoutOrderItem = itemView.findViewById(R.id.layoutOrderItem);
+        }
     }
 
     public int getCount() {
-        return dtList.size();
-    }
-
-    public void setIsPayment(boolean isPayment) {
-        this.isPayment = isPayment;
+        return dataList.size();
     }
 
     public void set(List<OrderItem> list) {
-        dtList = list;
-        notifyDataSetChanged();
+        dataList = list;
+        this.notifyItemRangeChanged(0,list.size());
     }
 
     public void removeAll() {
-        if (dtList.size() > 0) {
-            OrderDS.deleteOrder(dtList.get(0).getOrderId());
-            dtList = new ArrayList<>();
+        if (dataList.size() > 0) {
+            OrderDS.deleteAllOrderItem(dataList);
+            dataList = new ArrayList<>();
             notifyDataSetChanged();
+            OrderHelper.removeAllOrderItems();
+            if (listener!=null) listener.onChange();
         }
 
     }
 
-    public void removeByID(String orderItemId) {
-        if(loginData==null){
-            removeOrderItemQuantityOffline(orderItemId);
-        }else {
-            removeOrderItemQuantityOnline(orderItemId, new IResultCallback() {
-                @Override
-                public void onSuccess(boolean success) {
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        }
-        notifyDataSetChanged();
+    public void removeItem(int pos) {
+        dataList.remove(pos);
+        notifyItemRemoved(pos);
+        OrderHelper.removeOrderItemByPosition(pos);
+        if(listener!=null) listener.onChange();
     }
 
-    public void add(OrderItem user) {
-        dtList.add(user);
-        notifyDataSetChanged();
+    public void restoreItem(OrderItem item, int position) {
+        dataList.add(position, item);
+        notifyItemInserted(position);
+        OrderHelper.restoreOrderItemByPosition(item,position);
+        if(listener!=null) listener.onChange();
     }
 
-    public Object getItem(int position) {
-        return dtList.get(position);
+    public void add(OrderItem orderItem) {
+        dataList.add(orderItem);
+        notifyItemInserted(dataList.size()-1);
+        if(listener!=null) listener.onChange();
     }
 
-    public long getItemId(int position) {
-        return 0;
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.cart_list_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void notifyDataSetChanged() {
-        // TODO Auto-generated method stub
-        super.notifyDataSetChanged();
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        if (listener != null && loginData !=null) {
-            listener.onChange(OrderSession.getInstance());
-        }
-
-    }
-
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
-        ViewHolder holder;
-
-        if (convertView == null) {
-            vi = inflater.inflate(R.layout.cart_list_item, null);
-            holder = new ViewHolder();
-
-            holder.name = vi.findViewById(R.id.tvCartProductName);
-            holder.toppingNames = vi.findViewById(R.id.tvTopping);
-            holder.price = vi.findViewById(R.id.tvProductPrice);
-            holder.qty = vi.findViewById(R.id.tvTotal);
-            holder.btnMinus = vi.findViewById(R.id.btnSubQuantityCartItem);
-            holder.btnPlus = vi.findViewById(R.id.btnPlusQuantityCartItem);
-
-            vi.setTag(holder);
-        } else {
-            holder = (ViewHolder) vi.getTag();
-        }
-
-        if (isPayment) {
-            holder.btnMinus.setVisibility(View.INVISIBLE);
-            holder.btnPlus.setVisibility(View.INVISIBLE);
-        }
-
-        final OrderItem orderItem = (OrderItem) getItem(position);
+        final OrderItem orderItem = dataList.get(position);
         holder.name.setText(orderItem.getMenuItemName());
-        String toppingNames = "";
-        orderItem.getOrderItemToppings().forEach(item-> toppingNames.concat(item.getName()+"\n"));
-        holder.toppingNames.setText(toppingNames);
-        holder.price.setText(Helper.decimalformat.format(orderItem.getQuantity() * orderItem.getPrice()) + " " + Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
+        final StringBuilder toppingNamesBuilder = new StringBuilder();
+        orderItem.getOrderItemToppings().forEach(item->
+                toppingNamesBuilder.append(item.getName()).append("\n"));
+        holder.toppingNames.setText(toppingNamesBuilder.toString().trim());
+        holder.price.setText(Helper.formatMoney(orderItem.getSubTotal()));
         holder.qty.setText(String.valueOf(orderItem.getQuantity()));
         if (orderItem.getQuantity() == 1) {
             holder.btnMinus.setImageResource(R.drawable.ic_baseline_delete_24);
@@ -181,156 +140,80 @@ public class CartListAdapter extends BaseAdapter {
 
         holder.btnMinus.setOnClickListener(v -> {
             // TODO Auto-generated method stub
-            int newQuantity = orderItem.getQuantity() - 1;
-            orderItem.setQuantity(newQuantity);
+            Order order;
+            orderItem.setQuantity(orderItem.getQuantity() - 1);
+            if (orderItem.getQuantity()==0){
+                removeOrderItem(orderItem,position);
+                this.notifyItemRemoved(position);
+            }else {
+                order = updateOrderItemQuantity(orderItem, position);
 
-            debouncer.debounce(CartListAdapter.class, () ->
-                    updateOrRemoveOrderItemQuantity(orderItem) , 1000, TimeUnit.MILLISECONDS);
-
-
-            long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
-            long subtotal = (orderItem.getPrice() * orderItem.getQuantity()) - discount;
-            orderItem.setSubTotal(subtotal);
-            dtList.set(position, orderItem);
-
-            if (orderItem.getQuantity() <= 0) {
-                dtList.remove(position);
-                if (listener != null)
-                    listener.onRemove(orderItem.getId());
-                    removeByID(orderItem.getId());
+                debouncer.debounce(CartListAdapter.class, () ->
+                                OrderDS.updateOrderItemQuantity(orderItem.getId(), orderItem.getQuantity(), orderItem.getSubTotal(), order.getId(), order.getSubTotal())
+                         , 1000, TimeUnit.MILLISECONDS);
+                notifyItemChanged(position);
             }
-            notifyDataSetChanged();
+            if (listener != null) listener.onChange();
         });
 
         holder.btnPlus.setOnClickListener(v -> {
             // TODO Auto-generated method stub
             orderItem.setQuantity(orderItem.getQuantity() + 1);
+            Order order = updateOrderItemQuantity(orderItem, position);
+            notifyItemChanged(position);
+
             debouncer.debounce(CartListAdapter.class, () ->
-                    updateOrderItemQuantity(orderItem), 1000, TimeUnit.MILLISECONDS);
+                    OrderDS.updateOrderItemQuantity(orderItem.getId(), orderItem.getQuantity(), orderItem.getSubTotal(), order.getId(), order.getSubTotal())
+                   , 1000, TimeUnit.MILLISECONDS);
 
-            long discount = (orderItem.getPrice() * orderItem.getQuantity()) * (orderItem.getDiscount() / 100);
-            long subtotal = calculateSubTotal(orderItem) - discount;
-            orderItem.setSubTotal(subtotal);
-
-            dtList.set(position, orderItem);
-            notifyDataSetChanged();
         });
-
-        return vi;
+        holder.itemView.setTag(orderItem);
     }
 
-    private void updateOrRemoveOrderItemQuantity(OrderItem orderItem){
-         if(orderItem.getQuantity() >0 ) {
-             updateOrderItemQuantity(orderItem);
-         }
-         else{
-             removeOrderItemQuantity(orderItem.getId());
-         }
+    public long getItemId(int position) {
+        return 0;
     }
 
-    private long calculateSubTotal(OrderItem orderItem){
-       return(orderItem.getPrice() +
-               orderItem.getOrderItemToppings().stream().mapToLong(OrderItemTopping::getPrice).sum())
-               * orderItem.getQuantity();
+    @Override
+    public int getItemCount() {
+        return dataList.size();
     }
-
-    private void updateOrderItemQuantity(OrderItem orderItem) {
-        if (loginData != null) {
-            orderService.updateOrderItemQuantityOnline(OrderSession.getInstance().getId(),orderItem.getId(), orderItem.getQuantity(), new IResultCallback() {
-                @Override
-                public void onSuccess(boolean success) {
-                    if (success) {
-                        Log.i("[CartListAdapter][Api call]", "Order item " + orderItem.getId() + "update new quantity" + orderItem.getQuantity());
-                    }
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        } else {
-            OrderDS.updateOrderItemQuantity(orderItem.getId(), orderItem.getQuantity());
-        }
-
-    }
-
 
     public void setCartListener(CartListener listener) {
         this.listener = listener;
     }
 
     public interface CartListener {
-        void onRemove(String result);
-
-        void onChange(Order currentOrder);
+        void onChange();
     }
 
-    private void removeOrderItemQuantity(String orderItemId) {
-        if (loginData!=null){
-            removeOrderItemQuantityOnline(orderItemId, new IResultCallback() {
-                @Override
-                public void onSuccess(boolean success) {
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        }else {
-            removeOrderItemQuantityOffline(orderItemId);
-        }
-    }
-
-    private void removeOrderItemQuantityOffline(String orderItemId) {
-
-        for (int i = 0; i < dtList.size(); i++) {
-            if (dtList.get(i).getId().equals(orderItemId)) {
-                OrderDS.deleteOrderItem(dtList.get(i).getId());
-                dtList.remove(i);
+    private Order updateOrderItemQuantity(OrderItem orderItem, int pos) {
+        Order order =  OrderSession.getInstance();
+       for(int i=0;i<order.getOrderItems().size();i++){
+            if(order.getOrderItems().get(i).getId().equals(orderItem.getId())){
+                order.getOrderItems().get(i).setQuantity(orderItem.getQuantity());
+                order.getOrderItems().get(i).setSubTotal(OrderHelper.updateOrderItemStatistic(order.getOrderItems().get(i)).getSubTotal());
+                dataList.set(pos,order.getOrderItems().get(i));
             }
-            if (dtList.size() == 0) {
-                OrderDS.deleteOrder(dtList.get(i).getOrderId());
+        };
+        order = OrderHelper.updateOrderStatistic(order);
+        OrderSession.setInstance(order);
+        if (listener != null) listener.onChange();
+        return order;
+    }
+
+    private Order removeOrderItem(OrderItem orderItem,int pos) {
+        Order order =  OrderSession.getInstance();
+        for (int i = 0; i < order.getOrderItems().size(); i++) {
+            if (order.getOrderItems().get(i).getId().equals(orderItem.getId())) {
+                order.getOrderItems().remove(i);
+                order = OrderHelper.updateOrderStatistic(order);
+                OrderDS.deleteOrderItem(orderItem.getId(), order.getId(),order.getSubTotal());
+                dataList.remove(pos);
+                break;
             }
         }
+        OrderSession.setInstance(OrderHelper.updateOrderStatistic(order));
+        return order;
     }
-
-    private void removeOrderItemQuantityOnline(String orderItemId, IResultCallback resultCallback) {
-        Call<ResponseAdapter<OrderData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .removeOrderItem(OrderSession.getInstance().getId(),new RemoveOrderItemBody(orderItemId));
-        responseCall.enqueue(new Callback<ResponseAdapter<OrderData>>() {
-            @Override
-            public void onResponse(Call<ResponseAdapter<OrderData>> call, Response<ResponseAdapter<OrderData>> response) {
-                if (response.errorBody() != null) {
-                    try {
-                        Log.e("[OrderFragment][Api error]", response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-                    resultCallback.onSuccess(true);
-                    ResponseAdapter<OrderData> res = response.body();
-                    assert res != null;
-                    if (res.getStatus() == Constants.STATUS_CODE_CREATED) {
-                        listener.onChange(res.getData().getOrder());
-                    } else {
-                        LoggerHelper.CheckAndLogInfo(this,res.getMessage());
-                    }
-                } else {
-                    resultCallback.onSuccess(false);
-                    LoggerHelper.CheckAndLogInfo(this,response.errorBody().toString());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseAdapter<OrderData>> call, Throwable t) {
-                Log.e("Login Error", t.getMessage());
-            }
-        });
-    }
-
 }

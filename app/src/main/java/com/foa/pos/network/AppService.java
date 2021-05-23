@@ -4,6 +4,7 @@ import com.foa.pos.model.Menu;
 import com.foa.pos.model.MenuGroup;
 import com.foa.pos.model.MenuItem;
 import com.foa.pos.model.MenuItemTopping;
+import com.foa.pos.model.Order;
 import com.foa.pos.model.ToppingGroup;
 import com.foa.pos.model.ToppingItem;
 import com.foa.pos.network.entity.AddNewOrderItemBody;
@@ -42,37 +43,6 @@ public interface AppService {
             @Field("deviceId") String deviceId
     );
 
-    @POST("/order")
-    Call<ResponseAdapter<OrderData>> createOrderAndAddFirstOrderItem (
-            @Body NewOrderBody newOrder
-    );
-
-
-    @PATCH("/order/{orderId}/add-new-item")
-    Call<ResponseAdapter<OrderData>> addOrderItem (
-            @Path("orderId") String orderId,
-            @Body AddNewOrderItemBody body
-    );
-
-
-    @PATCH("/order/{orderId}/update-orditem-quantity")
-    Call<ResponseAdapter<OrderData>> updateOrderItemQuantity (
-            @Path("orderId") String orderId,
-            @Body UpdateQuantityBody body
-    );
-
-    @PATCH("/order/{orderId}/remove-orditem")
-    Call<ResponseAdapter<OrderData>> removeOrderItem (
-            @Path("orderId") String orderId,
-            @Body RemoveOrderItemBody body
-    );
-//
-//    @FormUrlEncoded
-//    @POST("/restaurant/get-menu-item-topping-info")
-//    Call<ResponseAdapter<ToppingGroupData>> getToppingsByMenuItemId (
-//            @Field("menuItemId") String menuItemId
-//    );
-
     @GET("/user/pos/menu")
     Call<ResponseAdapter<MenuData>> getMenuId (
 
@@ -98,4 +68,8 @@ public interface AppService {
             @Path("menuId") String menuId
     );
 
+    @POST("/user/pos/order/save-order")
+    Call<ResponseAdapter<OrderData>> syncOrder(
+            @Body OrderData order
+    );
 }

@@ -48,16 +48,18 @@ public class RestaurantService {
                     assert res != null;
                     if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
                         resultCallback.onSuccess(true, res.getData());
-                    } else {
-                        LoggerHelper.CheckAndLogInfo(this,res.getMessage());
                     }
+                }else {
+                    resultCallback.onSuccess(false, null);
                 }
+
 
             }
 
             @Override
             public void onFailure(Call<ResponseAdapter<MenuData>> call, Throwable t) {
                 LoggerHelper.CheckAndLogInfo(this,t.getMessage());
+                resultCallback.onSuccess(false, null);
             }
         });
     }
@@ -80,9 +82,9 @@ public class RestaurantService {
                     assert res != null;
                     if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
                         resultCallback.onSuccess(true, res.getData().getDataList());
-                    } else {
-                        LoggerHelper.CheckAndLogInfo(this,res.getMessage());
                     }
+                }else{
+                    resultCallback.onSuccess(true, null);
                 }
 
             }
@@ -90,6 +92,7 @@ public class RestaurantService {
             @Override
             public void onFailure(Call<ResponseAdapter<RestaurantServiceData<MenuItem>>> call, Throwable t) {
                 LoggerHelper.CheckAndLogInfo(this,t.getMessage());
+                resultCallback.onSuccess(true, null);
             }
         });
     }
