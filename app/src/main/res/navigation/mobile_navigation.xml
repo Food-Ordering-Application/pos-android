@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_order"
-        android:name="com.foa.pos.fragment.OrderFragment"
+        android:name="com.foa.smartpos.fragment.OrderFragment"
         android:label="Đặt món"
         tools:layout="@layout/fragment_order" />
 
     <fragment
         android:id="@+id/navigation_delivery"
-        android:name="com.foa.pos.fragment.DeliveryFragment"
+        android:name="com.foa.smartpos.fragment.DeliveryFragment"
         android:label="Giao hàng"
         tools:layout="@layout/fragment_delivery" />
 
     <fragment
         android:id="@+id/navigation_manaorder"
-        android:name="com.foa.pos.fragment.OrdersFragment"
+        android:name="com.foa.smartpos.fragment.OrdersFragment"
         android:label="Đơn hàng"
         tools:layout="@layout/fragment_orders" />
 

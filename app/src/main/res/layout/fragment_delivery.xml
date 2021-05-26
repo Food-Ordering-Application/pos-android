@@ -181,15 +181,13 @@
         </RelativeLayout>
 
     </RadioGroup>
-    <GridView
-        android:id="@+id/deliveryGridView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/deliveryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="5"
-        android:clipToPadding="false"
-        android:layout_margin="5dp"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        />
     </LinearLayout>
     <RelativeLayout
         android:id="@+id/bgOrderDetail"
