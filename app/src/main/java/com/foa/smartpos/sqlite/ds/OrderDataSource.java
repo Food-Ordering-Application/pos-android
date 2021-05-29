@@ -12,6 +12,7 @@ import com.foa.smartpos.model.enums.StockState;
 import com.foa.smartpos.sqlite.DbSchema;
 import com.foa.smartpos.utils.Helper;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -114,8 +115,10 @@ public class OrderDataSource {
 				item.setSelected(false);
 				
 				try {  
-				    item.setCreatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CREATED_AT))));
-				    item.setUpdatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_AT))));
+				    item.setCreatedAt( Helper.dateSQLiteFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CREATED_AT))));
+				    item.setUpdatedAt( Helper.dateSQLiteFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_AT))));
+					item.setSyncedAt(Helper.dateSQLiteFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYNCED_AT))));
+
 				} catch (Exception e) {
 				}
 				
@@ -185,6 +188,7 @@ public class OrderDataSource {
 		ContentValues values = new ContentValues();
 
 		values.put(DbSchema.COL_ORDER_STATUS, status.toString());
+		values.put(DbSchema.COL_ORDER_SYNCED_AT,Helper.dateSQLiteFormat.format(new Date()));
 
 		return db.update(DbSchema.TBL_ORDER, values, DbSchema.COL_ORDER_ID +"= '"+orderId+"' ", null);
 	}

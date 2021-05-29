@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -30,6 +31,9 @@ public class RetrofitClient {
             Request request = chain.request().newBuilder().addHeader("Authorization", accessToken).build();
             return chain.proceed(request);
         });
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClient.addInterceptor(interceptor);
         retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
                 .addConverterFactory(new EnumRetrofitConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gson))

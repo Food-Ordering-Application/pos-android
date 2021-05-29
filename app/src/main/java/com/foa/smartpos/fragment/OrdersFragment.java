@@ -21,12 +21,16 @@ import android.widget.Toast;
 
 import com.foa.smartpos.R;
 import com.foa.smartpos.adapter.OrdersListViewAdapter;
+import com.foa.smartpos.model.IDataResultCallback;
+import com.foa.smartpos.model.Order;
+import com.foa.smartpos.service.OrderService;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Helper;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class OrdersFragment extends Fragment {
     View root;
@@ -89,8 +93,17 @@ public class OrdersFragment extends Fragment {
             Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
         });
 
+        adapter.setData(DS.getAllOrder(startDate,endDate));
         btnSearch.setOnClickListener(view -> {
-            adapter.setData(DS.getAllOrder(startDate,endDate));
+            if (orderTypeSpinner.getSelectedItem().equals("Tại quán")){
+                adapter.setData(DS.getAllOrder(startDate,endDate));
+            }else{
+                OrderService.getAllOrder("SALE", 1, (success, data) -> {
+                    adapter.setData(data);
+                });
+
+            }
+
         });
 
 

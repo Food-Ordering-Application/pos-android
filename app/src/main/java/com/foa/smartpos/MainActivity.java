@@ -5,35 +5,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.foa.smartpos.fragment.DeliveryFragment;
-import com.foa.smartpos.fragment.OrderFragment;
-import com.foa.smartpos.fragment.OrdersFragment;
-import com.foa.smartpos.model.IDataResultCallback;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.receiver.NetworkReceiver;
-import com.foa.smartpos.service.OrderService;
 import com.foa.smartpos.utils.Constants;
-import com.foa.smartpos.utils.DeliveryOrderQueue;
 import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.utils.LoginSession;
 import com.foa.smartpos.utils.OrderSession;
@@ -111,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
 		PushNotifications.start(getApplicationContext(), "77650b88-b6b2-4178-9fc2-95c36493470d");
 		PushNotifications.addDeviceInterest("orders_"+Helper.read(Constants.RESTAURANT_ID));
+		//PushNotifications.addDeviceInterest("debug-test");
 
 	}
 

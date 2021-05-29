@@ -9,6 +9,7 @@ import com.foa.smartpos.network.entity.LoginBody;
 import com.foa.smartpos.network.response.LoginData;
 import com.foa.smartpos.network.response.MenuData;
 import com.foa.smartpos.network.response.OrderData;
+import com.foa.smartpos.network.response.OrderListData;
 import com.foa.smartpos.network.response.ResponseAdapter;
 import com.foa.smartpos.network.response.RestaurantServiceData;
 import com.foa.smartpos.network.response.VerifyAppResponse;
@@ -20,6 +21,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface AppService {
 
@@ -69,6 +71,19 @@ public interface AppService {
 
     @GET("/order/{orderId}")
     Call<ResponseAdapter<OrderData>> getOrderById(
+            @Path("orderId") String orderId
+    );
+
+
+    @GET("/order/get-all-restaurant-orders")
+    Call<ResponseAdapter<OrderListData>> getAllOrder(
+            @Query("restaurantId") String restaurantId,
+            @Query("query") String orderType,
+            @Query("pageNumber") int pageNumber
+    );
+
+    @POST("/user/pos/order/{orderId}/confirm")
+    Call<ResponseAdapter<String>> confirmOrder(
             @Path("orderId") String orderId
     );
 }

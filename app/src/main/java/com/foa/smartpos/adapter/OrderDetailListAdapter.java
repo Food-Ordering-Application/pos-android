@@ -40,6 +40,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
     private class ViewHolder {
         RelativeLayout layoutOrderItem;
         TextView name;
+        TextView toppingName;
         TextView price;
         TextView qty;
         ImageButton btnMinus;
@@ -83,6 +84,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
 
             holder.layoutOrderItem = vi.findViewById(R.id.layoutOrderItem);
             holder.name = vi.findViewById(R.id.tvCartProductName);
+            holder.toppingName = vi.findViewById(R.id.tvTopping);
             holder.price = vi.findViewById(R.id.tvProductPrice);
             holder.qty = vi.findViewById(R.id.tvTotal);
             holder.btnMinus = vi.findViewById(R.id.btnSubQuantityCartItem);
@@ -100,13 +102,14 @@ public class OrderDetailListAdapter extends BaseAdapter {
 
         holder.name.setText(orderItem.getMenuItemName());
         holder.qty.setText(String.valueOf(orderItem.getQuantity()));
-        holder.price.setText(Helper.decimalformat.format(orderItem.getPrice()* orderItem.getQuantity())
-                +" "+Helper.read(Constants.KEY_SETTING_CURRENCY_SYMBOL, Constants.VAL_DEFAULT_CURRENCY_SYMBOL));
+        holder.price.setText(Helper.formatMoney(orderItem.getSubTotal()));
 
-        if(orderItem.getQuantity() <= 0)
-        {
-        	holder.btnMinus.setEnabled(false);
-        }
+        final StringBuilder toppingNamesBuilder = new StringBuilder();
+        orderItem.getOrderItemToppings().forEach(item->
+                toppingNamesBuilder.append(item.getName()).append("\n"));
+        holder.toppingName.setText(toppingNamesBuilder.toString().trim());
+
+
         holder.btnMinus.setVisibility(View.INVISIBLE);
         holder.btnPlus.setVisibility(View.INVISIBLE);
         return vi;

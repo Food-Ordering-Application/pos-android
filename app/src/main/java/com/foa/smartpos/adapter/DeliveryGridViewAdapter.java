@@ -20,11 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.foa.smartpos.R;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.model.OrderItem;
+import com.foa.smartpos.model.enums.OrderStatus;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
+import com.foa.smartpos.utils.EnumHelper;
 import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.dialog.EditOrderItemDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -34,6 +37,8 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
     LinearLayout deliveriesLayout;
     RelativeLayout detailLayout;
     RecyclerView theGridView;
+    private OnSelectedItemListener onSelectedItemListener;
+    String currentOrderId="";
 
     public DeliveryGridViewAdapter(Context context) {
         this.context = context;
@@ -60,9 +65,7 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_item_delivery, parent, false);
 
-        deliveriesLayout = ((Activity) context).findViewById(R.id.bgDeliveries);
-        detailLayout = ((Activity) context).findViewById(R.id.bgOrderDetail);
-        theGridView = ((Activity) context).findViewById(R.id.deliveryRecyclerView);
+
 
         return new ViewHolder(view);
     }
@@ -76,36 +79,28 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
             holder.cardItem.setSelected(false);
         }
         holder.cardItem.setOnClickListener(v -> {
-            v.setSelected(true);
-            if (order.isSelected()){
-                order.setSelected(false);
-                Helper.disableSplitLayout(context, deliveriesLayout,detailLayout,theGridView);
+            if (order.getId()==currentOrderId){
+                currentOrderId="";;
+                v.setSelected(false);
+                if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(null);
             }else {
-                Activity a = ((Activity) context);
-                Log.e("a",""+a);
-                order.setSelected(true);
-                if(! Helper.checkHasSelectedItem(orders,order)){//disable another item
-                    Helper.enableSplitLayout(context,deliveriesLayout,detailLayout,theGridView);
-                }
-                loadOrderDetail(order,detailLayout, context);
+                v.setSelected(true);
+                currentOrderId=order.getId();
+                orders = new ArrayList<>();
+                notifyDataSetChanged();
+                if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(order);
+
             }
             notifyDataSetChanged();
         });
 
         //set data
         holder.orderId.setText(order.getId().substring(0,6));
-        //holder.timeLeft.setText(order.getOrderDelivery().getAcceptanceDeadline().toString());
         holder.orderQty.setText(String.valueOf(order.getSumQuantity()));
-        holder.orderAmount.setText(String.valueOf(order.getGrandTotal()));
-        holder.deliveryStatus.setText("Chờ xác nhận");
-        holder.deliveryDistance.setText(String.valueOf( Math.abs(new Random().nextInt()%7+0.2)));
+        holder.orderAmount.setText(String.valueOf(Helper.formatMoney(order.getGrandTotal())));
+        holder.deliveryStatus.setText(EnumHelper.getOrderStatusString(order.getStatus()));
+        holder.deliveryDistance.setText(String.valueOf(order.getDelivery().getDistance()));
         holder.paymentStatus.setText("Tiền mặt");
-
-//        (detailLayout.findViewById(R.id.btnCancelDetatil)).setOnClickListener(v -> {
-//            Helper.disableSplitLayout(deliveriesLayout,detailLayout,theGridView);
-//            Helper.clearSelectedItem(orders);
-//        });
-
         holder.itemView.setTag(order);
     }
 
@@ -137,33 +132,12 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
         }
     }
 
-    public static void loadOrderDetail(Order order, RelativeLayout detailLayout, Context context){
-        ((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(String.valueOf(order.getGrandTotal()));
-        ((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(String.valueOf(order.getGrandTotal()));
-        ((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getId().substring(0,6)));
-        ((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(String.valueOf(order.getGrandTotal()));
-        if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){
-            ((TextView)detailLayout.findViewById(R.id.tvChange)).setText(String.valueOf(0));
-        }
-        OrderDetailListAdapter adapter = new OrderDetailListAdapter((Activity) context);
-        adapter.set(order.getOrderItems());
-        adapter.notifyDataSetChanged();
-        ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
-        detailsListView.setAdapter(adapter);
-        detailsListView.setOnItemClickListener((parent, view, position, id) -> {
-            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
-            OrderItem item =(OrderItem) detailsListView.getItemAtPosition(position);
-            EditOrderItemDialog dialog = new EditOrderItemDialog(context,item);
-            dialog.setOutOfProductListener(result -> {
 
-                    SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
-                    OrderDataSource DS = new OrderDataSource(db);
-                    DS.updateOutSoldOrderItem(item.getId(),result);
-                    ((OrderDetailListAdapter) detailsListView.getAdapter()).updateIsOutSold(item.getId(),item.getStockState());
-                    ((OrderDetailListAdapter) detailsListView.getAdapter()).notifyDataSetChanged();
+    public void setOnSelectedItemListener(OnSelectedItemListener listener){
+        this.onSelectedItemListener =listener;
+    }
 
-            });
-            dialog.show();
-        });
+    public interface OnSelectedItemListener{
+        void OnSelected(Order order);
     }
 }

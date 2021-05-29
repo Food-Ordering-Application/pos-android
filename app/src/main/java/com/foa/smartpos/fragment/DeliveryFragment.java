@@ -1,51 +1,62 @@
 package com.foa.smartpos.fragment;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.foa.smartpos.MainActivity;
 import com.foa.smartpos.R;
 import com.foa.smartpos.adapter.DeliveryGridViewAdapter;
+import com.foa.smartpos.adapter.OrderDetailListAdapter;
+import com.foa.smartpos.catching.DeliveryOrderCatching;
+import com.foa.smartpos.dialog.EditOrderItemDialog;
+import com.foa.smartpos.model.IDataResultCallback;
 import com.foa.smartpos.model.Order;
+import com.foa.smartpos.model.OrderItem;
+import com.foa.smartpos.model.enums.OrderStatus;
+import com.foa.smartpos.model.enums.OrderType;
 import com.foa.smartpos.service.OrderService;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
-import com.foa.smartpos.utils.DeliveryOrderQueue;
-import com.google.firebase.messaging.RemoteMessage;
-import com.pusher.pushnotifications.PushNotificationReceivedListener;
+import com.foa.smartpos.utils.Helper;
 import com.pusher.pushnotifications.PushNotifications;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class DeliveryFragment extends Fragment{
-    View root;
-    RecyclerView orderRecyclerView;
-    LinearLayout ordersLayout;
-    RelativeLayout detailLayout;
-    RadioButton waitingAcceptRB;
-    RadioButton inProcessRB;
-    RadioButton completedRB;
-    RadioButton denyRadioButton;
-    List<RadioButton> radioButtonList;
-    OrderDataSource DS;
-    List<Order> orderList = new ArrayList<>();
-    DeliveryGridViewAdapter adapter;
+public class DeliveryFragment extends Fragment implements View.OnClickListener{
+    private View root;
+    private Context context;
+    private RecyclerView orderRecyclerView;
+    private LinearLayout deliveriesLayout;
+    private RelativeLayout detailLayout;
+    private RadioButton waitingAcceptRB;
+    private RadioButton inProcessRB;
+    private RadioButton completedRB;
+    private RadioButton denyRadioButton;
+    private List<RadioButton> radioButtonList;
+    private OrderDataSource DS;
+    private List<Order> orderList = new ArrayList<>();
+    private DeliveryGridViewAdapter adapter;
+    private Button btnConfirm;
+    private Button btnCancel;
+    private Order orderSelected;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,20 +67,32 @@ public class DeliveryFragment extends Fragment{
         //get data
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
+        context = getActivity();
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),4);
         orderRecyclerView.setLayoutManager(layoutManager);
         adapter = new DeliveryGridViewAdapter(getActivity(), orderList);
-        adapter.setOrders(DeliveryOrderQueue.getInstance());
         orderRecyclerView.setAdapter(adapter);
+        adapter.setOnSelectedItemListener(order -> {
+            if (order!=null){
+                Helper.enableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+                loadOrderDetail(order,detailLayout);
+                orderSelected = order;
+            }else{
+                Helper.disableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+            }
+        });
+        OrderService.getAllOrder("SALE", 1, (success, data) -> {
+            if (success){
+
+                adapter.setOrders(data.stream().filter(p -> p.getStatus().equals(OrderStatus.ORDERED) ).collect(Collectors.toList()));
+            }
+        });
 
         PushNotifications.setOnMessageReceivedListenerForVisibleActivity(getActivity(), remoteMessage -> {
-            OrderService.getOrderById("5a087577-8679-4e6b-92a2-259fab9cc125", (success, data) -> {
-                if (success){
-                    DeliveryOrderQueue.getInstance().add(data);
-                    adapter.addOrder(data);
-                }
-            });
+           String orderId = remoteMessage.getData().get("orderId");
+            OrderService.getOrderById(orderId, (success, data) -> adapter.addOrder(data));
+
 		});
 
         return root;
@@ -82,11 +105,19 @@ public class DeliveryFragment extends Fragment{
         completedRB = root.findViewById(R.id.completedRadioBuutton);
         denyRadioButton = root.findViewById(R.id.denyAcceptRadioBuutton);
         radioButtonList = Arrays.asList(waitingAcceptRB,inProcessRB,completedRB,denyRadioButton);
+        btnConfirm  = root.findViewById(R.id.btnConfirm);
+        btnCancel  = root.findViewById(R.id.btnCancel);
+        btnConfirm.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
+        deliveriesLayout =root.findViewById(R.id.bgDeliveries);
+        detailLayout = root.findViewById(R.id.bgOrderDetail);
     }
 
     private  void setGroupButtonListenter(){
         for (int i = 0; i < radioButtonList.size(); i++) {
+            int finalI = i;
             radioButtonList.get(i).setOnClickListener(v -> {
+                getOrderListWithPosition(finalI);
                 for (int j = 0; j < radioButtonList.size(); j++) {
                     if(v.getId()!=radioButtonList.get(j).getId()){
                         radioButtonList.get(j).setChecked(false);
@@ -96,4 +127,81 @@ public class DeliveryFragment extends Fragment{
         }
     }
 
+    private void getOrderListWithPosition(int position){
+        switch (position){
+            case 0:
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
+
+                });
+                break;
+            case 1:
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
+
+                });
+                break;
+            case 2:
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
+
+                });
+                break;
+            case 3:
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
+
+                });
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btnConfirm:
+                OrderService.confirmOrder(orderSelected.getId(), success -> {
+                    if (success){
+                        Helper.disableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+                    }else{
+                        Toast.makeText(getActivity(), "Loi xac nhan", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            case R.id.btnCancel:
+                Toast.makeText(getActivity(), "Void Clicked!", Toast.LENGTH_SHORT).show();
+                break;
+
+        }
+    }
+
+    public void loadOrderDetail(Order order, RelativeLayout detailLayout){
+        ((TextView)detailLayout.findViewById(R.id.tvTotal)).setText(Helper.formatMoney(order.getGrandTotal()));
+        ((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(Helper.formatMoney(order.getGrandTotal()));
+        ((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getId()));
+        ((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(Helper.formatMoney(order.getGrandTotal()));
+        if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){
+            ((TextView)detailLayout.findViewById(R.id.tvChange)).setText(Helper.formatMoney(0));
+        }
+
+        OrderDetailListAdapter adapter = new OrderDetailListAdapter(getActivity());
+
+        Order orderCatching = DeliveryOrderCatching.getOrderCatching(order);
+        if (orderCatching!=null){
+            adapter.set(orderCatching.getOrderItems());
+        }else{
+            OrderService.getOrderById(order.getId(), (success, data) -> {
+                adapter.set(data.getOrderItems());
+                DeliveryOrderCatching.addDeliveryCatching(data);
+            });
+        }
+
+        ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
+        detailsListView.setAdapter(adapter);
+        detailsListView.setOnItemClickListener((parent, view, position, id) -> {
+            Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+            OrderItem item =(OrderItem) detailsListView.getItemAtPosition(position);
+            EditOrderItemDialog dialog = new EditOrderItemDialog(getActivity(),item);
+            dialog.setOutOfProductListener(result -> {
+
+            });
+            dialog.show();
+        });
+    }
 }

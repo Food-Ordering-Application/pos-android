@@ -9,6 +9,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.foa.smartpos.model.MenuGroup;
 import com.foa.smartpos.model.MenuItem;
@@ -29,6 +31,7 @@ import com.foa.smartpos.utils.LoggerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -76,7 +79,7 @@ public class SplashActivity extends AppCompatActivity {
 
         Helper.initialize(this);
         Helper.write(Constants.MERCHANT_ID, "20c2c064-2457-4525-b7e4-7c2c10564e86");
-        Helper.write(Constants.RESTAURANT_ID, "75d1fd95-9699-4f21-85e6-480def4d8bbb");
+        Helper.write(Constants.RESTAURANT_ID, "6587f789-8c76-4a2e-9924-c14fc30629ef");
 
 //        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -87,26 +90,26 @@ public class SplashActivity extends AppCompatActivity {
         btnTryAgain.setOnClickListener(v -> {
            loadingView();
                executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-               if (!isMenuItemSuccess){
+               if (isMenuItemSuccess==null||!isMenuItemSuccess){
                     getMenuGroups = () -> getMenuGroups(menuId);
                    executor.execute(getMenuGroups);
                }
-               if (!isMenuGroupSuccess){
+               if (isMenuItemSuccess==null|| !isMenuGroupSuccess){
                     getMenuItems = () -> getMenuItems(menuId);
                    executor.execute(getMenuItems);
                }
 
-               if (!isToppingGroupSuccess){
+               if (isMenuItemSuccess==null || !isToppingGroupSuccess){
                     getToppingGroups = () -> getToppingGroups(menuId);
                    executor.execute(getToppingGroups);
                }
 
-               if(!isToppingItemSuccess){
+               if(isMenuItemSuccess==null || !isToppingItemSuccess){
                     getToppingItems = () -> getToppingItems(menuId);
                    executor.execute(getToppingItems);
                }
 
-               if (!isMenuItemToppingSuccess){
+               if (isMenuItemSuccess==null || !isMenuItemToppingSuccess){
                     getMenuItemToppings = () -> getMenuItemToppings(menuId);
                     executor.execute(getMenuItemToppings);
                }

@@ -178,7 +178,6 @@ public class PaymentDialog  extends DialogFragment implements View.OnClickListen
                     OrderSession.clearInstance();
                     listener.onFinish(true);
                 }
-                listener.onFinish(false);
                 dismiss();
                 break;
             default:

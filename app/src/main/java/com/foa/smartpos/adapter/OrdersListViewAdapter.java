@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -69,6 +70,7 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
             holder.orderTime = convertView.findViewById(R.id.orderTime);
             holder.orderAmount = convertView.findViewById(R.id.orderAmount);
             holder.orderStatus = convertView.findViewById(R.id.orderStatus);
+            holder.syncStatusIcon = convertView.findViewById(R.id.syncStatusIcon);
             convertView.setTag(holder);
         }else {
             holder = (ViewHolder) convertView.getTag();
@@ -80,7 +82,6 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
             holder.cardItem.setBackgroundResource(R.color.item_transparan);
         }
 
-        //Set item listener to change border
         Order order  = getItem(position);
         if(order.isSelected()){
             holder.cardItem.setSelected(true);
@@ -104,25 +105,18 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
 //            notifyDataSetChanged();
 //        });
 
-        //set data
+
         holder.orderId.setText(order.getId());
         holder.orderTime.setText(Helper.dateTimeformat.format(order.getCreatedAt()));
         holder.orderAmount.setText(String.valueOf(order.getGrandTotal()));
-        String paymentType;
-//        switch (order.getPaymentType()){
-//            case CASH:
-//                paymentType = "Tiền mặt";
-//                break;
-//            case COD:
-//                paymentType = "Tiền mặt";
-//                break;
-//            case PAYPAL:
-//                paymentType = "Paypal";
-//                break;
-//            default:
-//                paymentType = "N/A";
-//        }
         holder.orderStatus.setText("Tiền mặt");
+        if (order.getSyncedAt()!=null){
+            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_done);
+        }else{
+            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_none);
+
+        }
+
 
 
         return convertView;
@@ -134,5 +128,6 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
         TextView orderTime;
         TextView orderAmount;
         TextView orderStatus;
+        ImageView syncStatusIcon;
     }
 }

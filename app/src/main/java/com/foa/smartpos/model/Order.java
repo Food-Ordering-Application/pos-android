@@ -40,6 +40,8 @@ public class Order{
 	private Date createdAt;
 	@SerializedName( "updatedAt" )
 	private Date updatedAt;
+	@SerializedName( "syncedAt" )
+	private Date syncedAt;
 	@SerializedName( "orderItems" )
 	private List<OrderItem> orderItems;
 	@SerializedName("delivery")
@@ -169,6 +171,14 @@ public class Order{
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Date getSyncedAt() {
+		return syncedAt;
+	}
+
+	public void setSyncedAt(Date syncedAt) {
+		this.syncedAt = syncedAt;
 	}
 
 	public List<OrderItem> getOrderItems() {

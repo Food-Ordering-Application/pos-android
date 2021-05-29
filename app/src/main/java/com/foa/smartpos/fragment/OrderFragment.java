@@ -57,7 +57,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickListener,RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private View root;
     private RelativeLayout menuWrapper;
     private RelativeLayout cartWrapper;
@@ -73,6 +73,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private EditText txtKeyword;
     private TextView txtEmpty;
     private Button btnOrder;
+    private Button btnClearOrder;
     private MenuItemDataSource ProductDS;
     private OrderDataSource OrderDS;
     private OrderService orderService;
@@ -81,7 +82,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
 
@@ -99,7 +99,6 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         //Toolbar setting
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.right_layout_menu);
-        toolbar.setOnMenuItemClickListener(this);
 
         initRecyclerView();
 
@@ -136,6 +135,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             menuAdapter.set(ProductDS.getAll(txtKeyword.getText().toString(), ProductDS.getIdByName(cateName)));
         });
 
+        btnClearOrder.setOnClickListener(view -> {
+            clearOrder();
+        });
+
         return root;
     }
 
@@ -166,6 +169,7 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
         cartRecyclerview = root.findViewById(R.id.cartListView);
         radioGroup = root.findViewById(R.id.categoryGroup);
+        btnClearOrder = root.findViewById(R.id.btnClearOrder);
     }
 
     private void initListener() {
@@ -179,22 +183,12 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         txtKeyword.addTextChangedListener(keywordOnchange);
     }
 
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onMenuItemClick(android.view.MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.clear_cart:
-                if (cartAdapter.getCount()>0){
-                    cartAdapter.removeAll();
-                    menuAdapter.reset();
-                    return true;
-                }
-                return false;
-            case R.id.hold_cart:
-                Toast.makeText(getActivity(), "Hold cart clicked", Toast.LENGTH_SHORT).show();
-                return true;
+    private void clearOrder(){
+        if (cartAdapter.getCount()>0){
+            cartAdapter.removeAll();
+            menuAdapter.reset();
+            btnClearOrder.setVisibility(View.GONE);
         }
-        return false;
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -263,9 +257,10 @@ public class OrderFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         public void onChange() {
             Order order = OrderSession.getInstance();
             updateStatistic(order);
-            if (cartAdapter.getCount() == 0)
+            if (cartAdapter.getCount() == 0){
+                btnClearOrder.setVisibility(View.GONE);
                 txtEmpty.setVisibility(View.VISIBLE);
-            else
+            }else
                 txtEmpty.setVisibility(View.GONE);
         }
     };
