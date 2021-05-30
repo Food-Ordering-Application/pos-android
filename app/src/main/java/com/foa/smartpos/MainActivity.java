@@ -1,6 +1,9 @@
 package com.foa.smartpos;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -18,16 +21,18 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.foa.smartpos.model.Order;
+import com.foa.smartpos.receiver.BackgroundJobReceiver;
 import com.foa.smartpos.receiver.NetworkReceiver;
+import com.foa.smartpos.session.BackgroundJobSession;
 import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.Helper;
-import com.foa.smartpos.utils.LoginSession;
-import com.foa.smartpos.utils.OrderSession;
+import com.foa.smartpos.session.OrderSession;
 import com.google.android.material.navigation.NavigationView;
 import com.pusher.pushnotifications.PushNotifications;
 
 
 public class MainActivity extends AppCompatActivity {
+	private final int REQUEST_ID = 1;
 	private AppBarConfiguration mAppBarConfiguration;
 	private BroadcastReceiver networkReceiver = null;
 	private Button manualSyncButton;
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 //		});
 
 		mAppBarConfiguration = new AppBarConfiguration.Builder(
-				R.id.navigation_order, R.id.navigation_delivery, R.id.navigation_manaorder)
+				R.id.navigation_order, R.id.navigation_delivery, R.id.navigation_manaorder,R.id.navigation_setting)
 				.setOpenableLayout(drawer)
 				.build();
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -75,18 +80,12 @@ public class MainActivity extends AppCompatActivity {
 		NavigationUI.setupWithNavController(navigationView, navController);
 		navigationView.bringToFront();
 
-		View headerView = navigationView.getHeaderView(0);
-		manualSyncButton = headerView.findViewById(R.id.manualSyncButton);
-		manualSyncButton.setOnClickListener(view -> startActivity(new Intent(MainActivity.this,SplashActivity.class)));
-
 		navigationView.getMenu().findItem(R.id.navigation_logout).setOnMenuItemClickListener(menuItem -> {
 			logout();
 			return true;
 		});
 
-
-
-
+		BackgroundJobSession.resetInstance(this,0);
 	}
 
 	@Override
@@ -97,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
 		PushNotifications.start(getApplicationContext(), "77650b88-b6b2-4178-9fc2-95c36493470d");
 		PushNotifications.addDeviceInterest("orders_"+Helper.read(Constants.RESTAURANT_ID));
-		//PushNotifications.addDeviceInterest("debug-test");
-
 	}
 
 	@Override
@@ -122,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
 	
 	private void logout()
 	{
-		LoginSession.clearInstance();
 		OrderSession.clearInstance();
 		Helper.clearLoginData();
 		Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -134,6 +130,12 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		BackgroundJobSession.clearInstance();
 	}
 
 	public static void setNewDeliveryOrderListener(NewDeliveryOrderListener newDeliveryOrderListener){

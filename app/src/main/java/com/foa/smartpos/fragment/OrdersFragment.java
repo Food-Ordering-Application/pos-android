@@ -21,16 +21,13 @@ import android.widget.Toast;
 
 import com.foa.smartpos.R;
 import com.foa.smartpos.adapter.OrdersListViewAdapter;
-import com.foa.smartpos.model.IDataResultCallback;
-import com.foa.smartpos.model.Order;
-import com.foa.smartpos.service.OrderService;
+import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Helper;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class OrdersFragment extends Fragment {
     View root;

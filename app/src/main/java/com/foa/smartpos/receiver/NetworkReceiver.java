@@ -8,7 +8,6 @@ import android.widget.Toast;
 import com.foa.smartpos.dialog.NetworkWarningDialog;
 import com.foa.smartpos.network.utils.NetworkStatus;
 import com.foa.smartpos.network.utils.NetworkUtils;
-import com.foa.smartpos.utils.LoginSession;
 
 public class NetworkReceiver extends BroadcastReceiver {
     NetworkWarningDialog networkWarningDialog;
@@ -28,7 +27,7 @@ public class NetworkReceiver extends BroadcastReceiver {
             case DISCONNECTED:
                 networkWarningDialog = new NetworkWarningDialog(context);
                 networkWarningDialog.setSaleModeChangeListener(result -> {
-                    LoginSession.clearInstance();
+
 
                 });
                 networkWarningDialog.show();

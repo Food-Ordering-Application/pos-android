@@ -55,7 +55,7 @@ public class MenuItemToppingDataSource {
 		values.put(DbSchema.COL_MENU_ITEM_TOPPING_MENU_ID, item.getMenuId());
 		values.put(DbSchema.COL_MENU_ITEM_TOPPING_MENU_ITEM_ID, item.getMenuItemId());
 		values.put(DbSchema.COL_MENU_ITEM_TOPPING_TOPPING_ITEM_ID, item.getToppingItemId());
-		values.put(DbSchema.COL_MENU_ITEM_TOPPING_PIRCE, item.getCustomPrice());
+		values.put(DbSchema.COL_MENU_ITEM_TOPPING_PRICE, item.getCustomPrice());
 
 		return db.insert(DbSchema.TBL_MENU_ITEM_TOPPING, null, values);
 	}

@@ -9,15 +9,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.foa.smartpos.model.MenuGroup;
 import com.foa.smartpos.model.MenuItem;
 import com.foa.smartpos.model.MenuItemTopping;
 import com.foa.smartpos.model.ToppingGroup;
 import com.foa.smartpos.model.ToppingItem;
-import com.foa.smartpos.service.RestaurantService;
+import com.foa.smartpos.api.RestaurantService;
 import com.foa.smartpos.sqlite.DatabaseHelper;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.MenuGroupDataSource;
@@ -31,7 +29,6 @@ import com.foa.smartpos.utils.LoggerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +51,7 @@ public class SplashActivity extends AppCompatActivity {
     Runnable getToppingItems;
     Runnable getMenuItemToppings;
 
+    Boolean isMenuSuccess = null;
     Boolean isMenuItemSuccess = null;
     Boolean isMenuGroupSuccess = null;
     Boolean isToppingItemSuccess = null;
@@ -75,7 +73,7 @@ public class SplashActivity extends AppCompatActivity {
 
         restaurantService = new RestaurantService();
         DatabaseManager.initializeInstance(new DatabaseHelper(this));
-        db =  DatabaseManager.getInstance().openDatabase();
+        db = DatabaseManager.getInstance().openDatabase();
 
         Helper.initialize(this);
         Helper.write(Constants.MERCHANT_ID, "20c2c064-2457-4525-b7e4-7c2c10564e86");
@@ -88,32 +86,38 @@ public class SplashActivity extends AppCompatActivity {
         getMenuData();
 
         btnTryAgain.setOnClickListener(v -> {
-           loadingView();
-               executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-               if (isMenuItemSuccess==null||!isMenuItemSuccess){
+            loadingView();
+            executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            if (isMenuSuccess) {
+                getMenuData();
+            } else {
+
+                if (isMenuItemSuccess == null) {
                     getMenuGroups = () -> getMenuGroups(menuId);
-                   executor.execute(getMenuGroups);
-               }
-               if (isMenuItemSuccess==null|| !isMenuGroupSuccess){
+                    executor.execute(getMenuGroups);
+                }
+                if (isMenuItemSuccess == null) {
                     getMenuItems = () -> getMenuItems(menuId);
-                   executor.execute(getMenuItems);
-               }
+                    executor.execute(getMenuItems);
+                }
 
-               if (isMenuItemSuccess==null || !isToppingGroupSuccess){
+                if (isMenuItemSuccess == null) {
                     getToppingGroups = () -> getToppingGroups(menuId);
-                   executor.execute(getToppingGroups);
-               }
+                    executor.execute(getToppingGroups);
+                }
 
-               if(isMenuItemSuccess==null || !isToppingItemSuccess){
+                if (isMenuItemSuccess == null) {
                     getToppingItems = () -> getToppingItems(menuId);
-                   executor.execute(getToppingItems);
-               }
+                    executor.execute(getToppingItems);
+                }
 
-               if (isMenuItemSuccess==null || !isMenuItemToppingSuccess){
+                if (isMenuItemSuccess == null) {
                     getMenuItemToppings = () -> getMenuItemToppings(menuId);
                     executor.execute(getMenuItemToppings);
-               }
-               executor.shutdown();
+                }
+            }
+
+            executor.shutdown();
             try {
                 executor.awaitTermination(200, TimeUnit.MICROSECONDS);
             } catch (InterruptedException e) {
@@ -123,22 +127,22 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    private void getMenuData(){
+    private void getMenuData() {
         restaurantService.getMenuId((success, data) -> {
-            if (success){
+            if (success) {
                 menuId = data.getMenuId();
                 getMenuAndToppingData(data.getMenuId());
-            }else {
+            } else {
                 loadedView();
             }
         });
     }
 
-    private void checkSyncStatus(){
-        if (isMenuItemSuccess==null || isMenuGroupSuccess==null || isToppingGroupSuccess==null
-                || isToppingItemSuccess==null || isMenuItemToppingSuccess==null) return;
+    private void checkSyncStatus() {
+        if (isMenuItemSuccess == null || isMenuGroupSuccess == null || isToppingGroupSuccess == null
+                || isToppingItemSuccess == null || isMenuItemToppingSuccess == null) return;
         if (isMenuItemSuccess && isMenuGroupSuccess && isToppingGroupSuccess
-                && isToppingItemSuccess && isMenuItemToppingSuccess ) {
+                && isToppingItemSuccess && isMenuItemToppingSuccess) {
 
 //            executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 //            Runnable downloadMenuItemsImage = () -> menuItems.forEach(item->{
@@ -150,18 +154,18 @@ public class SplashActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-        }else {
+        } else {
             loadedView();
         }
     }
 
-    private void getMenuAndToppingData(String menuId){
+    private void getMenuAndToppingData(String menuId) {
         executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-         getMenuGroups = () -> getMenuGroups(menuId);
-         getMenuItems = () -> getMenuItems(menuId);
-         getToppingGroups = () -> getToppingGroups(menuId);
-         getToppingItems = () -> getToppingItems(menuId);
-         getMenuItemToppings = () -> getMenuItemToppings(menuId);
+        getMenuGroups = () -> getMenuGroups(menuId);
+        getMenuItems = () -> getMenuItems(menuId);
+        getToppingGroups = () -> getToppingGroups(menuId);
+        getToppingItems = () -> getToppingItems(menuId);
+        getMenuItemToppings = () -> getMenuItemToppings(menuId);
 
         executor.execute(getMenuGroups);
         executor.execute(getMenuItems);
@@ -175,22 +179,22 @@ public class SplashActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        LoggerHelper.CheckAndLogInfo(this,"Finished all threads");
+        LoggerHelper.CheckAndLogInfo(this, "Finished all threads");
     }
 
-    private void loadingView(){
+    private void loadingView() {
         btnTryAgain.setVisibility(View.GONE);
         statusMessage.setVisibility(View.GONE);
         loadingProgress.setVisibility(View.VISIBLE);
     }
 
-    private void loadedView(){
+    private void loadedView() {
         statusMessage.setVisibility(View.VISIBLE);
         loadingProgress.setVisibility(View.GONE);
         btnTryAgain.setVisibility(View.VISIBLE);
     }
 
-    private void getMenuGroups(String menuId){
+    private void getMenuGroups(String menuId) {
         restaurantService.getMenuGroups(menuId, (success, data) -> {
             if (success) {
                 isMenuGroupSuccess = true;
@@ -199,62 +203,74 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
     }
-    private void getMenuItems(String menuId){
+
+    private void getMenuItems(String menuId) {
         restaurantService.getMenuItems(menuId, (success, data) -> {
-            if (success){
+            if (success) {
                 isMenuItemSuccess = true;
                 menuItems = data;
                 saveMenuItemToLocal(data);
                 checkSyncStatus();
-            }else {
+            } else {
                 loadedView();
             }
 
         });
     }
 
-    private void getToppingItems(String menuId){
+    private void getToppingItems(String menuId) {
         restaurantService.getToppingItems(menuId, (success, data) -> {
             if (success) {
                 isToppingItemSuccess = true;
                 saveToppingItemToLocal(data);
                 checkSyncStatus();
-            }else {
-                loadedView();
-            }
-        });
-    }
-    private void getToppingGroups(String menuId){
-        restaurantService.getToppingGroups(menuId, (success, data) -> {
-            if (success) {
-                isToppingGroupSuccess = true;
-                saveToppingGroupToLocal(data);
-                checkSyncStatus();
-            }else {
-                loadedView();
-            }
-        });
-    }
-    private void getMenuItemToppings(String menuId){
-        restaurantService.getMenuItemTopping(menuId, (success, data) -> {
-            if (success) {
-                isMenuItemToppingSuccess = true;
-                saveMenuItemToppingToLocal(data);
-                checkSyncStatus();
-            }else {
+            } else {
                 loadedView();
             }
         });
     }
 
-    private void saveMenuItemToLocal(List<MenuItem> menuItems){
+    private void getToppingGroups(String menuId) {
+        restaurantService.getToppingGroups(menuId, (success, data) -> {
+            if (success) {
+                isToppingGroupSuccess = true;
+                saveToppingGroupToLocal(data);
+                checkSyncStatus();
+            } else {
+                loadedView();
+            }
+        });
+    }
+
+    private void getMenuItemToppings(String menuId) {
+        restaurantService.getMenuItemTopping(menuId, (success, data) -> {
+            if (success) {
+                isMenuItemToppingSuccess = true;
+                saveMenuItemToppingToLocal(data);
+                checkSyncStatus();
+            } else {
+                loadedView();
+            }
+        });
+    }
+
+    private void saveMenuItemToLocal(List<MenuItem> menuItems) {
+        if (menuItems == null) {
+            isMenuItemSuccess = false;
+            return;
+        }
         MenuItemDataSource menuItemDS = new MenuItemDataSource(db);
         menuItemDS.truncate();
         for (MenuItem menuItem : menuItems) {
             menuItemDS.insert(menuItem);
         }
     }
-    private void saveMenuGroupToLocal(List<MenuGroup> menuGroups){
+
+    private void saveMenuGroupToLocal(List<MenuGroup> menuGroups) {
+        if (menuGroups == null) {
+            isMenuGroupSuccess = false;
+            return;
+        }
         MenuGroupDataSource menuItemDS = new MenuGroupDataSource(db);
         menuItemDS.truncate();
         for (MenuGroup menuGroup : menuGroups) {
@@ -262,7 +278,11 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void saveToppingGroupToLocal(List<ToppingGroup> menuGroups){
+    private void saveToppingGroupToLocal(List<ToppingGroup> menuGroups) {
+        if (menuGroups == null) {
+            isToppingGroupSuccess = false;
+            return;
+        }
         ToppingGroupDataSource toppingGroupDS = new ToppingGroupDataSource(db);
         toppingGroupDS.truncate();
         for (ToppingGroup menuGroup : menuGroups) {
@@ -270,7 +290,11 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void saveToppingItemToLocal(List<ToppingItem> toppingItems){
+    private void saveToppingItemToLocal(List<ToppingItem> toppingItems) {
+        if (toppingItems == null) {
+            isToppingItemSuccess = false;
+            return;
+        }
         ToppingItemDataSource toppingItemDS = new ToppingItemDataSource(db);
         toppingItemDS.truncate();
         for (ToppingItem menuGroup : toppingItems) {
@@ -278,15 +302,17 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void saveMenuItemToppingToLocal(List<MenuItemTopping> menuItemToppings){
+    private void saveMenuItemToppingToLocal(List<MenuItemTopping> menuItemToppings) {
+        if (menuItemToppings == null) {
+            isMenuItemToppingSuccess = false;
+            return;
+        }
         MenuItemToppingDataSource menuItemToppingDS = new MenuItemToppingDataSource(db);
         menuItemToppingDS.truncate();
         for (MenuItemTopping menuItemTopping : menuItemToppings) {
             menuItemToppingDS.insert(menuItemTopping);
         }
     }
-
-
 
 
 //    public void getMenuData(){
@@ -360,16 +386,16 @@ public class SplashActivity extends AppCompatActivity {
 //        });
 //    }
 
-    private void saveMenuToLocal(List<MenuGroup> menuGroups){
+    private void saveMenuToLocal(List<MenuGroup> menuGroups) {
         DatabaseManager.initializeInstance(new DatabaseHelper(this));
-        SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
+        SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         MenuItemDataSource menuItemDS = new MenuItemDataSource(db);
         MenuGroupDataSource menuGroupDS = new MenuGroupDataSource(db);
 
         menuItemDS.truncate();
         menuGroupDS.truncate();
 
-        for (MenuGroup menuGroup: menuGroups) {
+        for (MenuGroup menuGroup : menuGroups) {
             menuGroupDS.insert(menuGroup);
             for (MenuItem menuItem : menuGroup.getMenuItems()) {
                 menuItem.setGroupId(menuGroup.getId());

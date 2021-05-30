@@ -24,12 +24,12 @@ import com.foa.smartpos.adapter.DeliveryGridViewAdapter;
 import com.foa.smartpos.adapter.OrderDetailListAdapter;
 import com.foa.smartpos.catching.DeliveryOrderCatching;
 import com.foa.smartpos.dialog.EditOrderItemDialog;
-import com.foa.smartpos.model.IDataResultCallback;
+import com.foa.smartpos.dialog.VoidNoteDialog;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.model.OrderItem;
 import com.foa.smartpos.model.enums.OrderStatus;
 import com.foa.smartpos.model.enums.OrderType;
-import com.foa.smartpos.service.OrderService;
+import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Helper;
@@ -57,6 +57,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private Button btnConfirm;
     private Button btnCancel;
     private Order orderSelected;
+    private List<String> listOrderItemsOutStock = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,17 +76,17 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         orderRecyclerView.setAdapter(adapter);
         adapter.setOnSelectedItemListener(order -> {
             if (order!=null){
-                Helper.enableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+                enableSplitLayout(getActivity());
                 loadOrderDetail(order,detailLayout);
                 orderSelected = order;
             }else{
-                Helper.disableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+                disableSplitLayout(getActivity());
             }
         });
         OrderService.getAllOrder("SALE", 1, (success, data) -> {
             if (success){
 
-                adapter.setOrders(data.stream().filter(p -> p.getStatus().equals(OrderStatus.ORDERED) ).collect(Collectors.toList()));
+                adapter.setOrders(data.stream().filter(p -> p.getStatus()!=null && p.getStatus().equals(OrderStatus.ORDERED) ).collect(Collectors.toList()));
             }
         });
 
@@ -165,7 +166,13 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 });
                 break;
             case R.id.btnCancel:
-                Toast.makeText(getActivity(), "Void Clicked!", Toast.LENGTH_SHORT).show();
+                VoidNoteDialog dialog = new VoidNoteDialog(getActivity());
+                dialog.setNoteReceiveListener(note -> {
+                    OrderService.voidOrder(orderSelected.getId(), listOrderItemsOutStock, note, success -> {
+
+                    });
+                });
+                dialog.show();
                 break;
 
         }
@@ -195,13 +202,40 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
         detailsListView.setAdapter(adapter);
         detailsListView.setOnItemClickListener((parent, view, position, id) -> {
-            Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
             OrderItem item =(OrderItem) detailsListView.getItemAtPosition(position);
             EditOrderItemDialog dialog = new EditOrderItemDialog(getActivity(),item);
-            dialog.setOutOfProductListener(result -> {
-
+            dialog.setOutOfProductListener(isChecked -> {
+                adapter.notifyDataSetChanged();
+                if (isChecked){
+                    listOrderItemsOutStock.add(item.getId());
+                }else{
+                    listOrderItemsOutStock.remove(item.getId());
+                }
+                if (listOrderItemsOutStock.size()>0){
+                    btnConfirm.setVisibility(View.GONE);
+                }
             });
             dialog.show();
         });
+    }
+
+    public void enableSplitLayout(Context context) {
+        final int width = Helper.getDisplayWidth();
+        ViewGroup.LayoutParams param = deliveriesLayout.getLayoutParams();
+        param.width = (width / 3)*2;
+        deliveriesLayout.setLayoutParams(param);
+        ViewGroup.LayoutParams param2 = detailLayout.getLayoutParams();
+        param2.width = (width / 3);
+        detailLayout.setLayoutParams(param2);
+        detailLayout.setVisibility(View.VISIBLE);
+        orderRecyclerView.setLayoutManager(new GridLayoutManager(context,3));
+    }
+
+    public void disableSplitLayout(Context context) {
+        ViewGroup.LayoutParams param = deliveriesLayout.getLayoutParams();
+        param.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        detailLayout.setLayoutParams(param);
+        detailLayout.setVisibility(View.GONE);
+        orderRecyclerView.setLayoutManager(new GridLayoutManager(context,4));
     }
 }

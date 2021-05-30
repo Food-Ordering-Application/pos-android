@@ -25,7 +25,7 @@ public interface DbSchema {
 	String COL_MENU_ITEM_DESCRIPTION = "description";
 	String COL_MENU_ITEM_PRICE = "price";
 	String COL_MENU_ITEM_DISCOUNT = "discount";
-	String COL_MENU_ITEM_STATUS = "status";
+	String COL_MENU_ITEM_STOCK_STATE = "stock_state";
 	String COL_MENU_ITEM_IMAGE = "image";
 	String COL_MENU_ITEM_IS_ACTIVE = "is_active";
 	String COL_MENU_ITEM_INDEX = "item_index";
@@ -39,7 +39,7 @@ public interface DbSchema {
 				+ COL_MENU_ITEM_DESCRIPTION + " TEXT,"
 				+ COL_MENU_ITEM_PRICE + " INTEGER,"
 				+ COL_MENU_ITEM_DISCOUNT + " INTEGER,"
-				+ COL_MENU_ITEM_STATUS + " TEXT,"
+				+ COL_MENU_ITEM_STOCK_STATE + " TEXT,"
 				+ COL_MENU_ITEM_IMAGE + " TEXT,"
 				+ COL_MENU_ITEM_IS_ACTIVE + " INTEGER,"
 				+ COL_MENU_ITEM_INDEX + " REAL"
@@ -55,6 +55,7 @@ public interface DbSchema {
 	String COL_ORDER_SUBTOTAL = "sub_total";
 	String COL_ORDER_GRAND_TOTAL = "grand_total";
 	String COL_ORDER_CASHIER_ID = "cashier_id";
+	String COL_ORDER_RESTAURANT_ID = "restaurant_id";
 	String COL_ORDER_STATUS = "status";
 	
 	String CREATE_TBL_ORDER = "CREATE TABLE "
@@ -67,6 +68,7 @@ public interface DbSchema {
 				+ COL_ORDER_SUBTOTAL + " INTEGER,"
 				+ COL_ORDER_GRAND_TOTAL + " INTEGER,"
 				+ COL_ORDER_CASHIER_ID + " TEXT,"
+				+ COL_ORDER_RESTAURANT_ID + " TEXT,"
 				+ COL_ORDER_STATUS + " TEXT,"
 				+ COL_ORDER_CREATED_AT + " DATETIME,"
 				+ COL_ORDER_UPDATED_AT + " DATETIME,"
@@ -136,6 +138,7 @@ public interface DbSchema {
 	String COL_TOPPING_ITEM_PRICE = "price";
 	String COL_TOPPING_ITEM_DESC = "description";
 	String COL_TOPPING_ITEM_MAX_QTY = "max_quantity";
+	String COL_TOPPING_ITEM_STOCK_STATE = "stock_state";
 	String COL_TOPPING_ITEM_IS_ACTIVE = "is_active";
 	String COL_TOPPING_ITEM_INDEX = "topping_index";
 
@@ -150,7 +153,8 @@ public interface DbSchema {
 			+ COL_TOPPING_ITEM_PRICE + " INTEGER,"
 			+ COL_TOPPING_ITEM_MAX_QTY + " INTEGER,"
 			+ COL_TOPPING_ITEM_INDEX + " REAL,"
-			+ COL_TOPPING_ITEM_IS_ACTIVE + " INTEGER"
+			+ COL_TOPPING_ITEM_IS_ACTIVE + " INTEGER,"
+			+ COL_TOPPING_ITEM_STOCK_STATE + " TEXT"
 			+ ");";
 
 	String TBL_TOPPING_GROUP = "topping_group";
@@ -175,7 +179,8 @@ public interface DbSchema {
 	String COL_MENU_ITEM_TOPPING_MENU_ID = "menu_id";
 	String COL_MENU_ITEM_TOPPING_MENU_ITEM_ID = "menu_item_id";
 	String COL_MENU_ITEM_TOPPING_TOPPING_ITEM_ID = "topping_item_id";
-	String COL_MENU_ITEM_TOPPING_PIRCE = "price";
+	String COL_MENU_ITEM_TOPPING_PRICE = "price";
+	String COL_MENU_ITEM_TOPPING_STOCK_STATE = "stock_state";
 
 	String CREATE_TBL_MENU_ITEM_TOPPING = "CREATE TABLE "
 			+ TBL_MENU_ITEM_TOPPING
@@ -184,7 +189,8 @@ public interface DbSchema {
 			+ COL_MENU_ITEM_TOPPING_MENU_ID + " TEXT,"
 			+ COL_MENU_ITEM_TOPPING_MENU_ITEM_ID + " TEXT,"
 			+ COL_MENU_ITEM_TOPPING_TOPPING_ITEM_ID + " TEXT,"
-			+ COL_MENU_ITEM_TOPPING_PIRCE + " INTEGER"
+			+ COL_MENU_ITEM_TOPPING_PRICE + " INTEGER,"
+			+ COL_MENU_ITEM_TOPPING_STOCK_STATE + " TEXT"
 			+ ");";
 
 	String DROP_TBL_MENU_GROUP = "DROP TABLE IF EXISTS "+ TBL_MENU_GROUP;

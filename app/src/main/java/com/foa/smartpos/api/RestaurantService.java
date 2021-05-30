@@ -1,4 +1,4 @@
-package com.foa.smartpos.service;
+package com.foa.smartpos.api;
 
 import com.foa.smartpos.model.IDataResultCallback;
 import com.foa.smartpos.model.MenuGroup;

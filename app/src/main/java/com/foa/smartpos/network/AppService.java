@@ -6,6 +6,7 @@ import com.foa.smartpos.model.MenuItemTopping;
 import com.foa.smartpos.model.ToppingGroup;
 import com.foa.smartpos.model.ToppingItem;
 import com.foa.smartpos.network.entity.LoginBody;
+import com.foa.smartpos.network.entity.VoidOrderBody;
 import com.foa.smartpos.network.response.LoginData;
 import com.foa.smartpos.network.response.MenuData;
 import com.foa.smartpos.network.response.OrderData;
@@ -17,6 +18,7 @@ import com.foa.smartpos.network.response.VerifyAppResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -85,5 +87,13 @@ public interface AppService {
     @POST("/user/pos/order/{orderId}/confirm")
     Call<ResponseAdapter<String>> confirmOrder(
             @Path("orderId") String orderId
+    );
+
+
+
+    @POST("/user/pos/order/{orderId}/void")
+    Call<ResponseAdapter<String>> voidOrder(
+            @Path("orderId") String orderId,
+            @Body VoidOrderBody voidOrderBody
     );
 }

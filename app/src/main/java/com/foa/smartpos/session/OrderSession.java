@@ -1,4 +1,4 @@
-package com.foa.smartpos.utils;
+package com.foa.smartpos.session;
 
 import com.foa.smartpos.model.Order;
 

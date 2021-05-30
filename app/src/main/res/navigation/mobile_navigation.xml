@@ -19,5 +19,9 @@
         android:id="@+id/navigation_manaorder"
         android:name="com.foa.smartpos.fragment.OrdersFragment"
         tools:layout="@layout/fragment_orders" />
+    <fragment
+        android:id="@+id/navigation_setting"
+        android:name="com.foa.smartpos.fragment.SettingFragment"
+        tools:layout="@layout/fragment_setting" />
 
 </navigation>

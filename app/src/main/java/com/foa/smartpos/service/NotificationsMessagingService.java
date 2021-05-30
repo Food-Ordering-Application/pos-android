@@ -1,4 +1,4 @@
-package com.foa.smartpos.notification;
+package com.foa.smartpos.service;
 
 import com.google.firebase.messaging.RemoteMessage;
 import com.pusher.pushnotifications.fcm.MessagingService;

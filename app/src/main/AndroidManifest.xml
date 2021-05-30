@@ -25,7 +25,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.POS"
         android:windowSoftInputMode="adjustPan">
-        <service android:name="com.foa.smartpos.notification.NotificationsMessagingService">
+        <receiver
+            android:name=".receiver.BackgroundJobReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
+        <service android:name="com.foa.smartpos.service.NotificationsMessagingService">
             <intent-filter android:priority="1">
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

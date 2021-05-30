@@ -206,12 +206,6 @@
             android:padding="10dp"
             >
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chi tiết đơn hàng: #"
-                android:textColor="@color/white"
-                android:textSize="16dp" />
-            <TextView
                 android:id="@+id/tvOderId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

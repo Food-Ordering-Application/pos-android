@@ -18,6 +18,10 @@
             android:icon="@drawable/ic_nav_mana_order"
             android:title="Đơn hàng" />
         <item
+            android:id="@+id/navigation_setting"
+            android:icon="@drawable/ic_nav_settings"
+            android:title="Cài đặt" />
+        <item
             android:id="@+id/navigation_logout"
             android:icon="@drawable/ic_logout"
             android:title="Đăng xuất" />

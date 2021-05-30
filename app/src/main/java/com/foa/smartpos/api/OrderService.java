@@ -1,9 +1,10 @@
-package com.foa.smartpos.service;
+package com.foa.smartpos.api;
 
 import com.foa.smartpos.model.IDataResultCallback;
 import com.foa.smartpos.model.IResultCallback;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.network.RetrofitClient;
+import com.foa.smartpos.network.entity.VoidOrderBody;
 import com.foa.smartpos.network.response.OrderData;
 import com.foa.smartpos.network.response.OrderListData;
 import com.foa.smartpos.network.response.ResponseAdapter;
@@ -12,9 +13,7 @@ import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.utils.LoggerHelper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -140,6 +139,35 @@ public class OrderService {
                         e.printStackTrace();
                     }
                 }
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                LoggerHelper.CheckAndLogInfo(this,t.getMessage());
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
+
+    public static void voidOrder(String orderId,List<String> orderItemIds,String cashierNote, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .voidOrder(orderId, new VoidOrderBody(orderItemIds,cashierNote));
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>>call, Response<ResponseAdapter<String>> response) {
                 if (response.code() == Constants.STATUS_CODE_SUCCESS) {
                     ResponseAdapter<String> res = response.body();
                     assert res != null;

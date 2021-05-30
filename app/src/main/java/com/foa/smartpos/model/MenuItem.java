@@ -1,6 +1,7 @@
 package com.foa.smartpos.model;
 
 
+import com.foa.smartpos.model.enums.StockState;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -17,12 +18,8 @@ public class MenuItem {
 	private String description;
 	@SerializedName("price")
 	private long price;
-	private long discount;
-	private Date createdAt;
-	private Date updatedAt;
-	private Date syncedAt;
-	private String merchantId;
-	private String status;
+	@SerializedName("stockState")
+	private StockState stockState;
 	@SerializedName("imageUrl")
 	private String image;
 	@SerializedName("index")
@@ -80,52 +77,12 @@ public class MenuItem {
 		this.price = price;
 	}
 
-	public long getDiscount() {
-		return discount;
+	public StockState getStockState() {
+		return stockState;
 	}
 
-	public void setDiscount(long discount) {
-		this.discount = discount;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public Date getSyncedAt() {
-		return syncedAt;
-	}
-
-	public void setSyncedAt(Date syncedAt) {
-		this.syncedAt = syncedAt;
-	}
-
-	public String getMerchantId() {
-		return merchantId;
-	}
-
-	public void setMerchantId(String merchantId) {
-		this.merchantId = merchantId;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStockState(StockState stockState) {
+		this.stockState = stockState;
 	}
 
 	public String getImage() {

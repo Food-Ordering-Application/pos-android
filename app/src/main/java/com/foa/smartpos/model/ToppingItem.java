@@ -22,6 +22,8 @@ public class ToppingItem {
     private boolean isActive;
     @SerializedName("price")
     private long price;
+    @SerializedName("stockState")
+    private StockState stockState;
     private int radioButtonId;
 
     public ToppingItem() {
@@ -110,6 +112,14 @@ public class ToppingItem {
 
     public void setPrice(long price) {
         this.price = price;
+    }
+
+    public StockState getStockState() {
+        return stockState;
+    }
+
+    public void setStockState(StockState stockState) {
+        this.stockState = stockState;
     }
 
     public int getRadioButtonId() {

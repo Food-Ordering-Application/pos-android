@@ -3,6 +3,7 @@ package com.foa.smartpos.utils;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.model.OrderItem;
 import com.foa.smartpos.model.OrderItemTopping;
+import com.foa.smartpos.session.OrderSession;
 
 import java.util.ArrayList;
 

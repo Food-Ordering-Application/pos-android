@@ -79,18 +79,28 @@ public class OrderDataSource {
 	}
 
 	public ArrayList<Order> getAllOrder(String startDate, String endDate) {
-		return getAllOrder(null,null,null,null, OrderStatus.COMPLETED,startDate,endDate);
+		return getAllOrder(null,null,null,null, OrderStatus.COMPLETED,startDate,endDate,null);
 	}
 
-	public ArrayList<Order> getAllOrder() {
-		return getAllOrder(null,null,null,null, OrderStatus.COMPLETED,null,null);
+	public ArrayList<Order> getAllOrder(Boolean isNotSynced) {
+		return getAllOrder(null,null,null,null, OrderStatus.DRAFT,null,null,isNotSynced);
 	}
 
-	public ArrayList<Order> getAllOrder(ArrayList<HashMap<String, String>> filter, String orderby, String limit, String offset, OrderStatus status, String startDate, String endDate) {
+//	public ArrayList<Order> getAllOrder() {
+//		return getAllOrder(null,null,null,null, OrderStatus.COMPLETED,null,null);
+//	}
+
+	public ArrayList<Order> getAllOrder(ArrayList<HashMap<String, String>> filter, String orderby, String limit, String offset, OrderStatus status, String startDate, String endDate, Boolean isNotSynced) {
 		ArrayList<Order> items = new ArrayList<Order>();
 		String selectQuery;
 		if (startDate==null && endDate ==null){
-			selectQuery  = "SELECT * FROM "+ DbSchema.TBL_ORDER;
+			if (isNotSynced){
+				selectQuery  = "SELECT * FROM "+ DbSchema.TBL_ORDER + " WHERE " + DbSchema.COL_ORDER_SYNCED_AT +" IS NULL";
+
+			}else{
+				selectQuery  = "SELECT * FROM "+ DbSchema.TBL_ORDER;
+			}
+
 
 		}else{
 			selectQuery  = "SELECT * FROM "+ DbSchema.TBL_ORDER +" WHERE "
@@ -111,7 +121,9 @@ public class OrderDataSource {
 				item.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
 				item.setGrandTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_SUBTOTAL)));
 				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_DISCOUNT)));
-				item.setCustomerId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CASHIER_ID)));
+				item.setCashierId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CASHIER_ID)));
+				item.setRestaurantId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_RESTAURANT_ID)));
+				item.setStatus(OrderStatus.valueOf(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_STATUS))));
 				item.setSelected(false);
 				
 				try {  
@@ -161,7 +173,8 @@ public class OrderDataSource {
 		values.put(DbSchema.COL_ORDER_SUBTOTAL, item.getSubTotal());
 		values.put(DbSchema.COL_ORDER_GRAND_TOTAL, item.getSubTotal());
 		values.put(DbSchema.COL_ORDER_DISCOUNT,item.getDiscount());
-		values.put(DbSchema.COL_ORDER_CASHIER_ID, item.getCustomerId());
+		values.put(DbSchema.COL_ORDER_CASHIER_ID, item.getCashierId());
+		values.put(DbSchema.COL_ORDER_RESTAURANT_ID, item.getRestaurantId());
 		values.put(DbSchema.COL_ORDER_STATUS, item.getStatus().toString());
 		values.put(DbSchema.COL_ORDER_CREATED_AT, Helper.dateTimeformat.format(new Date()));
 		values.put(DbSchema.COL_ORDER_UPDATED_AT, Helper.dateTimeformat.format(new Date()));
@@ -183,12 +196,19 @@ public class OrderDataSource {
 		return 1;
 	}
 
+	public void updateSyncAt(String orderId){
+		ContentValues values = new ContentValues();
+
+		values.put(DbSchema.COL_ORDER_SYNCED_AT, Helper.dateSQLiteFormat.format(new Date()));
+
+		db.update(DbSchema.TBL_ORDER, values, DbSchema.COL_ORDER_ID +"= '"+orderId+"' ", null);
+	}
+
 	public long updateOrderStatus(String orderId, OrderStatus status)
 	{
 		ContentValues values = new ContentValues();
 
 		values.put(DbSchema.COL_ORDER_STATUS, status.toString());
-		values.put(DbSchema.COL_ORDER_SYNCED_AT,Helper.dateSQLiteFormat.format(new Date()));
 
 		return db.update(DbSchema.TBL_ORDER, values, DbSchema.COL_ORDER_ID +"= '"+orderId+"' ", null);
 	}

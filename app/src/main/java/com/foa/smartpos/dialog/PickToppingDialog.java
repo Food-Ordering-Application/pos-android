@@ -26,7 +26,6 @@ import com.foa.smartpos.network.response.LoginData;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.MenuItemToppingDataSource;
 import com.foa.smartpos.utils.Helper;
-import com.foa.smartpos.utils.LoginSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +64,6 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 		setContentView(R.layout.pick_topping_dialog);
-		loginData = LoginSession.getInstance();
 
 		btnOk = findViewById(R.id.btnDoneTopping);
 		btnCancel = findViewById(R.id.btnCancel);

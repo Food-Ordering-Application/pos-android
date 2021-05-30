@@ -1,17 +1,13 @@
 package com.foa.smartpos.dialog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,11 +24,11 @@ import com.foa.smartpos.model.enums.OrderStatus;
 import com.foa.smartpos.model.enums.PaymentType;
 import com.foa.smartpos.network.utils.NetworkStatus;
 import com.foa.smartpos.network.utils.NetworkUtils;
-import com.foa.smartpos.service.OrderService;
+import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.LoggerHelper;
-import com.foa.smartpos.utils.OrderSession;
+import com.foa.smartpos.session.OrderSession;
 
 
 public class PaymentDialog  extends DialogFragment implements View.OnClickListener{
@@ -169,6 +165,8 @@ public class PaymentDialog  extends DialogFragment implements View.OnClickListen
                         OrderService.syncOrder(order, success -> {
                             if (success){
                                 LoggerHelper.CheckAndLogInfo(PaymentDialog.this,"Order is synced");
+                                orderDS.updateSyncAt(order.getId());
+
                             }
                         });
                     }

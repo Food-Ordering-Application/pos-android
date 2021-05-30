@@ -1,6 +1,7 @@
 package com.foa.smartpos.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -28,7 +30,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.foa.smartpos.MainActivity;
 import com.foa.smartpos.R;
+import com.foa.smartpos.SplashActivity;
 import com.foa.smartpos.adapter.CartListAdapter;
 import com.foa.smartpos.adapter.ProductGridAdapter;
 import com.foa.smartpos.adapter.PromotionListAdapter;
@@ -39,7 +43,7 @@ import com.foa.smartpos.model.MenuItem;
 import com.foa.smartpos.model.OrderItemTopping;
 import com.foa.smartpos.model.Promotion;
 import com.foa.smartpos.model.enums.OrderStatus;
-import com.foa.smartpos.service.OrderService;
+import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.sqlite.ds.MenuGroupDataSource;
@@ -47,7 +51,7 @@ import com.foa.smartpos.sqlite.ds.MenuItemDataSource;
 import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.utils.OrderHelper;
-import com.foa.smartpos.utils.OrderSession;
+import com.foa.smartpos.session.OrderSession;
 import com.foa.smartpos.dialog.PaymentDialog;
 import com.foa.smartpos.dialog.PickToppingDialog;
 import com.foa.smartpos.utils.RecyclerItemTouchHelper;
@@ -74,6 +78,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
     private TextView txtEmpty;
     private Button btnOrder;
     private Button btnClearOrder;
+    private ImageButton btnManualSync;
     private MenuItemDataSource ProductDS;
     private OrderDataSource OrderDS;
     private OrderService orderService;
@@ -170,6 +175,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         cartRecyclerview = root.findViewById(R.id.cartListView);
         radioGroup = root.findViewById(R.id.categoryGroup);
         btnClearOrder = root.findViewById(R.id.btnClearOrder);
+        btnManualSync = root.findViewById(R.id.btnManualSync);
     }
 
     private void initListener() {
@@ -178,9 +184,8 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         cartAdapter.setCartListener(cartOnItemClick);
         promotionAdapter.setItemClickListener(promotionOnItemClick);
         //cartList.setOnItemClickListener(editOrderOnitemClick);
-
-        // Handle input change
         txtKeyword.addTextChangedListener(keywordOnchange);
+        btnManualSync.setOnClickListener(syncClick);
     }
 
     private void clearOrder(){
@@ -188,6 +193,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
             cartAdapter.removeAll();
             menuAdapter.reset();
             btnClearOrder.setVisibility(View.GONE);
+            txtEmpty.setVisibility(View.VISIBLE);
         }
     }
 
@@ -239,6 +245,10 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
 
     }
 
+    private final View.OnClickListener syncClick = view -> {
+        startActivity(new Intent(getActivity(), SplashActivity.class));
+    };
+
     private final PromotionListAdapter.OnItemClickListener promotionOnItemClick = new PromotionListAdapter.OnItemClickListener() {
         @Override
         public void onPick(Promotion item) {
@@ -260,8 +270,11 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
             if (cartAdapter.getCount() == 0){
                 btnClearOrder.setVisibility(View.GONE);
                 txtEmpty.setVisibility(View.VISIBLE);
-            }else
+            }else{
+                btnClearOrder.setVisibility(View.VISIBLE);
                 txtEmpty.setVisibility(View.GONE);
+            }
+
         }
     };
 

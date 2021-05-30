@@ -20,7 +20,7 @@ import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Debouncer;
 import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.utils.OrderHelper;
-import com.foa.smartpos.utils.OrderSession;
+import com.foa.smartpos.session.OrderSession;
 
 import java.util.ArrayList;
 import java.util.List;

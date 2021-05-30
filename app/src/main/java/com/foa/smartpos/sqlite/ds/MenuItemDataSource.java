@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.foa.smartpos.model.MenuItem;
+import com.foa.smartpos.model.enums.StockState;
 import com.foa.smartpos.sqlite.DbSchema;
 
 import java.util.ArrayList;
@@ -43,10 +44,7 @@ public class MenuItemDataSource {
 				item.setCategoryName(c.getString(c.getColumnIndex(COL_MENU_GROUP_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DESCRIPTION)));
 				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_PRICE)));
-				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DISCOUNT)));
-				//item.setCreatedAt(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_CREATED_BY)));
-				//item.setUpdatedAt(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_UPDATED_BY)));
-				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
+				item.setStockState(StockState.valueOf(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STOCK_STATE))));
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
 			
 			} while (c.moveToNext());
@@ -57,6 +55,10 @@ public class MenuItemDataSource {
 
 	public ArrayList<MenuItem> getAll(String keyword, String menuGroupId) {
 		return getAll(false,keyword,menuGroupId);
+	}
+
+	public ArrayList<MenuItem> getAll(String keyword) {
+		return getAll(false,keyword,null);
 	}
 	
 	public ArrayList<MenuItem> getAll(boolean isAll, String keyword, String menuGroupId) {
@@ -87,8 +89,8 @@ public class MenuItemDataSource {
 				item.setCategoryName(c.getString(c.getColumnIndex(COL_MENU_GROUP_NAME)));
 				item.setDescription(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DESCRIPTION)));
 				item.setPrice(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_PRICE)));
-				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_MENU_ITEM_DISCOUNT)));
-				item.setStatus(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_STATUS)));
+				item.setStockState(StockState.valueOf(c.getString((c.getColumnIndex(DbSchema.COL_MENU_ITEM_STOCK_STATE)))));
+				item.setActive(c.getInt(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IS_ACTIVE))>0);
 				item.setImage(c.getString(c.getColumnIndex(DbSchema.COL_MENU_ITEM_IMAGE)));
 				
 				items.add(item);
@@ -106,8 +108,8 @@ public class MenuItemDataSource {
 		values.put(DbSchema.COL_MENU_GROUP_ID, item.getGroupId());
 		values.put(DbSchema.COL_MENU_ITEM_DESCRIPTION, item.getDescription());
 		values.put(DbSchema.COL_MENU_ITEM_PRICE, item.getPrice());
-		values.put(DbSchema.COL_MENU_ITEM_DISCOUNT,item.getDiscount());
-		values.put(DbSchema.COL_MENU_ITEM_STATUS, item.getStatus());
+		//values.put(DbSchema.COL_MENU_ITEM_STOCK_STATE, item.getStockState().toString());
+		values.put(DbSchema.COL_MENU_ITEM_STOCK_STATE, StockState.IN_STOCK.toString());
 		values.put(DbSchema.COL_MENU_ITEM_IS_ACTIVE, item.isActive()?1:0);
 		values.put(DbSchema.COL_MENU_ITEM_INDEX, item.getIndex());
 		values.put(DbSchema.COL_MENU_ITEM_IMAGE, item.getImage());
@@ -115,20 +117,10 @@ public class MenuItemDataSource {
 		return db.insert(DbSchema.TBL_MENU_ITEM, null, values);
 	}
 	
-	public long update(MenuItem item, String menuItemId)
+	public long updateStockState(String menuItemId, StockState stockState)
 	{
 		ContentValues values = new ContentValues();
-			values.put(DbSchema.COL_MENU_ITEM_ID, item.getId());
-			values.put(DbSchema.COL_MENU_ITEM_NAME, item.getName());
-			values.put(DbSchema.COL_MENU_GROUP_ID, item.getGroupId());
-			values.put(DbSchema.COL_MENU_ITEM_DESCRIPTION, item.getDescription());
-			values.put(DbSchema.COL_MENU_ITEM_PRICE, item.getPrice());
-			values.put(DbSchema.COL_MENU_ITEM_DISCOUNT, item.getDiscount());
-			values.put(DbSchema.COL_MENU_ITEM_STATUS, item.getStatus());
-			values.put(DbSchema.COL_MENU_ITEM_IS_ACTIVE, item.isActive()?1:0);
-			values.put(DbSchema.COL_MENU_ITEM_INDEX, item.getIndex());
-			values.put(DbSchema.COL_MENU_ITEM_IMAGE, item.getImage());
-
+			values.put(DbSchema.COL_MENU_ITEM_STOCK_STATE, stockState.toString());
 		return db.update(DbSchema.TBL_MENU_ITEM, values, DbSchema.COL_MENU_ITEM_ID +"= '"+menuItemId+"' ", null);
 	}
 

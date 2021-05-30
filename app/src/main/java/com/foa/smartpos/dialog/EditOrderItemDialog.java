@@ -75,8 +75,10 @@ public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
 			break;
 		case R.id.btnDoneTopping:
 			dismiss();
-			if(listener != null)
+			if(listener != null){
 				listener.onFinish(outOfProductSwitch.isChecked());
+			}
+
 			break;
 		default:
 			break;
@@ -89,7 +91,7 @@ public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
     }
 
     public interface OutOfProductListener {
-        void onFinish(boolean result);
+        void onFinish(boolean isChecked);
     }
 
 

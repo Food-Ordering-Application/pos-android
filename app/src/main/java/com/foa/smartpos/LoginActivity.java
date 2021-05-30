@@ -23,7 +23,6 @@ import com.foa.smartpos.sqlite.DatabaseHelper;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.Helper;
-import com.foa.smartpos.utils.LoginSession;
 import com.foa.smartpos.dialog.LoadingDialog;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -115,7 +114,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 					case Constants.STATUS_CODE_SUCCESS:
 						ResponseAdapter<LoginData> res = response.body();
 					if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-						LoginSession.setInstance(res.getData());//Lưu vào session
 						Helper.setLoginData(res.getData());
 						RetrofitClient.getInstance().setAuthorizationHeader(res.getData().getBearerAccessToken());
 
