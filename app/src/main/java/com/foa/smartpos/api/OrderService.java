@@ -89,10 +89,10 @@ public class OrderService {
         });
     }
 
-    public static void getAllOrder(String orderType, int pageNumber, IDataResultCallback<List<Order>> resultCallback) {
+    public static void getAllOrder(String orderType, int pageNumber,String orderStatus, IDataResultCallback<List<Order>> resultCallback) {
         String restaurantId = Helper.read(Constants.RESTAURANT_ID);
         Call<ResponseAdapter<OrderListData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .getAllOrder(restaurantId,orderType,pageNumber);
+                .getAllOrder(restaurantId,orderType,pageNumber, orderStatus);
         responseCall.enqueue(new Callback<ResponseAdapter<OrderListData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderListData>> call, Response<ResponseAdapter<OrderListData>> response) {

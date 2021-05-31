@@ -83,7 +83,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 disableSplitLayout(getActivity());
             }
         });
-        OrderService.getAllOrder("SALE", 1, (success, data) -> {
+        OrderService.getAllOrder(OrderType.SALE.toString(), 1,OrderStatus.ORDERED.toString(), (success, data) -> {
             if (success){
 
                 adapter.setOrders(data.stream().filter(p -> p.getStatus()!=null && p.getStatus().equals(OrderStatus.ORDERED) ).collect(Collectors.toList()));
@@ -131,23 +131,23 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private void getOrderListWithPosition(int position){
         switch (position){
             case 0:
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
-
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.ORDERED.toString(), (success, data) -> {
+                    adapter.setOrders(data);
                 });
                 break;
             case 1:
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
-
+                OrderService.getAllOrder(OrderType.SALE.name(), 1,OrderStatus.CONFIRMED.toString() ,(success, data) -> {
+                    adapter.setOrders(data);
                 });
                 break;
             case 2:
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
-
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.COMPLETED.toString(),(success, data) -> {
+                    adapter.setOrders(data);
                 });
                 break;
             case 3:
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, (success, data) -> {
-
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.CANCELED.toString(),(success, data) -> {
+                    adapter.setOrders(data);
                 });
                 break;
         }

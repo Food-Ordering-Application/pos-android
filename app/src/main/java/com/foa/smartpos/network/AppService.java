@@ -81,7 +81,8 @@ public interface AppService {
     Call<ResponseAdapter<OrderListData>> getAllOrder(
             @Query("restaurantId") String restaurantId,
             @Query("query") String orderType,
-            @Query("pageNumber") int pageNumber
+            @Query("pageNumber") int pageNumber,
+            @Query("orderStatus") String orderStatus
     );
 
     @POST("/user/pos/order/{orderId}/confirm")

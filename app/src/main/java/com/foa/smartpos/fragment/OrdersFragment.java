@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.foa.smartpos.R;
 import com.foa.smartpos.adapter.OrdersListViewAdapter;
 import com.foa.smartpos.api.OrderService;
+import com.foa.smartpos.model.enums.OrderStatus;
+import com.foa.smartpos.model.enums.OrderType;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Helper;
@@ -95,10 +97,9 @@ public class OrdersFragment extends Fragment {
             if (orderTypeSpinner.getSelectedItem().equals("Tại quán")){
                 adapter.setData(DS.getAllOrder(startDate,endDate));
             }else{
-                OrderService.getAllOrder("SALE", 1, (success, data) -> {
+                OrderService.getAllOrder(OrderType.SALE.toString(), 1, OrderStatus.COMPLETED.toString(), (success, data) -> {
                     adapter.setData(data);
                 });
-
             }
 
         });
