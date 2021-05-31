@@ -127,9 +127,9 @@ public class OrderDataSource {
 				item.setSelected(false);
 				
 				try {  
-				    item.setCreatedAt( Helper.dateSQLiteFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CREATED_AT))));
-				    item.setUpdatedAt( Helper.dateSQLiteFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_AT))));
-					item.setSyncedAt(Helper.dateSQLiteFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYNCED_AT))));
+				    item.setCreatedAt( Helper.dateTimeformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CREATED_AT))));
+				    item.setUpdatedAt( Helper.dateTimeformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_AT))));
+					item.setSyncedAt(Helper.dateTimeformat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_SYNCED_AT))));
 
 				} catch (Exception e) {
 				}
@@ -199,7 +199,7 @@ public class OrderDataSource {
 	public void updateSyncAt(String orderId){
 		ContentValues values = new ContentValues();
 
-		values.put(DbSchema.COL_ORDER_SYNCED_AT, Helper.dateSQLiteFormat.format(new Date()));
+		values.put(DbSchema.COL_ORDER_SYNCED_AT, Helper.dateTimeformat.format(new Date()));
 
 		db.update(DbSchema.TBL_ORDER, values, DbSchema.COL_ORDER_ID +"= '"+orderId+"' ", null);
 	}

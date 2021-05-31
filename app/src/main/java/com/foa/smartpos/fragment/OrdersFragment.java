@@ -84,7 +84,7 @@ public class OrdersFragment extends Fragment {
         Helper.initialize(getActivity().getBaseContext());
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
-        String dateNow = Helper.dateSQLiteFormat.format(new Date());
+        String dateNow = Helper.dateTimeformat.format(new Date());
         final OrdersListViewAdapter adapter = new OrdersListViewAdapter(getActivity(), DS.getAllOrder(dateNow,dateNow));
         // set elements to adapter
         theListView.setAdapter(adapter);

@@ -82,7 +82,9 @@ public interface AppService {
             @Query("restaurantId") String restaurantId,
             @Query("query") String orderType,
             @Query("pageNumber") int pageNumber,
-            @Query("orderStatus") String orderStatus
+            @Query("orderStatus") String orderStatus,
+            @Query("start") String startDate,
+            @Query("end") String endDate
     );
 
     @POST("/user/pos/order/{orderId}/confirm")

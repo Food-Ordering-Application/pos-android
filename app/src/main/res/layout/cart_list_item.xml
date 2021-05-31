@@ -42,17 +42,16 @@
         android:src="@drawable/ic_remove_circle" />
 
 
-
     <TextView
         android:id="@+id/tvTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/btnPlusQuantityCartItem"
         android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:textSize="20sp"
-        android:text="2" />
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/btnPlusQuantityCartItem"
+        android:text="0"
+        android:textSize="20sp" />
 
     <ImageButton
         android:id="@+id/btnPlusQuantityCartItem"

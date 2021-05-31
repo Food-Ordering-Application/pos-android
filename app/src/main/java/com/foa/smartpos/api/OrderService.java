@@ -13,6 +13,9 @@ import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.utils.LoggerHelper;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -89,10 +92,14 @@ public class OrderService {
         });
     }
 
-    public static void getAllOrder(String orderType, int pageNumber,String orderStatus, IDataResultCallback<List<Order>> resultCallback) {
+    public static void getAllOrder(String orderType, int pageNumber, String orderStatus,IDataResultCallback<List<Order>> resultCallback) {
         String restaurantId = Helper.read(Constants.RESTAURANT_ID);
+        GregorianCalendar calendar = new GregorianCalendar();
+        String strStartDate = Helper.dateSQLiteFormat.format(calendar.getTime());
+        calendar.add(Calendar.DATE,1);
+        String strEndDate = Helper.dateSQLiteFormat.format(calendar.getTime());
         Call<ResponseAdapter<OrderListData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .getAllOrder(restaurantId,orderType,pageNumber, orderStatus);
+                .getAllOrder(restaurantId,orderType,pageNumber, orderStatus, strStartDate,strEndDate);
         responseCall.enqueue(new Callback<ResponseAdapter<OrderListData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderListData>> call, Response<ResponseAdapter<OrderListData>> response) {

@@ -59,32 +59,33 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
         this.notifyDataSetChanged();
     }
 
+    public void removeOrder(Order order){
+        this.orders.remove(order);
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_item_delivery, parent, false);
-
-
-
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Order order  = orders.get(position);
-        if(order.isSelected()){
+        if (currentOrderId.equals(order.getId())){
             holder.cardItem.setSelected(true);
         }else{
             holder.cardItem.setSelected(false);
         }
+
         holder.cardItem.setOnClickListener(v -> {
             if (order.getId().equals(currentOrderId)){
                 currentOrderId="";
-                v.setSelected(false);
                 if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(null);
             }else {
-                v.setSelected(true);
                 currentOrderId=order.getId();
                 if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(order);
             }

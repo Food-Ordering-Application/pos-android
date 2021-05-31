@@ -57,7 +57,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private List<RadioButton> radioButtonList;
     private OrderDataSource DS;
     private List<Order> orderList = new ArrayList<>();
-    private DeliveryGridViewAdapter adapter;
+    private DeliveryGridViewAdapter deliveryAdapter;
     private Button btnConfirm;
     private Button btnCancel;
     private Order orderSelected;
@@ -65,6 +65,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private LoadingDialog loading;
     private LinearLayout deliveryOrderControlLayout;
     private LinearLayout progressLoading;
+    private  OrderDetailListAdapter detailAdapter;
+    private boolean isConfirmMode = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,9 +82,11 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),4);
         orderRecyclerView.setLayoutManager(layoutManager);
-        adapter = new DeliveryGridViewAdapter(getActivity(), orderList);
-        orderRecyclerView.setAdapter(adapter);
-        adapter.setOnSelectedItemListener(order -> {
+        deliveryAdapter = new DeliveryGridViewAdapter(getActivity(), orderList);
+        detailAdapter = new OrderDetailListAdapter(getActivity());
+        orderRecyclerView.setAdapter(deliveryAdapter);
+        deliveryAdapter.setOnSelectedItemListener(order -> {
+            detailAdapter.set(new ArrayList<>());
             if (order!=null){
                 enableSplitLayout(getActivity());
                 loadOrderDetail(order,detailLayout);
@@ -91,19 +95,25 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 disableSplitLayout(getActivity());
             }
         });
-        OrderService.getAllOrder(OrderType.SALE.toString(), 1,OrderStatus.ORDERED.toString(), (success, data) -> {
-            if (success){
-                adapter.setOrders(data);
-            }
-        });
-
         PushNotifications.setOnMessageReceivedListenerForVisibleActivity(getActivity(), remoteMessage -> {
            String orderId = remoteMessage.getData().get("orderId");
-            OrderService.getOrderById(orderId, (success, data) -> adapter.addOrder(data));
+            OrderService.getOrderById(orderId, (success, data) -> deliveryAdapter.addOrder(data));
 
 		});
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressLoading.setVisibility(View.VISIBLE);
+        OrderService.getAllOrder(OrderType.SALE.toString(), 1,OrderStatus.ORDERED.toString(), (success, data) -> {
+            if (success){
+                deliveryAdapter.setOrders(data);
+                progressLoading.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void  init(){
@@ -144,53 +154,57 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 deliveryOrderControlLayout.setVisibility(View.VISIBLE);
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.ORDERED.toString(), (success, data) -> {
-                    adapter.setOrders(data);
+                    deliveryAdapter.setOrders(data);
                     progressLoading.setVisibility(View.GONE);
                 });
+                isConfirmMode=true;
                 break;
             case 1:
                 deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
                 List<Order> confirmedorders = ConfirmedDeliveryOrderCatching.getConfirmedOrderCatching();
                 if (confirmedorders!=null){
-                    adapter.setOrders(confirmedorders);
+                    deliveryAdapter.setOrders(confirmedorders);
                     break;
                 }
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1,OrderStatus.CONFIRMED.toString() ,(success, data) -> {
-                    adapter.setOrders(data);
+                    deliveryAdapter.setOrders(data);
                     ConfirmedDeliveryOrderCatching.setConfirmedDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
 
                 });
+                isConfirmMode=false;
                 break;
             case 2:
                 deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
                 List<Order> completedOrders = CompletedDeliveryOrderCatching.getCompletedOrderCatching();
                 if (completedOrders!=null){
-                    adapter.setOrders(completedOrders);
+                    deliveryAdapter.setOrders(completedOrders);
                     break;
                 }
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.COMPLETED.toString(),(success, data) -> {
-                    adapter.setOrders(data);
+                    deliveryAdapter.setOrders(data);
                     CompletedDeliveryOrderCatching.setCompletedDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
                 });
+                isConfirmMode=false;
                 break;
             case 3:
                 deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
                 List<Order> cancelledOrders = CancelledDeliveryOrderCatching.getCancelledOrderCatching();
                 if (cancelledOrders!=null){
-                    adapter.setOrders(cancelledOrders);
+                    deliveryAdapter.setOrders(cancelledOrders);
                     break;
                 }
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.CANCELLED.toString(),(success, data) -> {
-                    adapter.setOrders(data);
+                    deliveryAdapter.setOrders(data);
                     CancelledDeliveryOrderCatching.setCancelledDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
 
                 });
+                isConfirmMode=false;
                 break;
         }
     }
@@ -202,6 +216,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 OrderService.confirmOrder(orderSelected.getId(), success -> {
                     if (success){
                         Helper.disableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+                        deliveryAdapter.removeOrder(orderSelected);
                     }else{
                         Toast.makeText(getActivity(), "Loi xac nhan", Toast.LENGTH_SHORT).show();
                     }
@@ -214,6 +229,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                     OrderService.voidOrder(orderSelected.getId(), listOrderItemsOutStock, note, success -> {
                         loading.dismiss();
                         dialog.dismiss();
+                        deliveryAdapter.removeOrder(orderSelected);
                     });
                 });
                 dialog.show();
@@ -231,27 +247,25 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
             ((TextView)detailLayout.findViewById(R.id.tvChange)).setText(Helper.formatMoney(0));
         }
 
-        OrderDetailListAdapter adapter = new OrderDetailListAdapter(getActivity());
-
         Order orderCatching = DetailDeliveryOrderCatching.getOrderCatching(order);
         if (orderCatching!=null){
-            adapter.set(orderCatching.getOrderItems());
+            detailAdapter.set(orderCatching.getOrderItems());
         }else{
             OrderService.getOrderById(order.getId(), (success, data) -> {
-                adapter.set(data.getOrderItems());
+                detailAdapter.set(data.getOrderItems());
                 DetailDeliveryOrderCatching.addDeliveryCatching(data);
             });
         }
 
         ListView detailsListView = detailLayout.findViewById(R.id.listOrderDetails);
-        detailsListView.setAdapter(adapter);
+        detailsListView.setAdapter(detailAdapter);
         detailsListView.setOnItemClickListener((parent, view, position, id) -> {
             OrderItem item =(OrderItem) detailsListView.getItemAtPosition(position);
             EditOrderItemDialog dialog = new EditOrderItemDialog(getActivity(),item);
             dialog.setOutOfProductListener(isChecked -> {
                 StockState stockState  = isChecked? StockState.OUT_OF_STOCK:StockState.IN_STOCK;
                 item.setStockState(stockState);
-                adapter.updateStockStateOrderItem(item.getId(),stockState);
+                detailAdapter.updateStockStateOrderItem(item.getId(),stockState);
                 if (isChecked){
                     listOrderItemsOutStock.add(item.getId());
                 }else{
@@ -263,7 +277,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                     btnConfirm.setVisibility(View.VISIBLE);
                 }
             });
-            dialog.show();
+            if (isConfirmMode) dialog.show();
         });
     }
 
