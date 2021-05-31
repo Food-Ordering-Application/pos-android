@@ -11,6 +11,6 @@ public enum OrderStatus {
     COMPLETED,
     @SerializedName("CONFIRMED")
     CONFIRMED,
-    @SerializedName("CANCELED")
-    CANCELED
+    @SerializedName("CANCELLED")
+    CANCELLED
 }

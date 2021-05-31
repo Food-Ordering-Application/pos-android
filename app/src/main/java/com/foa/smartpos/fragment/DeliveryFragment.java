@@ -22,14 +22,19 @@ import android.widget.Toast;
 import com.foa.smartpos.R;
 import com.foa.smartpos.adapter.DeliveryGridViewAdapter;
 import com.foa.smartpos.adapter.OrderDetailListAdapter;
-import com.foa.smartpos.catching.DeliveryOrderCatching;
+import com.foa.smartpos.catching.CancelledDeliveryOrderCatching;
+import com.foa.smartpos.catching.CompletedDeliveryOrderCatching;
+import com.foa.smartpos.catching.ConfirmedDeliveryOrderCatching;
+import com.foa.smartpos.catching.DetailDeliveryOrderCatching;
 import com.foa.smartpos.dialog.EditOrderItemDialog;
+import com.foa.smartpos.dialog.LoadingDialog;
 import com.foa.smartpos.dialog.VoidNoteDialog;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.model.OrderItem;
 import com.foa.smartpos.model.enums.OrderStatus;
 import com.foa.smartpos.model.enums.OrderType;
 import com.foa.smartpos.api.OrderService;
+import com.foa.smartpos.model.enums.StockState;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Helper;
@@ -38,7 +43,6 @@ import com.pusher.pushnotifications.PushNotifications;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private View root;
@@ -58,6 +62,9 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private Button btnCancel;
     private Order orderSelected;
     private List<String> listOrderItemsOutStock = new ArrayList<>();
+    private LoadingDialog loading;
+    private LinearLayout deliveryOrderControlLayout;
+    private LinearLayout progressLoading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +76,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
         context = getActivity();
+        loading = new LoadingDialog(getActivity());
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),4);
         orderRecyclerView.setLayoutManager(layoutManager);
@@ -85,8 +93,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         });
         OrderService.getAllOrder(OrderType.SALE.toString(), 1,OrderStatus.ORDERED.toString(), (success, data) -> {
             if (success){
-
-                adapter.setOrders(data.stream().filter(p -> p.getStatus()!=null && p.getStatus().equals(OrderStatus.ORDERED) ).collect(Collectors.toList()));
+                adapter.setOrders(data);
             }
         });
 
@@ -112,6 +119,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         btnCancel.setOnClickListener(this);
         deliveriesLayout =root.findViewById(R.id.bgDeliveries);
         detailLayout = root.findViewById(R.id.bgOrderDetail);
+        deliveryOrderControlLayout = root.findViewById(R.id.deliveryOrderControlLayout);
+        progressLoading = root.findViewById(R.id.progressLoading);
     }
 
     private  void setGroupButtonListenter(){
@@ -119,6 +128,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
             int finalI = i;
             radioButtonList.get(i).setOnClickListener(v -> {
                 getOrderListWithPosition(finalI);
+                disableSplitLayout(getActivity());
                 for (int j = 0; j < radioButtonList.size(); j++) {
                     if(v.getId()!=radioButtonList.get(j).getId()){
                         radioButtonList.get(j).setChecked(false);
@@ -131,23 +141,55 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private void getOrderListWithPosition(int position){
         switch (position){
             case 0:
+                deliveryOrderControlLayout.setVisibility(View.VISIBLE);
+                progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.ORDERED.toString(), (success, data) -> {
                     adapter.setOrders(data);
+                    progressLoading.setVisibility(View.GONE);
                 });
                 break;
             case 1:
+                deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
+                List<Order> confirmedorders = ConfirmedDeliveryOrderCatching.getConfirmedOrderCatching();
+                if (confirmedorders!=null){
+                    adapter.setOrders(confirmedorders);
+                    break;
+                }
+                progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1,OrderStatus.CONFIRMED.toString() ,(success, data) -> {
                     adapter.setOrders(data);
+                    ConfirmedDeliveryOrderCatching.setConfirmedDeliveryCatching(data);
+                    progressLoading.setVisibility(View.GONE);
+
                 });
                 break;
             case 2:
+                deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
+                List<Order> completedOrders = CompletedDeliveryOrderCatching.getCompletedOrderCatching();
+                if (completedOrders!=null){
+                    adapter.setOrders(completedOrders);
+                    break;
+                }
+                progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.COMPLETED.toString(),(success, data) -> {
                     adapter.setOrders(data);
+                    CompletedDeliveryOrderCatching.setCompletedDeliveryCatching(data);
+                    progressLoading.setVisibility(View.GONE);
                 });
                 break;
             case 3:
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.CANCELED.toString(),(success, data) -> {
+                deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
+                List<Order> cancelledOrders = CancelledDeliveryOrderCatching.getCancelledOrderCatching();
+                if (cancelledOrders!=null){
+                    adapter.setOrders(cancelledOrders);
+                    break;
+                }
+                progressLoading.setVisibility(View.VISIBLE);
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.CANCELLED.toString(),(success, data) -> {
                     adapter.setOrders(data);
+                    CancelledDeliveryOrderCatching.setCancelledDeliveryCatching(data);
+                    progressLoading.setVisibility(View.GONE);
+
                 });
                 break;
         }
@@ -168,8 +210,10 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
             case R.id.btnCancel:
                 VoidNoteDialog dialog = new VoidNoteDialog(getActivity());
                 dialog.setNoteReceiveListener(note -> {
+                    loading.show();
                     OrderService.voidOrder(orderSelected.getId(), listOrderItemsOutStock, note, success -> {
-
+                        loading.dismiss();
+                        dialog.dismiss();
                     });
                 });
                 dialog.show();
@@ -189,13 +233,13 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
 
         OrderDetailListAdapter adapter = new OrderDetailListAdapter(getActivity());
 
-        Order orderCatching = DeliveryOrderCatching.getOrderCatching(order);
+        Order orderCatching = DetailDeliveryOrderCatching.getOrderCatching(order);
         if (orderCatching!=null){
             adapter.set(orderCatching.getOrderItems());
         }else{
             OrderService.getOrderById(order.getId(), (success, data) -> {
                 adapter.set(data.getOrderItems());
-                DeliveryOrderCatching.addDeliveryCatching(data);
+                DetailDeliveryOrderCatching.addDeliveryCatching(data);
             });
         }
 
@@ -205,7 +249,9 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
             OrderItem item =(OrderItem) detailsListView.getItemAtPosition(position);
             EditOrderItemDialog dialog = new EditOrderItemDialog(getActivity(),item);
             dialog.setOutOfProductListener(isChecked -> {
-                adapter.notifyDataSetChanged();
+                StockState stockState  = isChecked? StockState.OUT_OF_STOCK:StockState.IN_STOCK;
+                item.setStockState(stockState);
+                adapter.updateStockStateOrderItem(item.getId(),stockState);
                 if (isChecked){
                     listOrderItemsOutStock.add(item.getId());
                 }else{
@@ -213,6 +259,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 }
                 if (listOrderItemsOutStock.size()>0){
                     btnConfirm.setVisibility(View.GONE);
+                }else{
+                    btnConfirm.setVisibility(View.VISIBLE);
                 }
             });
             dialog.show();
@@ -221,20 +269,23 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
 
     public void enableSplitLayout(Context context) {
         final int width = Helper.getDisplayWidth();
+
         ViewGroup.LayoutParams param = deliveriesLayout.getLayoutParams();
         param.width = (width / 3)*2;
         deliveriesLayout.setLayoutParams(param);
+
+        detailLayout.setVisibility(View.VISIBLE);
         ViewGroup.LayoutParams param2 = detailLayout.getLayoutParams();
         param2.width = (width / 3);
         detailLayout.setLayoutParams(param2);
-        detailLayout.setVisibility(View.VISIBLE);
+
         orderRecyclerView.setLayoutManager(new GridLayoutManager(context,3));
     }
 
     public void disableSplitLayout(Context context) {
         ViewGroup.LayoutParams param = deliveriesLayout.getLayoutParams();
         param.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        detailLayout.setLayoutParams(param);
+        deliveriesLayout.setLayoutParams(param);
         detailLayout.setVisibility(View.GONE);
         orderRecyclerView.setLayoutManager(new GridLayoutManager(context,4));
     }

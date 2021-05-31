@@ -12,7 +12,7 @@ public class EnumHelper {
                 return "Hoàn thành";
             case CONFIRMED:
                 return"Đã xác nhận";
-            case CANCELED:
+            case CANCELLED:
                 return"Huỷ";
             default:
                 return "";

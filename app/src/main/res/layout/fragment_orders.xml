@@ -341,7 +341,7 @@
                 android:id="@+id/paymentInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/relativeLayout2"
+                android:layout_above="@+id/deliveryOrderControlLayout"
                 android:layout_marginStart="4dp"
                 android:elevation="4dp"
                 android:padding="2dp">
@@ -422,7 +422,7 @@
             </com.google.android.material.card.MaterialCardView>
             <!-- payment button-->
             <LinearLayout
-                android:id="@+id/relativeLayout2"
+                android:id="@+id/deliveryOrderControlLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"

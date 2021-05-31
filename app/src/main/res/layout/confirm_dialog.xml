@@ -20,7 +20,7 @@
             android:background="@drawable/body_cart">
 
             <LinearLayout
-                android:id="@+id/relativeLayout2"
+                android:id="@+id/deliveryOrderControlLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -65,7 +65,7 @@
                 android:id="@+id/summaryPay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/relativeLayout2"
+                android:layout_above="@+id/deliveryOrderControlLayout"
                 android:layout_marginLeft="16dp"
                 android:padding="5dp">
 
@@ -74,7 +74,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/relativeLayout2"
+                android:layout_above="@+id/deliveryOrderControlLayout"
                 android:layout_alignParentTop="true"
                 android:gravity="center">
                 <GridLayout

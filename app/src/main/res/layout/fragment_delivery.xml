@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="horizontal"
     tools:context=".fragment.DeliveryFragment"
@@ -181,13 +181,28 @@
         </RelativeLayout>
 
     </RadioGroup>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/deliveryRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="15dp"
-        />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/deliveryRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="15dp"
+                />
+            <LinearLayout
+                android:id="@+id/progressLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone">
+                <ProgressBar
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+
     </LinearLayout>
     <RelativeLayout
         android:id="@+id/bgOrderDetail"
@@ -223,8 +238,6 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/body_cart"
             android:layout_above="@+id/imageView1"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             >
@@ -338,7 +351,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/relativeLayout2"
+                android:layout_above="@+id/deliveryOrderControlLayout"
                 android:padding="2dp"
                 android:layout_marginStart="4dp"
                 android:id="@+id/paymentInfo"
@@ -397,7 +410,7 @@
             </com.google.android.material.card.MaterialCardView>
             <!-- payment button-->
             <LinearLayout
-                android:id="@+id/relativeLayout2"
+                android:id="@+id/deliveryOrderControlLayout"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

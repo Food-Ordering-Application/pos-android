@@ -71,7 +71,6 @@ public class VoidNoteDialog extends Dialog implements View.OnClickListener{
 			dismiss();
 			break;
 		case R.id.btnDoneTopping:
-			dismiss();
 			if(listener != null)
 				listener.onFinish(cashierNoteEditText.getText().toString());
 			break;

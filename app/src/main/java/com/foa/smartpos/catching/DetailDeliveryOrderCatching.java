@@ -5,17 +5,10 @@ import com.foa.smartpos.model.Order;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeliveryOrderCatching {
+public class DetailDeliveryOrderCatching {
     private static List<Order> orderList = null;
 
-    public DeliveryOrderCatching() {
-    }
-
-    public static List<Order> getInstance(){
-        if (orderList == null){
-            orderList  = new ArrayList<>();
-        }
-        return orderList;
+    public DetailDeliveryOrderCatching() {
     }
 
     public static void addDeliveryCatching(Order order){

@@ -88,30 +88,30 @@ public class SplashActivity extends AppCompatActivity {
         btnTryAgain.setOnClickListener(v -> {
             loadingView();
             executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-            if (isMenuSuccess) {
+            if (isMenuSuccess==null || !isMenuSuccess) {
                 getMenuData();
             } else {
 
-                if (isMenuItemSuccess == null) {
+                if (isMenuGroupSuccess == null||!isMenuGroupSuccess) {
                     getMenuGroups = () -> getMenuGroups(menuId);
                     executor.execute(getMenuGroups);
                 }
-                if (isMenuItemSuccess == null) {
+                if (isMenuItemSuccess == null||!isMenuItemSuccess) {
                     getMenuItems = () -> getMenuItems(menuId);
                     executor.execute(getMenuItems);
                 }
 
-                if (isMenuItemSuccess == null) {
+                if (isToppingGroupSuccess == null||!isToppingGroupSuccess) {
                     getToppingGroups = () -> getToppingGroups(menuId);
                     executor.execute(getToppingGroups);
                 }
 
-                if (isMenuItemSuccess == null) {
+                if (isToppingGroupSuccess == null|| !isToppingGroupSuccess) {
                     getToppingItems = () -> getToppingItems(menuId);
                     executor.execute(getToppingItems);
                 }
 
-                if (isMenuItemSuccess == null) {
+                if (isMenuItemToppingSuccess!=null||!isMenuItemToppingSuccess) {
                     getMenuItemToppings = () -> getMenuItemToppings(menuId);
                     executor.execute(getMenuItemToppings);
                 }
@@ -200,6 +200,8 @@ public class SplashActivity extends AppCompatActivity {
                 isMenuGroupSuccess = true;
                 saveMenuGroupToLocal(data);
                 checkSyncStatus();
+            }else {
+                isMenuGroupSuccess=false;
             }
         });
     }
@@ -212,6 +214,7 @@ public class SplashActivity extends AppCompatActivity {
                 saveMenuItemToLocal(data);
                 checkSyncStatus();
             } else {
+                isMenuItemSuccess=false;
                 loadedView();
             }
 
@@ -225,6 +228,7 @@ public class SplashActivity extends AppCompatActivity {
                 saveToppingItemToLocal(data);
                 checkSyncStatus();
             } else {
+                isToppingItemSuccess=false;
                 loadedView();
             }
         });
@@ -237,6 +241,7 @@ public class SplashActivity extends AppCompatActivity {
                 saveToppingGroupToLocal(data);
                 checkSyncStatus();
             } else {
+                isToppingGroupSuccess=false;
                 loadedView();
             }
         });
@@ -249,6 +254,7 @@ public class SplashActivity extends AppCompatActivity {
                 saveMenuItemToppingToLocal(data);
                 checkSyncStatus();
             } else {
+                isMenuItemToppingSuccess=false;
                 loadedView();
             }
         });

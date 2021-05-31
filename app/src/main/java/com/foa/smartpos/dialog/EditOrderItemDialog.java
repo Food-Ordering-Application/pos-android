@@ -76,6 +76,7 @@ public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
 		case R.id.btnDoneTopping:
 			dismiss();
 			if(listener != null){
+
 				listener.onFinish(outOfProductSwitch.isChecked());
 			}
 

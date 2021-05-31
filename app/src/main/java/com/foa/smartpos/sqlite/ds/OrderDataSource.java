@@ -252,11 +252,11 @@ public class OrderDataSource {
 		return success;
 	}
 
-	public long updateOutSoldOrderItem(String orderItemId, boolean isOutOfSold)
+	public long updateStockStateOrderItem(String orderItemId, StockState stockState)
 	{
 		ContentValues values = new ContentValues();
 
-		values.put(DbSchema.COL_ORDER_ITEM_STATE, isOutOfSold ? StockState.OUT_OF_STOCK.toString():StockState.IN_STOCK.toString());
+		values.put(DbSchema.COL_ORDER_ITEM_STATE, stockState.toString());
 
 		long success =  db.update(DbSchema.TBL_ORDER_ITEM, values, DbSchema.COL_ORDER_ITEM_ID +"= '"+orderItemId+"' ", null);
 		return success;

@@ -56,7 +56,7 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
 
     public void setOrders(List<Order> orders){
         this.orders = orders;
-        this.notifyItemRangeChanged(0, orders.size());
+        this.notifyDataSetChanged();
     }
 
     @NonNull
@@ -79,17 +79,14 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
             holder.cardItem.setSelected(false);
         }
         holder.cardItem.setOnClickListener(v -> {
-            if (order.getId()==currentOrderId){
-                currentOrderId="";;
+            if (order.getId().equals(currentOrderId)){
+                currentOrderId="";
                 v.setSelected(false);
                 if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(null);
             }else {
                 v.setSelected(true);
                 currentOrderId=order.getId();
-                orders = new ArrayList<>();
-                notifyDataSetChanged();
                 if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(order);
-
             }
             notifyDataSetChanged();
         });

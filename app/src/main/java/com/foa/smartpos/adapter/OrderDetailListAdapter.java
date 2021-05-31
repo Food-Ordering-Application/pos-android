@@ -56,11 +56,11 @@ public class OrderDetailListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void updateIsOutSold (String orderItemId, StockState stockState){
-        for (OrderItem item:
-                dtList) {
-            if(item.getId()==orderItemId){
+    public void updateStockStateOrderItem (String orderItemId, StockState stockState){
+        for (OrderItem item: dtList) {
+            if(item.getId().equals(orderItemId)){
                 item.setStockState( stockState);
+                notifyDataSetChanged();
             }
         }
     }
@@ -98,6 +98,8 @@ public class OrderDetailListAdapter extends BaseAdapter {
         final OrderItem orderItem = (OrderItem) getItem(position);
         if (orderItem.getStockState()==StockState.OUT_OF_STOCK){
             holder.layoutOrderItem.setBackgroundResource(R.color.line_gray);
+        }else{
+            holder.layoutOrderItem.setBackgroundResource(R.color.white);
         }
 
         holder.name.setText(orderItem.getMenuItemName());
