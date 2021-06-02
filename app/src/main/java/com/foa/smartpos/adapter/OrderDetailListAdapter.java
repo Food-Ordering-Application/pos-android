@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.foa.smartpos.R;
 import com.foa.smartpos.model.OrderItem;
 import com.foa.smartpos.model.enums.StockState;
-import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.Helper;
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
             holder.name = vi.findViewById(R.id.tvCartProductName);
             holder.toppingName = vi.findViewById(R.id.tvTopping);
             holder.price = vi.findViewById(R.id.tvProductPrice);
-            holder.qty = vi.findViewById(R.id.tvTotal);
+            holder.qty = vi.findViewById(R.id.tvQty);
             holder.btnMinus = vi.findViewById(R.id.btnSubQuantityCartItem);
             holder.btnPlus = vi.findViewById(R.id.btnPlusQuantityCartItem);
             

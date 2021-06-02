@@ -26,4 +26,8 @@ public class CompletedDeliveryOrderCatching {
     public static List<Order> getCompletedOrderCatching(){
         return orderList;
     }
+
+    public static void clearInstance(){
+        orderList = null;
+    }
 }

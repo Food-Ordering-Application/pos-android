@@ -30,7 +30,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.foa.smartpos.MainActivity;
 import com.foa.smartpos.R;
 import com.foa.smartpos.SplashActivity;
 import com.foa.smartpos.adapter.CartListAdapter;
@@ -167,7 +166,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         cartWrapper = root.findViewById(R.id.bgCart);
         menuGrid = root.findViewById(R.id.gridView1);
         txtEmpty = root.findViewById(R.id.textView9);
-        txtTotal = root.findViewById(R.id.tvTotal);
+        txtTotal = root.findViewById(R.id.tvQty);
         txtGrandTotal = root.findViewById(R.id.tvTotalPay);
         txtKeyword = root.findViewById(R.id.editText1);
         btnOrder = root.findViewById(R.id.btnOrder);

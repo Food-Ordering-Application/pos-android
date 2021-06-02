@@ -28,4 +28,8 @@ public class DetailDeliveryOrderCatching {
         }
         return null;
     }
+
+    public static void clearInstance(){
+        orderList = null;
+    }
 }
