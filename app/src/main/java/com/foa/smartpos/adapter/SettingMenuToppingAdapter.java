@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.foa.smartpos.R;
+import com.foa.smartpos.api.RestaurantService;
+import com.foa.smartpos.model.IResultCallback;
 import com.foa.smartpos.model.MenuItem;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.model.ToppingItem;
@@ -69,7 +71,13 @@ public class SettingMenuToppingAdapter extends RecyclerView.Adapter<SettingMenuT
             holder.itemName.setText(menuItem.getName());
             holder.itemPrice.setText(String.valueOf(menuItem.getPrice()));
             holder.itemStatus.setChecked(menuItem.getStockState().equals(StockState.IN_STOCK));
-            holder.itemStatus.setOnCheckedChangeListener((compoundButton, b) -> menuItemDS.updateStockState(menuItem.getId(),b? StockState.IN_STOCK: StockState.OUT_OF_STOCK));
+            holder.itemStatus.setOnCheckedChangeListener((compoundButton, b) -> {
+                StockState stockState = b? StockState.IN_STOCK: StockState.OUT_OF_STOCK;
+                menuItemDS.updateStockState(menuItem.getId(),stockState);
+                RestaurantService.updateMenuItemStockState(menuItem.getId(), stockState, success -> {
+
+                });
+            });
             holder.itemView.setTag(menuItem);
         }else {
             ToppingItem toppingItem = toppingItems.get(position);
@@ -77,7 +85,13 @@ public class SettingMenuToppingAdapter extends RecyclerView.Adapter<SettingMenuT
             holder.itemName.setText(toppingItem.getName());
             holder.itemPrice.setText(Helper.formatMoney(toppingItem.getPrice()));
             holder.itemStatus.setChecked(toppingItem.getStockState().equals(StockState.IN_STOCK));
-            holder.itemStatus.setOnCheckedChangeListener((compoundButton, b) -> menuItemDS.updateStockState(toppingItem.getId(),b? StockState.IN_STOCK: StockState.OUT_OF_STOCK));
+            holder.itemStatus.setOnCheckedChangeListener((compoundButton, b) -> {
+                StockState stockState = b? StockState.IN_STOCK: StockState.OUT_OF_STOCK;
+                toppingItemDS.updateStockState(toppingItem.getId(),stockState);
+                RestaurantService.updateToppingItemStockState(toppingItem.getId(), stockState, success -> {
+
+                });
+            });
             holder.itemView.setTag(toppingItem);
         }
     }

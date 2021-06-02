@@ -18,7 +18,7 @@ public class MenuItem {
 	private String description;
 	@SerializedName("price")
 	private long price;
-	@SerializedName("stockState")
+	@SerializedName("state")
 	private StockState stockState;
 	@SerializedName("imageUrl")
 	private String image;

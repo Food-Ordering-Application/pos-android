@@ -6,6 +6,7 @@ import com.foa.smartpos.model.MenuItemTopping;
 import com.foa.smartpos.model.ToppingGroup;
 import com.foa.smartpos.model.ToppingItem;
 import com.foa.smartpos.network.entity.LoginBody;
+import com.foa.smartpos.network.entity.UpdateStockStateBody;
 import com.foa.smartpos.network.entity.VoidOrderBody;
 import com.foa.smartpos.network.response.LoginData;
 import com.foa.smartpos.network.response.MenuData;
@@ -21,6 +22,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -98,5 +100,18 @@ public interface AppService {
     Call<ResponseAdapter<String>> voidOrder(
             @Path("orderId") String orderId,
             @Body VoidOrderBody voidOrderBody
+    );
+
+
+    @PATCH("/user/pos/menu-item/{menuItemId}")
+    Call<ResponseAdapter<String>> updateMenuItem(
+            @Path("menuItemId") String menuItemId,
+            @Body UpdateStockStateBody body
+    );
+
+    @PATCH("/user/pos/topping-item/{toppingItemId}")
+    Call<ResponseAdapter<String>> updateToppingItem(
+            @Path("toppingItemId") String toppingItemId,
+            @Body UpdateStockStateBody body
     );
 }

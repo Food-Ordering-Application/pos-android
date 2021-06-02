@@ -12,10 +12,11 @@
     <string name="submit">SUBMIT</string>
     <string name="activation_failed">Xác nhận thất bại</string>
     <string name="activation_succeed">Xác nhận thành công</string>
-    <string name="login">LOGIN</string>
+    <string name="login">ĐĂNG NHẬP</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="error_field_empty">field can not be empty</string>
+    <string name="error_field_empty">Không được để trống</string>
     <string name="error_user_or_password">Tên đăng nhập hoặc mật khẩu không đúng</string>
+    <string name="login_failed">"Đăng nhập thất bại"</string>
     <string name="error_restaurant">Nhà hàng chưa được kích hoạt</string>
     <string name="quick_order">QUICK\nORDER</string>
     <string name="report">REPORT</string>
@@ -103,6 +104,6 @@
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Đăng nhập thất bại"</string>
+
     <string name="sync_failed">Thất bại</string>
 </resources>

@@ -108,8 +108,7 @@ public class MenuItemDataSource {
 		values.put(DbSchema.COL_MENU_GROUP_ID, item.getGroupId());
 		values.put(DbSchema.COL_MENU_ITEM_DESCRIPTION, item.getDescription());
 		values.put(DbSchema.COL_MENU_ITEM_PRICE, item.getPrice());
-		//values.put(DbSchema.COL_MENU_ITEM_STOCK_STATE, item.getStockState().toString());
-		values.put(DbSchema.COL_MENU_ITEM_STOCK_STATE, StockState.IN_STOCK.toString());
+		values.put(DbSchema.COL_MENU_ITEM_STOCK_STATE, item.getStockState().toString());
 		values.put(DbSchema.COL_MENU_ITEM_IS_ACTIVE, item.isActive()?1:0);
 		values.put(DbSchema.COL_MENU_ITEM_INDEX, item.getIndex());
 		values.put(DbSchema.COL_MENU_ITEM_IMAGE, item.getImage());

@@ -63,6 +63,13 @@ public class ToppingItemDataSource {
 	
 		return items;
 	}
+
+	public long updateStockState(String toppingItemId, StockState stockState)
+	{
+		ContentValues values = new ContentValues();
+		values.put(DbSchema.COL_MENU_ITEM_STOCK_STATE, stockState.toString());
+		return db.update(DbSchema.TBL_TOPPING_ITEM, values, COL_TOPPING_ITEM_ID +"= '"+toppingItemId+"' ", null);
+	}
 	
 	public long insert(ToppingItem item)
 	{
@@ -74,8 +81,7 @@ public class ToppingItemDataSource {
 		values.put(DbSchema.COL_TOPPING_ITEM_MAX_QTY, item.getMaxQuantity());
 		values.put(DbSchema.COL_TOPPING_ITEM_INDEX, item.getIndex());
 		values.put(DbSchema.COL_TOPPING_ITEM_PRICE, item.getPrice());
-		//values.put(DbSchema.COL_TOPPING_ITEM_STOCK_STATE, item.getStockState().toString());
-		values.put(DbSchema.COL_TOPPING_ITEM_STOCK_STATE, StockState.IN_STOCK.toString());
+		values.put(DbSchema.COL_TOPPING_ITEM_STOCK_STATE, item.getStockState().toString());
 		values.put(DbSchema.COL_TOPPING_ITEM_IS_ACTIVE, item.isActive()?1:0);
 
 		return db.insert(DbSchema.TBL_TOPPING_ITEM, null, values);

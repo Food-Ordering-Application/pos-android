@@ -22,7 +22,7 @@ public class ToppingItem {
     private boolean isActive;
     @SerializedName("price")
     private long price;
-    @SerializedName("stockState")
+    @SerializedName("state")
     private StockState stockState;
     private int radioButtonId;
 

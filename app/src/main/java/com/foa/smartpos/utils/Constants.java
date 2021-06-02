@@ -2,16 +2,6 @@ package com.foa.smartpos.utils;
 
 public class Constants {
 
-    public static String KEY_SETTING_BRANCH_ID = "branch_id";
-    public static String KEY_SETTING_CURRENCY_SYMBOL = "currency_symbol";
-    public static String KEY_SETTING_MENU = "current_menu";
-
-    public static String VAL_DEFAULT_MENU = "GRID";
-    public static String VAL_DEFAULT_CURRENCY_SYMBOL = "đ";
-
-    public static String ARG_ITEM_ID = "item_id";
-    public static String ARG_CATEGORY_ID = "category_id";
-
     //HTTP RES CODE
     public static final int STATUS_CODE_SUCCESS = 200;
     public static final int STATUS_CODE_CREATED = 201;

@@ -1,12 +1,16 @@
 package com.foa.smartpos.api;
 
 import com.foa.smartpos.model.IDataResultCallback;
+import com.foa.smartpos.model.IResultCallback;
 import com.foa.smartpos.model.MenuGroup;
 import com.foa.smartpos.model.MenuItem;
 import com.foa.smartpos.model.MenuItemTopping;
 import com.foa.smartpos.model.ToppingGroup;
 import com.foa.smartpos.model.ToppingItem;
+import com.foa.smartpos.model.enums.StockState;
 import com.foa.smartpos.network.RetrofitClient;
+import com.foa.smartpos.network.entity.UpdateStockStateBody;
+import com.foa.smartpos.network.entity.VoidOrderBody;
 import com.foa.smartpos.network.response.MenuData;
 import com.foa.smartpos.network.response.ResponseAdapter;
 import com.foa.smartpos.network.response.RestaurantServiceData;
@@ -222,6 +226,62 @@ public class RestaurantService {
             public void onFailure(Call<ResponseAdapter<RestaurantServiceData<MenuItemTopping>>> call, Throwable t) {
                 LoggerHelper.CheckAndLogInfo(this,t.getMessage());
                 resultCallback.onSuccess(false, null);
+            }
+        });
+    }
+
+    public static void updateMenuItemStockState(String menuItemId, StockState stockState, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .updateMenuItem(menuItemId, new UpdateStockStateBody(stockState));
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>>call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                LoggerHelper.CheckAndLogInfo(this,t.getMessage());
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
+    public static void updateToppingItemStockState(String toppingItemId, StockState stockState, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .updateToppingItem(toppingItemId, new UpdateStockStateBody(stockState));
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>>call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                LoggerHelper.CheckAndLogInfo(this,t.getMessage());
+                resultCallback.onSuccess(false);
             }
         });
     }
