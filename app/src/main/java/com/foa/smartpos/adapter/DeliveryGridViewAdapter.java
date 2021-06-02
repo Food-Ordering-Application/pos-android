@@ -54,6 +54,16 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
         notifyItemInserted(orders.size()-1);
     }
 
+    public void updateOrder(Order order){
+        for (int i=0;i<orders.size();i++) {
+            if (orders.get(i).getId().equals(order.getId())) {
+                orders.set(i,order);
+                notifyItemInserted(i);
+                break;
+            }
+        }
+    }
+
     public void setOrders(List<Order> orders){
         this.orders = orders;
         this.notifyDataSetChanged();

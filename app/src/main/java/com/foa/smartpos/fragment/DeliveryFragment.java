@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,17 @@ import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.model.enums.StockState;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
+import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.Helper;
+import com.google.gson.Gson;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.PusherEvent;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
 import com.pusher.pushnotifications.PushNotifications;
 
 import java.util.ArrayList;
@@ -95,11 +106,13 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 disableSplitLayout(getActivity());
             }
         });
-        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(getActivity(), remoteMessage -> {
-           String orderId = remoteMessage.getData().get("orderId");
-            OrderService.getOrderById(orderId, (success, data) -> deliveryAdapter.addOrder(data));
-
-		});
+//        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(getActivity(), remoteMessage -> {
+//           String orderId = remoteMessage.getData().get("orderId");
+//            OrderService.getOrderById(orderId, (success, data) -> deliveryAdapter.addOrder(data));
+//
+//		});
+//
+        initPusher();
 
         return root;
     }
@@ -131,6 +144,50 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         detailLayout = root.findViewById(R.id.bgOrderDetail);
         deliveryOrderControlLayout = root.findViewById(R.id.deliveryOrderControlLayout);
         progressLoading = root.findViewById(R.id.progressLoading);
+    }
+
+    private void initPusher(){
+        PusherOptions options = new PusherOptions();
+        options.setCluster("ap1");
+
+        Pusher pusher = new Pusher("29ff5ecb5e2501177186", options);
+
+        pusher.connect(new ConnectionEventListener() {
+            @Override
+            public void onConnectionStateChange(ConnectionStateChange change) {
+                Log.i("Pusher", "State changed from " + change.getPreviousState() +
+                        " to " + change.getCurrentState());
+            }
+
+            @Override
+            public void onError(String message, String code, Exception e) {
+                Log.i("Pusher", "There was a problem connecting! " +
+                        "\ncode: " + code +
+                        "\nmessage: " + message +
+                        "\nException: " + e
+                );
+            }
+        }, ConnectionState.ALL);
+
+        Channel channel = pusher.subscribe("orders_"+Helper.read(Constants.RESTAURANT_ID));
+
+        channel.bind("new-order", event -> {
+            getActivity().runOnUiThread(() -> {
+                Gson g = new Gson();
+                Order newOrder = g.fromJson(event.getData(), Order.class);
+                deliveryAdapter.addOrder(newOrder);
+            });
+
+        });
+
+        channel.bind("order-status", event -> {
+            getActivity().runOnUiThread(() -> {
+                Gson g = new Gson();
+                Order newOrder = g.fromJson(event.getData(), Order.class);
+                
+            });
+
+        });
     }
 
     private  void setGroupButtonListenter(){

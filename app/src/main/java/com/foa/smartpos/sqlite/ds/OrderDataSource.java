@@ -79,7 +79,7 @@ public class OrderDataSource {
 	}
 
 	public ArrayList<Order> getAllOrder(String startDate, String endDate) {
-		return getAllOrder(null,null,null,null, OrderStatus.COMPLETED,startDate,endDate,null);
+		return getAllOrder(null,null,null,null, OrderStatus.COMPLETED,startDate,endDate,false);
 	}
 
 	public ArrayList<Order> getAllOrder(Boolean isNotSynced) {

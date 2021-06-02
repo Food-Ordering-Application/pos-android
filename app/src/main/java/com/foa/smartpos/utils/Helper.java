@@ -57,6 +57,7 @@ public final class Helper
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	public static SimpleDateFormat dateSQLiteFormat = new SimpleDateFormat("yyyy-MM-dd");
 	public static SimpleDateFormat dateTimeformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	public static SimpleDateFormat dateTimeformat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public static DecimalFormat decimalformat = new DecimalFormat("#.###");
 	public static void initialize(Context base)

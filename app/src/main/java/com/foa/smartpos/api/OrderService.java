@@ -92,7 +92,12 @@ public class OrderService {
         });
     }
 
-    public static void getAllOrder(String orderType, int pageNumber, String orderStatus,IDataResultCallback<List<Order>> resultCallback) {
+    public static void getAllOrder(String orderType, int pageNumber,IDataResultCallback<List<Order>> resultCallback) {
+        OrderService.getAllOrder(orderType,pageNumber,null, resultCallback);
+    }
+
+
+        public static void getAllOrder(String orderType, int pageNumber, String orderStatus,IDataResultCallback<List<Order>> resultCallback) {
         String restaurantId = Helper.read(Constants.RESTAURANT_ID);
         GregorianCalendar calendar = new GregorianCalendar();
         String strStartDate = Helper.dateSQLiteFormat.format(calendar.getTime());

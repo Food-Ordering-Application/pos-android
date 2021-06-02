@@ -165,19 +165,32 @@
                 android:gravity="end"
                 android:textAppearance="?android:textAppearanceMedium" />
         </LinearLayout>
-
-        <ListView
-            android:id="@+id/orderGridView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="10dp"
-            android:horizontalSpacing="10dp"
-            android:numColumns="5"
-            android:scrollbars="none"
-            android:verticalSpacing="10dp" />
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/orderGridView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="10dp"
+                android:horizontalSpacing="10dp"
+                android:numColumns="5"
+                android:scrollbars="none"
+                android:verticalSpacing="10dp" />
+            <LinearLayout
+                android:id="@+id/progressLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone">
+                <ProgressBar
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"/>
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <RelativeLayout

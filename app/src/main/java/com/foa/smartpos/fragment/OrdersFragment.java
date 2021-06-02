@@ -42,6 +42,7 @@ public class OrdersFragment extends Fragment {
     TextView dateToTextView;
     Spinner orderTypeSpinner;
     Button btnSearch;
+    LinearLayout progressLoading;
 
     String startDate;
     String endDate;
@@ -59,6 +60,7 @@ public class OrdersFragment extends Fragment {
         dateToTextView = root.findViewById(R.id.dateTo);
         orderTypeSpinner = root.findViewById(R.id.orderTypeSpinner);
         btnSearch = root.findViewById(R.id.btnSearch);
+        progressLoading = root.findViewById(R.id.progressLoading);
 
         String currentDate = Helper.dateFormat.format(Calendar.getInstance().getTime());
         dateFromTextView.setText(currentDate);
@@ -94,17 +96,19 @@ public class OrdersFragment extends Fragment {
 
         adapter.setData(DS.getAllOrder(startDate,endDate));
         btnSearch.setOnClickListener(view -> {
+            progressLoading.setVisibility(View.VISIBLE);
             if (orderTypeSpinner.getSelectedItem().equals("Tại quán")){
                 adapter.setData(DS.getAllOrder(startDate,endDate));
+                progressLoading.setVisibility(View.GONE);
+
             }else{
-                OrderService.getAllOrder(OrderType.SALE.toString(), 1, OrderStatus.COMPLETED.toString(), (success, data) -> {
+                OrderService.getAllOrder(OrderType.SALE.toString(), 1, (success, data) -> {
                     adapter.setData(data);
+                    progressLoading.setVisibility(View.GONE);
                 });
             }
 
         });
-
-
 
         return root;
     }
