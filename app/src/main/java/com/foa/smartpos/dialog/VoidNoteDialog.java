@@ -10,12 +10,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import com.foa.smartpos.R;
-import com.foa.smartpos.model.OrderItem;
-import com.foa.smartpos.model.enums.StockState;
 
 public class VoidNoteDialog extends Dialog implements View.OnClickListener{
 	private EditText cashierNoteEditText;
@@ -33,7 +29,7 @@ public class VoidNoteDialog extends Dialog implements View.OnClickListener{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-		setContentView(R.layout.void_note_dialog);
+		setContentView(R.layout.dialog_void_note);
 
 		cashierNoteEditText = findViewById(R.id.cashierNoteEditText);
 		btnOk = findViewById(R.id.btnDoneTopping);

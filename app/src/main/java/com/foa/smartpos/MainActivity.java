@@ -50,27 +50,6 @@ public class MainActivity extends AppCompatActivity {
 		DrawerLayout drawer = findViewById(R.id.drawer_layout);
 		NavigationView navigationView = findViewById(R.id.nav_view);
 
-//		navigationView.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) item -> {
-//			Fragment fragment;
-//			switch (item.getItemId()){
-//				case R.id.navigation_order:
-//					fragment = new OrderFragment();
-//					break;
-//				case R.id.navigation_manaorder:
-//					fragment = new OrdersFragment();
-//					break;
-//				case R.id.navigation_delivery:
-//					(De)fragment = new DeliveryFragment();
-//					fragment.set
-//					break;
-//				default:
-//					return false;
-//			}
-//			FragmentTransaction ft = getSupportFragmentManager().beginTransaction()
-//			ft.replace(R.id.nav_host_fragment, fragment);
-//			return true;
-//		});
-
 		mAppBarConfiguration = new AppBarConfiguration.Builder(
 				R.id.navigation_order, R.id.navigation_delivery, R.id.navigation_manaorder,R.id.navigation_setting)
 				.setOpenableLayout(drawer)

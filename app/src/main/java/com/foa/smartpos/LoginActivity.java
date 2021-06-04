@@ -85,7 +85,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 		finish();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
 
+	}
 
 	@Override
 	public void onClick(View v) {

@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.foa.smartpos.R;
+import com.foa.smartpos.dialog.OrderDetailDialog;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.utils.Helper;
 
@@ -88,33 +89,20 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
         }else{
             holder.cardItem.setSelected(false);
         }
-//        holder.cardItem.setOnClickListener(v -> {
-//            v.setSelected(true);
-//            if (order.isSelected()){
-//                order.setSelected(false);
-//                Helper.disableSplitLayout(ordersLayout,detailLayout,theGridView);
-//            }else {
-//                Activity a = ((Activity) context);
-//                Log.e("a",""+a);
-//                order.setSelected(true);
-//                if(!Helper.checkHasSelectedItem(orders,order)){//disable another item
-//                    //Helper.enableSplitLayout(ordersLayout,detailLayout,theGridView);
-//                }
-//                Helper.loadOrderDetail(order,detailLayout,context);
-//            }
-//            notifyDataSetChanged();
-//        });
+        holder.cardItem.setOnClickListener(v -> {
+            OrderDetailDialog dialog  = new OrderDetailDialog(context,order);
+            dialog.show();
+        });
 
 
         holder.orderId.setText(order.getId());
         holder.orderTime.setText(Helper.dateTimeformat.format(order.getCreatedAt()));
         holder.orderAmount.setText(String.valueOf(order.getGrandTotal()));
         holder.orderStatus.setText("Tiền mặt");
-        if (order.getSyncedAt()!=null){
-            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_done);
-        }else{
+        if (order.getSyncedAt()==null||order.getDelivery()==null){
             holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_none);
-
+        }else{
+            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_done);
         }
 
 

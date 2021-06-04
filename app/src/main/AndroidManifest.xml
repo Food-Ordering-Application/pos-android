@@ -58,6 +58,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.foa.smartpos.SplashActivity"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.POS.NoActionBar"/>
         <receiver android:name = "com.foa.smartpos.receiver.NetworkReceiver">
             <intent-filter>
@@ -66,6 +67,12 @@
                 <action android:name = "android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_android" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/primaryColor" />
     </application>
 
 </manifest>

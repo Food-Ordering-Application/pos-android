@@ -28,7 +28,7 @@ public class NetworkWarningDialog extends Dialog implements View.OnClickListener
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-		setContentView(R.layout.network_warning_dialog);
+		setContentView(R.layout.dialog_network_warning);
 
 		btnGoToOffline = findViewById(R.id.btnGoToOffline);
 

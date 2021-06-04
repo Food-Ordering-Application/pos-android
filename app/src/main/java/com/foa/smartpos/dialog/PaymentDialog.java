@@ -63,7 +63,7 @@ public class PaymentDialog  extends DialogFragment implements View.OnClickListen
         builder.getWindow().setLayout(400,600);
         builder.setContentView(view);
 
-        tvTotalPay = view.findViewById(R.id.tvTotalPay);
+        tvTotalPay = view.findViewById(R.id.tvGrandTotal);
         tvChange = view.findViewById(R.id.tvChange);
         btnPay =  view.findViewById(R.id.btnPay);
         btnCancel =  view.findViewById(R.id.btnCancel);

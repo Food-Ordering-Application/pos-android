@@ -62,7 +62,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHo
             name = itemView.findViewById(R.id.tvCartProductName);
             toppingNames = itemView.findViewById(R.id.tvTopping);
             price = itemView.findViewById(R.id.tvProductPrice);
-            qty = itemView.findViewById(R.id.tvQty);
+            qty = itemView.findViewById(R.id.subTotal);
             btnMinus = itemView.findViewById(R.id.btnSubQuantityCartItem);
             btnPlus = itemView.findViewById(R.id.btnPlusQuantityCartItem);
             layoutOrderItem = itemView.findViewById(R.id.layoutOrderItem);

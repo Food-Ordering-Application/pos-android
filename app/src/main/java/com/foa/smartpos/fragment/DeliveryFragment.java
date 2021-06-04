@@ -47,6 +47,7 @@ import com.pusher.client.channel.Channel;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
+import com.pusher.pushnotifications.PushNotifications;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,12 +106,10 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 disableSplitLayout(getActivity());
             }
         });
-//        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(getActivity(), remoteMessage -> {
-//           String orderId = remoteMessage.getData().get("orderId");
-//            OrderService.getOrderById(orderId, (success, data) -> deliveryAdapter.addOrder(data));
-//
-//		});
-//
+        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(getActivity(), remoteMessage -> {
+           Log.e("beams"," noti");
+
+		});
         initPusher();
 
         return root;
@@ -315,8 +314,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     }
 
     public void loadOrderDetail(Order order, RelativeLayout detailLayout){
-        ((TextView)detailLayout.findViewById(R.id.tvQty)).setText(Helper.formatMoney(order.getGrandTotal()));
-        ((TextView)detailLayout.findViewById(R.id.tvTotalPay)).setText(Helper.formatMoney(order.getGrandTotal()));
+        ((TextView)detailLayout.findViewById(R.id.subTotal)).setText(Helper.formatMoney(order.getGrandTotal()));
+        ((TextView)detailLayout.findViewById(R.id.tvGrandTotal)).setText(Helper.formatMoney(order.getGrandTotal()));
         ((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getId()));
         ((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(Helper.formatMoney(order.getGrandTotal()));
         if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){

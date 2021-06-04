@@ -85,7 +85,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
             holder.name = vi.findViewById(R.id.tvCartProductName);
             holder.toppingName = vi.findViewById(R.id.tvTopping);
             holder.price = vi.findViewById(R.id.tvProductPrice);
-            holder.qty = vi.findViewById(R.id.tvQty);
+            holder.qty = vi.findViewById(R.id.subTotal);
             holder.btnMinus = vi.findViewById(R.id.btnSubQuantityCartItem);
             holder.btnPlus = vi.findViewById(R.id.btnPlusQuantityCartItem);
             

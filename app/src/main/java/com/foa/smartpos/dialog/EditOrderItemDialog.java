@@ -40,7 +40,7 @@ public class EditOrderItemDialog extends Dialog implements View.OnClickListener{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-		setContentView(R.layout.edit_order_item_dialog);
+		setContentView(R.layout.dialog_edit_order_item);
 
 		btnOk = findViewById(R.id.btnDoneTopping);
 		btnCancel = findViewById(R.id.btnCancel);
