@@ -10,12 +10,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.foa.smartpos.network.RetrofitClient;
 import com.foa.smartpos.network.response.VerifyAppResponse;
+import com.foa.smartpos.session.NotificationOrderIdSession;
 import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.dialog.LoadingDialog;
@@ -43,8 +45,19 @@ public class VerifyAppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_verify_app);
         context = this;
         Helper.initialize(getBaseContext());
-        androidId = Secure.getString(getContext().getContentResolver(),Secure.ANDROID_ID);
 
+        if(Helper.read(Constants.RESTAURANT_ID)!=null){
+           if(getIntent().getExtras()!=null){
+               String orderId  = getIntent().getExtras().getString("orderId");
+               if (orderId!=null){
+                   NotificationOrderIdSession.setInstance(orderId);
+               }
+           }
+            Intent intent  = new Intent(VerifyAppActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
+
+        androidId = Secure.getString(getContext().getContentResolver(),Secure.ANDROID_ID);
         txtInput1 = findViewById(R.id.txtInput1);
         txtInput2 = findViewById(R.id.txtInput2);
         txtInput3 = findViewById(R.id.txtInput3);

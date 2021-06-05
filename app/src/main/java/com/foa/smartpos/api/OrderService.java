@@ -100,8 +100,9 @@ public class OrderService {
         public static void getAllOrder(String orderType, int pageNumber, String orderStatus,IDataResultCallback<List<Order>> resultCallback) {
         String restaurantId = Helper.read(Constants.RESTAURANT_ID);
         GregorianCalendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.DATE,-1);
         String strStartDate = Helper.dateSQLiteFormat.format(calendar.getTime());
-        calendar.add(Calendar.DATE,1);
+        calendar.add(Calendar.DATE,2);
         String strEndDate = Helper.dateSQLiteFormat.format(calendar.getTime());
         Call<ResponseAdapter<OrderListData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .getAllOrder(restaurantId,orderType,pageNumber, orderStatus, strStartDate,strEndDate);

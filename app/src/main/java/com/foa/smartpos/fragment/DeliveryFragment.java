@@ -36,6 +36,7 @@ import com.foa.smartpos.model.enums.OrderStatus;
 import com.foa.smartpos.model.enums.OrderType;
 import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.model.enums.StockState;
+import com.foa.smartpos.session.NotificationOrderIdSession;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Constants;
@@ -52,6 +53,8 @@ import com.pusher.pushnotifications.PushNotifications;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.foa.smartpos.model.enums.OrderStatus.*;
 
 public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private View root;
@@ -76,7 +79,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private LinearLayout progressLoading;
     private LinearLayout progressItemLoading;
     private  OrderDetailListAdapter detailAdapter;
-    private OrderStatus selectedStatus = OrderStatus.ORDERED;
+    private OrderStatus selectedStatus = ORDERED;
     private boolean isSplitMode = false;
 
     @Override
@@ -119,10 +122,19 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     public void onResume() {
         super.onResume();
         progressLoading.setVisibility(View.VISIBLE);
-        OrderService.getAllOrder(OrderType.SALE.toString(), 1,OrderStatus.ORDERED.toString(), (success, data) -> {
+        OrderService.getAllOrder(OrderType.SALE.toString(), 1, ORDERED.toString(), (success, data) -> {
             if (success){
                 deliveryAdapter.setOrders(data);
-                progressLoading.setVisibility(View.GONE);
+                if (NotificationOrderIdSession.getInstance()!=null){
+                    OrderService.getOrderById(NotificationOrderIdSession.getInstance(), (success1, data1) -> {
+                        enableSplitLayout(getActivity());
+                        loadOrderDetail(data1,detailLayout);
+                        progressLoading.setVisibility(View.GONE);
+                        deliveryAdapter.setCurrentOrderId(data1.getId());
+                    });
+                }else {
+                    progressLoading.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -183,8 +195,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
             getActivity().runOnUiThread(() -> {
                 Gson g = new Gson();
                 Order updatedOrder = g.fromJson(event.getData(), Order.class);
-                if (updatedOrder.getStatus() == OrderStatus.COMPLETED){
-                    if ( selectedStatus == OrderStatus.COMPLETED){
+                if (updatedOrder.getStatus() == COMPLETED){
+                    if ( selectedStatus == COMPLETED){
                         deliveryAdapter.addOrder(orderSelected);
                     }else if(CompletedDeliveryOrderCatching.getCompletedOrderCatching()!=null){
                         CompletedDeliveryOrderCatching.addCompletedDeliveryCatching(orderSelected);
@@ -215,61 +227,72 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private void getOrderListWithPosition(int position){
         switch (position){
             case 0:
-                deliveryOrderControlLayout.setVisibility(View.VISIBLE);
+                displayControlLayout(true);
                 progressLoading.setVisibility(View.VISIBLE);
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.ORDERED.toString(), (success, data) -> {
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, ORDERED.toString(), (success, data) -> {
                     deliveryAdapter.setOrders(data);
                     progressLoading.setVisibility(View.GONE);
                 });
-                selectedStatus= OrderStatus.ORDERED;
+                selectedStatus= ORDERED;
                 break;
             case 1:
-                deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
+                displayControlLayout(false);
                 List<Order> confirmedorders = ConfirmedDeliveryOrderCatching.getConfirmedOrderCatching();
                 if (confirmedorders!=null){
                     deliveryAdapter.setOrders(confirmedorders);
                     break;
                 }
                 progressLoading.setVisibility(View.VISIBLE);
-                OrderService.getAllOrder(OrderType.SALE.name(), 1,OrderStatus.CONFIRMED.toString() ,(success, data) -> {
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, CONFIRMED.toString() ,(success, data) -> {
                     deliveryAdapter.setOrders(data);
                     ConfirmedDeliveryOrderCatching.setConfirmedDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
 
                 });
-                selectedStatus= OrderStatus.CONFIRMED;
+                selectedStatus= CONFIRMED;
                 break;
             case 2:
-                deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
+                displayControlLayout(false);
                 List<Order> completedOrders = CompletedDeliveryOrderCatching.getCompletedOrderCatching();
                 if (completedOrders!=null){
                     deliveryAdapter.setOrders(completedOrders);
                     break;
                 }
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.COMPLETED.toString(),(success, data) -> {
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, COMPLETED.toString(),(success, data) -> {
                     deliveryAdapter.setOrders(data);
                     CompletedDeliveryOrderCatching.setCompletedDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
                 });
-                selectedStatus= OrderStatus.COMPLETED;
+                selectedStatus= COMPLETED;
                 break;
             case 3:
-                deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
+                displayControlLayout(false);
                 List<Order> cancelledOrders = CancelledDeliveryOrderCatching.getCancelledOrderCatching();
                 if (cancelledOrders!=null){
                     deliveryAdapter.setOrders(cancelledOrders);
                     break;
                 }
                 progressLoading.setVisibility(View.VISIBLE);
-                OrderService.getAllOrder(OrderType.SALE.name(), 1, OrderStatus.CANCELLED.toString(),(success, data) -> {
+                OrderService.getAllOrder(OrderType.SALE.name(), 1, CANCELLED.toString(),(success, data) -> {
                     deliveryAdapter.setOrders(data);
                     CancelledDeliveryOrderCatching.setCancelledDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
 
                 });
-                selectedStatus= OrderStatus.CANCELLED;
+                selectedStatus= CANCELLED;
                 break;
         }
+    }
+
+    private void displayControlLayout(boolean isDisplay){
+        if (isDisplay){
+            deliveryOrderControlLayout.setVisibility(View.VISIBLE);
+            deliveryOrderControlLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+        }else{
+            deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
+            deliveryOrderControlLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,1));
+        }
+
     }
 
     @Override
@@ -314,19 +337,17 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     }
 
     public void loadOrderDetail(Order order, RelativeLayout detailLayout){
-        ((TextView)detailLayout.findViewById(R.id.subTotal)).setText(Helper.formatMoney(order.getGrandTotal()));
-        ((TextView)detailLayout.findViewById(R.id.tvGrandTotal)).setText(Helper.formatMoney(order.getGrandTotal()));
         ((TextView)detailLayout.findViewById(R.id.tvOderId)).setText(String.valueOf(order.getId()));
+        ((TextView)detailLayout.findViewById(R.id.qtyOrderItemTextView)).setText(Helper.formatMoney(order.getSubTotal()));
+        ((TextView)detailLayout.findViewById(R.id.tvGrandTotal)).setText(Helper.formatMoney(order.getGrandTotal()));
+        ((TextView)detailLayout.findViewById(R.id.tvShippingFee)).setText(Helper.formatMoney(order.getDelivery().getShippingFee()));
         ((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(Helper.formatMoney(order.getGrandTotal()));
-        if((TextView)detailLayout.findViewById(R.id.tvChange)!=null){
-            ((TextView)detailLayout.findViewById(R.id.tvChange)).setText(Helper.formatMoney(0));
-        }
+        ((TextView)detailLayout.findViewById(R.id.tvCustomerName)).setText(order.getDelivery().getCustomerName());
 
         Order orderCatching = DetailDeliveryOrderCatching.getOrderCatching(order);
         if (orderCatching!=null){
             detailAdapter.set(orderCatching.getOrderItems());
         }else{
-            progressItemLoading.setVisibility(View.VISIBLE);
             detailAdapter.set(new ArrayList<>());
             OrderService.getOrderById(order.getId(), (success, data) -> {
                 if (success){
@@ -357,7 +378,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                     btnConfirm.setVisibility(View.VISIBLE);
                 }
             });
-            if (selectedStatus == OrderStatus.ORDERED) dialog.show();
+            if (selectedStatus == ORDERED) dialog.show();
         });
     }
 

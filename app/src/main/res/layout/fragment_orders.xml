@@ -103,7 +103,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 style="@style/TalbleTitle"
                 android:gravity="start"
                 android:textAppearance="?android:textAppearanceMedium"
@@ -138,9 +138,10 @@
                 android:text="Loại đơn" />
 
             <TextView
+                android:id="@+id/titleCashierOrCustomer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:textAppearance="?android:textAppearanceMedium"
                 style="@style/TalbleTitle"
@@ -149,7 +150,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:paddingEnd="5dp"
                 style="@style/TalbleTitle"
                 android:gravity="center"
@@ -287,7 +288,7 @@
                             android:textSize="14dp" />
 
                         <TextView
-                            android:id="@+id/subTotal"
+                            android:id="@+id/qtyOrderItemTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="0 đ"
@@ -329,7 +330,7 @@
                         android:layout_marginTop="10dp">
 
                         <TextView
-                            android:id="@+id/twTotlaPay"
+                            android:id="@+id/grandTotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Tổng cộng"

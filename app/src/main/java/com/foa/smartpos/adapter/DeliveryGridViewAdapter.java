@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.solver.state.State;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.foa.smartpos.R;
@@ -66,11 +67,17 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
 
     public void setOrders(List<Order> orders){
         this.orders = orders;
+        currentOrderId="";
         this.notifyDataSetChanged();
     }
 
     public void removeOrder(Order order){
         this.orders.remove(order);
+        notifyDataSetChanged();
+    }
+
+    public void setCurrentOrderId(String orderId){
+        this.currentOrderId = orderId;
         notifyDataSetChanged();
     }
 
@@ -94,7 +101,11 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
         holder.cardItem.setOnClickListener(v -> {
             if (order.getId().equals(currentOrderId)){
                 currentOrderId="";
-                if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(null);
+                if (onSelectedItemListener!=null){
+                    orders = new ArrayList<>();
+                    notifyDataSetChanged();
+                    onSelectedItemListener.OnSelected(null);
+                }
             }else {
                 currentOrderId=order.getId();
                 if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(order);
@@ -103,11 +114,11 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
         });
 
         //set data
-        holder.orderId.setText(order.getId().substring(0,6));
+        holder.orderId.setText(order.getDelivery().getCustomerName());
         holder.orderQty.setText(String.valueOf(order.getSumQuantity()));
-        holder.orderAmount.setText(String.valueOf(Helper.formatMoney(order.getGrandTotal())));
+        holder.orderAmount.setText(Helper.formatMoney(order.getGrandTotal()));
         holder.deliveryStatus.setText(EnumHelper.getOrderStatusString(order.getStatus()));
-        holder.deliveryDistance.setText(String.valueOf(order.getDelivery().getDistance()));
+        holder.deliveryDistance.setText(Helper.formatDistance(order.getDelivery().getDistance()));
         holder.paymentStatus.setText("Tiền mặt");
         holder.itemView.setTag(order);
     }

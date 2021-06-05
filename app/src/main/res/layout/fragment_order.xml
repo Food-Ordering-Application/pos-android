@@ -250,7 +250,7 @@
                         android:text="Thành tiền" />
 
                     <TextView
-                        android:id="@+id/subTotal"
+                        android:id="@+id/qtyOrderItemTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAlignment="viewEnd"
@@ -306,7 +306,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
                     <TextView
-                        android:id="@+id/twTotlaPay"
+                        android:id="@+id/grandTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"

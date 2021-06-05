@@ -25,58 +25,6 @@ public class OrderDataSource {
 	{
 		this.db = db;
 	}
-	
-	public Order getOrderById(String id) {
-		 
-		Order order = new Order();
-		String selectQuery = 	" SELECT *  FROM " + DbSchema.TBL_ORDER + " Where " +DbSchema.COL_ORDER_ID + " = '"+id+"'";
-		Cursor c = db.rawQuery(selectQuery, null);
-	
-		if (c.moveToFirst()) {
-			do {
-
-				order.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ID)));
-				order.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				order.setSubTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_SUBTOTAL)));
-				order.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				order.setCustomerId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CASHIER_ID)));
-				
-				try {  
-				    order.setCreatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CREATED_AT))));
-				    order.setUpdatedAt( Helper.dateFormat.parse(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_UPDATED_AT))));
-				} catch (Exception e) {
-				}
-				
-				
-				String selectQueryDetail =  " SELECT  o.*,p."+DbSchema.COL_MENU_ITEM_NAME +",c."+DbSchema.COL_MENU_GROUP_NAME +"  FROM " + DbSchema.TBL_ORDER_ITEM + " o " +
-											" LEFT JOIN " +  DbSchema.TBL_MENU_ITEM +  " p ON p." +  DbSchema.COL_MENU_ITEM_ID + " = o." + DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID +
-											" LEFT JOIN " +  DbSchema.TBL_MENU_GROUP +  " c ON c." +  DbSchema.COL_MENU_GROUP_ID + " = p." + DbSchema.COL_MENU_GROUP_ID +
-											" WHERE " +DbSchema.COL_ORDER_ITEM_ORDER_ID + " = '"+id+"'";
-				Cursor cDetail = db.rawQuery(selectQueryDetail, null);
-				
-				ArrayList<OrderItem> details = new ArrayList<OrderItem>();
-				if (cDetail.moveToFirst()) {
-					do {
-						
-						OrderItem orderItem = new OrderItem();
-						orderItem.setId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_ID)));
-						orderItem.setMenuItemName(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_MENU_ITEM_NAME)));
-						orderItem.setOrderId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_ORDER_ID)));
-						orderItem.setMenuItemId(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_MENU_ITEM_ID)));
-						orderItem.setQuantity(cDetail.getInt(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_QTY)));
-						orderItem.setDiscount(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_DISCOUNT)));
-						orderItem.setPrice(cDetail.getLong(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_PRICE)));
-						orderItem.setStockState(StockState.valueOf(cDetail.getString(cDetail.getColumnIndex(DbSchema.COL_ORDER_ITEM_STATE))));
-						details.add(orderItem);
-					} while (cDetail.moveToNext());
-				}
-				
-				 order.setOrderItems(details);
-			
-			} while (c.moveToNext());
-		}
-		return order;
-	}
 
 	public ArrayList<Order> getAllOrder(String startDate, String endDate) {
 		return getAllOrder(null,null,null,null, OrderStatus.COMPLETED,startDate,endDate,false);
@@ -119,9 +67,11 @@ public class OrderDataSource {
 				Order item = new Order();
 				item.setId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_ID)));
 				item.setNote(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_DESCRIPTION)));
-				item.setGrandTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_SUBTOTAL)));
+				item.setSubTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_SUBTOTAL)));
+				item.setGrandTotal(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_GRAND_TOTAL)));
 				item.setDiscount(c.getLong(c.getColumnIndex(DbSchema.COL_ORDER_DISCOUNT)));
 				item.setCashierId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CASHIER_ID)));
+				item.setCashierName(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_CASHIER_NAME)));
 				item.setRestaurantId(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_RESTAURANT_ID)));
 				item.setStatus(OrderStatus.valueOf(c.getString(c.getColumnIndex(DbSchema.COL_ORDER_STATUS))));
 				item.setSelected(false);
@@ -174,6 +124,7 @@ public class OrderDataSource {
 		values.put(DbSchema.COL_ORDER_GRAND_TOTAL, item.getSubTotal());
 		values.put(DbSchema.COL_ORDER_DISCOUNT,item.getDiscount());
 		values.put(DbSchema.COL_ORDER_CASHIER_ID, item.getCashierId());
+		values.put(DbSchema.COL_ORDER_CASHIER_NAME, item.getCashierName());
 		values.put(DbSchema.COL_ORDER_RESTAURANT_ID, item.getRestaurantId());
 		values.put(DbSchema.COL_ORDER_STATUS, item.getStatus().toString());
 		values.put(DbSchema.COL_ORDER_CREATED_AT, Helper.dateTimeformat.format(new Date()));

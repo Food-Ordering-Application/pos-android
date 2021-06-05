@@ -29,7 +29,7 @@
             <!--body cart-->
             <LinearLayout
                 android:id="@+id/cartContainer"
-                android:layout_width="700dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/card_edge"
@@ -39,19 +39,33 @@
                 android:layout_marginEnd="4dp"
                 android:paddingTop="2dp"
                 >
-
-                <ListView
-                    android:id="@+id/listOrderDetails"
-                    android:layout_weight="3"
-                    android:layout_width="0dp"
-                    android:layout_height="320dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginBottom="2dp"
-                    android:animateLayoutChanges="true"/>
                 <LinearLayout
-                    android:layout_weight="2"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <ListView
+                        android:id="@+id/listOrderDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="2dp"
+                        android:animateLayoutChanges="true"/>
+                    <LinearLayout
+                        android:id="@+id/progressLoading"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <ProgressBar
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -85,7 +99,7 @@
                                     android:text="Thành tiền  " />
 
                                 <TextView
-                                    android:id="@+id/subTotal"
+                                    android:id="@+id/qtyOrderItemTextView"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:textAlignment="viewEnd"
@@ -102,14 +116,15 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="16sp"
                                     android:textColor="@color/item"
-                                    android:text="Giảm trên món  " />
+                                    android:text="Phí giao hàng" />
 
                                 <TextView
+                                    android:id="@+id/shippingFee"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="0 đ"
                                     android:textAlignment="viewEnd"
-                                    android:textSize="16sp"
-                                    android:text="0 đ" />
+                                    android:textSize="16sp" />
                             </LinearLayout>
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -141,7 +156,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp">
                                 <TextView
-                                    android:id="@+id/twTotlaPay"
+                                    android:id="@+id/grandTotal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textSize="16sp"
@@ -185,7 +200,7 @@
                                 android:textSize="16sp"
                                 android:padding="5dp"
                                 android:textColor="@color/item"
-                                android:text="Khách hàng" />
+                                android:text="KH" />
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -233,21 +248,6 @@
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
-
-                    <Button
-                        android:layout_marginTop="15dp"
-                        android:id="@+id/btnCancel"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:textSize="14sp"
-                        android:layout_weight="3"
-                        android:layout_marginEnd="0dp"
-                        android:layout_margin="10dp"
-                        android:text="Thoát"
-                        android:layout_marginStart="8dp"
-                        android:textColor="@color/white"
-                        android:background="@color/primaryColor"
-                        />
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>

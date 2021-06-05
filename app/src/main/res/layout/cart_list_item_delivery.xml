@@ -26,44 +26,22 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/tvCartProductName"
         android:layout_below="@+id/tvCartProductName"
-        android:layout_toStartOf="@+id/btnSubQuantityCartItem"
         android:textColor="@color/text_gray"
         android:textSize="12sp"
         android:text="Topping name" />
-    <ImageButton
-        android:id="@+id/btnSubQuantityCartItem"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/qtyOrderItemTextView"
-        android:background="@null"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_remove_circle" />
 
 
     <TextView
-        android:id="@+id/qtyOrderItemTextView"
+        android:id="@+id/quantityTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/btnPlusQuantityCartItem"
+        android:layout_toLeftOf="@+id/tvProductPrice"
         android:text="0"
         android:textSize="20sp" />
 
-    <ImageButton
-        android:id="@+id/btnPlusQuantityCartItem"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_toLeftOf="@+id/tvProductPrice"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="8dp"
-        android:background="@null"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_add_circle_24" />
     <TextView
         android:id="@+id/tvProductPrice"
         android:layout_width="80dp"

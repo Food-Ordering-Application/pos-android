@@ -19,6 +19,7 @@ import com.foa.smartpos.network.response.LoginData;
 import com.foa.smartpos.network.response.ResponseAdapter;
 import com.foa.smartpos.network.utils.NetworkStatus;
 import com.foa.smartpos.network.utils.NetworkUtils;
+import com.foa.smartpos.session.NotificationOrderIdSession;
 import com.foa.smartpos.sqlite.DatabaseHelper;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.utils.Constants;
@@ -72,15 +73,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 	private void goNext(){
 		Intent intent;
-		if(NetworkUtils.getConnectivityStatusString(context)== NetworkStatus.CONNETED){
-			intent = new Intent(LoginActivity.this,SplashActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
-		}else{
+		if (NotificationOrderIdSession.getInstance()!=null ){
 			intent = new Intent(LoginActivity.this,MainActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		}else if(NetworkUtils.getConnectivityStatusString(context)== NetworkStatus.CONNETED){
+			intent = new Intent(LoginActivity.this,SplashActivity.class);
+		}else {
+			intent = new Intent(LoginActivity.this,MainActivity.class);
 		}
-
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 		finish();
 	}

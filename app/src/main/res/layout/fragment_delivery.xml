@@ -301,7 +301,7 @@
                             android:text="Thành tiền" />
 
                         <TextView
-                            android:id="@+id/subTotal"
+                            android:id="@+id/qtyOrderItemTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
@@ -318,10 +318,10 @@
                             android:layout_height="wrap_content"
                             android:textSize="14dp"
                             android:textColor="@color/item"
-                            android:text="Giảm" />
+                            android:text="Phí giao hàng" />
 
                         <TextView
-                            android:id="@+id/tvDiscount"
+                            android:id="@+id/tvShippingFee"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
@@ -338,7 +338,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp">
                         <TextView
-                            android:id="@+id/twTotlaPay"
+                            android:id="@+id/grandTotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="14dp"
@@ -379,6 +379,27 @@
                     android:background="@drawable/card_edge"
                     android:padding="10dp">
                     <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:textColor="@color/item"
+                            android:text="Khách hàng" />
+
+                        <TextView
+                            android:id="@+id/tvCustomerName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="viewEnd"
+                            android:textSize="16sp"
+                            android:text="Nguyễn Văn A" />
+                    </LinearLayout>
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
@@ -396,7 +417,7 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
                             android:textSize="16sp"
-                            android:text="Thẻ ATM" />
+                            android:text="Thu hộ" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -413,9 +434,9 @@
                             android:id="@+id/tvReceiveMoney"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="0 đồng"
                             android:textAlignment="viewEnd"
-                            android:textSize="16dp"
-                            android:text="0 đồng" />
+                            android:textSize="16dp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

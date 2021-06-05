@@ -13,10 +13,10 @@ import java.util.List;
 public class Order{
 	@SerializedName( "id" )
 	private String id;
-	@SerializedName( "customerId" )
-	private String customerId;
 	@SerializedName( "cashierId" )
 	private String cashierId;
+	@SerializedName( "cashierName" )
+	private String cashierName;
 	@SerializedName( "restaurantId" )
 	private String restaurantId;
 	@SerializedName( "subTotal" )
@@ -61,12 +61,12 @@ public class Order{
 		this.id = id;
 	}
 
-	public String getCustomerId() {
-		return customerId;
+	public String getCashierName() {
+		return cashierName;
 	}
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
+	public void setCashierName(String cashierName) {
+		this.cashierName = cashierName;
 	}
 
 	public String getCashierId() {

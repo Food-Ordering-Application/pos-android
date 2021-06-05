@@ -78,14 +78,14 @@ public class OrderDetailListAdapter extends BaseAdapter {
         ViewHolder holder;
         
         if (convertView == null) {
-        	vi = inflater.inflate(R.layout.cart_list_item, null);
+        	vi = inflater.inflate(R.layout.cart_list_item_delivery, null);
             holder = new ViewHolder();
 
             holder.layoutOrderItem = vi.findViewById(R.id.layoutOrderItem);
             holder.name = vi.findViewById(R.id.tvCartProductName);
             holder.toppingName = vi.findViewById(R.id.tvTopping);
             holder.price = vi.findViewById(R.id.tvProductPrice);
-            holder.qty = vi.findViewById(R.id.subTotal);
+            holder.qty = vi.findViewById(R.id.quantityTextView);
             holder.btnMinus = vi.findViewById(R.id.btnSubQuantityCartItem);
             holder.btnPlus = vi.findViewById(R.id.btnPlusQuantityCartItem);
             
@@ -109,10 +109,6 @@ public class OrderDetailListAdapter extends BaseAdapter {
         orderItem.getOrderItemToppings().forEach(item->
                 toppingNamesBuilder.append(item.getName()).append("\n"));
         holder.toppingName.setText(toppingNamesBuilder.toString().trim());
-
-
-        holder.btnMinus.setVisibility(View.INVISIBLE);
-        holder.btnPlus.setVisibility(View.INVISIBLE);
         return vi;
     }
 }

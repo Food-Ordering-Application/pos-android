@@ -55,6 +55,7 @@ public interface DbSchema {
 	String COL_ORDER_SUBTOTAL = "sub_total";
 	String COL_ORDER_GRAND_TOTAL = "grand_total";
 	String COL_ORDER_CASHIER_ID = "cashier_id";
+	String COL_ORDER_CASHIER_NAME = "cashier_name";
 	String COL_ORDER_RESTAURANT_ID = "restaurant_id";
 	String COL_ORDER_STATUS = "status";
 	
@@ -68,6 +69,7 @@ public interface DbSchema {
 				+ COL_ORDER_SUBTOTAL + " INTEGER,"
 				+ COL_ORDER_GRAND_TOTAL + " INTEGER,"
 				+ COL_ORDER_CASHIER_ID + " TEXT,"
+				+ COL_ORDER_CASHIER_NAME + " TEXT,"
 				+ COL_ORDER_RESTAURANT_ID + " TEXT,"
 				+ COL_ORDER_STATUS + " TEXT,"
 				+ COL_ORDER_CREATED_AT + " DATETIME,"

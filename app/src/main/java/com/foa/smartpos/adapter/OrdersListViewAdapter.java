@@ -70,7 +70,9 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
             holder.orderId = convertView.findViewById(R.id.orderId);
             holder.orderTime = convertView.findViewById(R.id.orderTime);
             holder.orderAmount = convertView.findViewById(R.id.orderAmount);
-            holder.orderStatus = convertView.findViewById(R.id.orderStatus);
+            holder.cashierName = convertView.findViewById(R.id.cashierCustomerName);
+            holder.orderTypeName = convertView.findViewById(R.id.orderTypeName);
+            holder.paymentMethod = convertView.findViewById(R.id.paymentMethod);
             holder.syncStatusIcon = convertView.findViewById(R.id.syncStatusIcon);
             convertView.setTag(holder);
         }else {
@@ -96,15 +98,23 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
 
 
         holder.orderId.setText(order.getId());
-        holder.orderTime.setText(Helper.dateTimeformat.format(order.getCreatedAt()));
-        holder.orderAmount.setText(String.valueOf(order.getGrandTotal()));
-        holder.orderStatus.setText("Tiền mặt");
-        if (order.getSyncedAt()==null||order.getDelivery()==null){
-            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_none);
+        holder.orderTime.setText(Helper.dateTimeformat2.format(order.getCreatedAt()));
+        holder.orderAmount.setText(Helper.formatMoney(order.getGrandTotal()));
+        holder.paymentMethod.setText("Tiền mặt");
+        if (order.getDelivery()!=null){
+            holder.orderTypeName.setText("Trực tuyến");
+            holder.cashierName.setText(order.getDelivery().getCustomerName());
         }else{
-            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_done);
+            holder.orderTypeName.setText("Tại quán");
+            holder.cashierName.setText(order.getCashierName());
+
         }
 
+        if (order.getDelivery()!=null||order.getSyncedAt()!=null){
+            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_done);
+        }else{
+            holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_none);
+        }
 
 
         return convertView;
@@ -115,7 +125,9 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
         TextView orderId;
         TextView orderTime;
         TextView orderAmount;
-        TextView orderStatus;
+        TextView orderTypeName;
+        TextView cashierName;
+        TextView paymentMethod;
         ImageView syncStatusIcon;
     }
 }

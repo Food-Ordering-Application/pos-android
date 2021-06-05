@@ -187,6 +187,11 @@ public final class Helper
 		}
 	}
 
+	public static String formatDistance(float distance){
+		DecimalFormat df = new DecimalFormat("#.00");
+		return df.format(distance/1000) + " Km";
+	}
+
 	public static String getAppDir()
 	{
 		File f;

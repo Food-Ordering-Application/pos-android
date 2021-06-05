@@ -43,6 +43,7 @@ public class OrdersFragment extends Fragment {
     Spinner orderTypeSpinner;
     Button btnSearch;
     LinearLayout progressLoading;
+    TextView titleCashierOrCustomer;
 
     String startDate;
     String endDate;
@@ -61,6 +62,7 @@ public class OrdersFragment extends Fragment {
         orderTypeSpinner = root.findViewById(R.id.orderTypeSpinner);
         btnSearch = root.findViewById(R.id.btnSearch);
         progressLoading = root.findViewById(R.id.progressLoading);
+        titleCashierOrCustomer = root.findViewById(R.id.titleCashierOrCustomer);
 
         String currentDate = Helper.dateFormat.format(Calendar.getInstance().getTime());
         dateFromTextView.setText(currentDate);
@@ -84,33 +86,42 @@ public class OrdersFragment extends Fragment {
         });
 
         Helper.initialize(getActivity().getBaseContext());
+
+
+        theListView.setOnItemClickListener((parent, view, position, id) -> {
+            Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
+        });
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressLoading.setVisibility(View.VISIBLE);
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
         String dateNow = Helper.dateTimeformat.format(new Date());
         final OrdersListViewAdapter adapter = new OrdersListViewAdapter(getActivity(), DS.getAllOrder(dateNow,dateNow));
         // set elements to adapter
         theListView.setAdapter(adapter);
-        theListView.setOnItemClickListener((parent, view, position, id) -> {
-            Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
-        });
-
+        progressLoading.setVisibility(View.GONE);
         adapter.setData(DS.getAllOrder(startDate,endDate));
         btnSearch.setOnClickListener(view -> {
             progressLoading.setVisibility(View.VISIBLE);
             if (orderTypeSpinner.getSelectedItem().equals("Tại quán")){
+                titleCashierOrCustomer.setText("Thu ngân");
                 adapter.setData(DS.getAllOrder(startDate,endDate));
                 progressLoading.setVisibility(View.GONE);
 
             }else{
                 OrderService.getAllOrder(OrderType.SALE.toString(), 1, (success, data) -> {
+                    titleCashierOrCustomer.setText("Khách hàng");
                     adapter.setData(data);
                     progressLoading.setVisibility(View.GONE);
                 });
             }
 
         });
-
-        return root;
     }
 
     private final View.OnClickListener onPickDateFrom = v -> showDateStartTimePicker();

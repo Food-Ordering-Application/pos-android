@@ -1,8 +1,12 @@
 package com.foa.smartpos.model.enums;
 
 public enum DeliveryStatus {
-    WAITING,
-    IN_PROCESSING,
-    COMPLETED,
-    CANCELED
+    DRAFT,
+    ASSIGNING_DRIVER,
+    ON_GOING,
+    PICKED_UP ,
+    COMPLETED ,
+    CANCELLED ,
+    EXPIRED
+    //ON_GOING OR PICKED_UP = ACTIVE
 }

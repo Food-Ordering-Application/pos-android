@@ -166,7 +166,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         cartWrapper = root.findViewById(R.id.bgCart);
         menuGrid = root.findViewById(R.id.gridView1);
         txtEmpty = root.findViewById(R.id.textView9);
-        txtTotal = root.findViewById(R.id.subTotal);
+        txtTotal = root.findViewById(R.id.qtyOrderItemTextView);
         txtGrandTotal = root.findViewById(R.id.tvGrandTotal);
         txtKeyword = root.findViewById(R.id.editText1);
         btnOrder = root.findViewById(R.id.btnOrder);
@@ -301,6 +301,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
             currentOrder.setId(Helper.getOrderID());
             currentOrder.setRestaurantId(Helper.read(Constants.RESTAURANT_ID));
             currentOrder.setCashierId(Helper.read(Constants.CASHIER_ID));
+            currentOrder.setCashierName(Helper.read(Constants.CASHIER_NAME));
             currentOrder.setStatus(OrderStatus.DRAFT);
             currentOrder.setCreatedAt(dt);
             currentOrder.setNote("");

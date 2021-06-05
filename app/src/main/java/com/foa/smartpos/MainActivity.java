@@ -24,6 +24,7 @@ import com.foa.smartpos.model.Order;
 import com.foa.smartpos.receiver.BackgroundJobReceiver;
 import com.foa.smartpos.receiver.NetworkReceiver;
 import com.foa.smartpos.session.BackgroundJobSession;
+import com.foa.smartpos.session.NotificationOrderIdSession;
 import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.session.OrderSession;
@@ -55,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
 				.setOpenableLayout(drawer)
 				.build();
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+		if(NotificationOrderIdSession.getInstance()!=null){
+				Bundle bundle = new Bundle();
+				bundle.putString("orderId", NotificationOrderIdSession.getInstance());
+				navController.navigate(R.id.navigation_delivery,bundle);
+		}
+
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 		NavigationUI.setupWithNavController(navigationView, navController);
 		navigationView.bringToFront();
@@ -63,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 			logout();
 			return true;
 		});
+
+
 
 		BackgroundJobSession.resetInstance(this,0);
 	}
@@ -75,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
 
 		PushNotifications.start(getApplicationContext(), "77650b88-b6b2-4178-9fc2-95c36493470d");
 		PushNotifications.addDeviceInterest("orders_"+Helper.read(Constants.RESTAURANT_ID));
+		//PushNotifications.stop();
+		//PushNotifications.addDeviceInterest("orders_"+Helper.read(Constants.RESTAURANT_ID));
+		//PushNotifications.clearDeviceInterests();
+
 	}
 
 	@Override
