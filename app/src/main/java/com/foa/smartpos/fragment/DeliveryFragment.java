@@ -99,13 +99,17 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         deliveryAdapter = new DeliveryGridViewAdapter(getActivity(), orderList);
         detailAdapter = new OrderDetailListAdapter(getActivity());
         orderRecyclerView.setAdapter(deliveryAdapter);
-        deliveryAdapter.setOnSelectedItemListener(order -> {
+        deliveryAdapter.setOnSelectedItemListener((order, position) -> {
             detailAdapter.set(new ArrayList<>());
             if (order!=null){
-                enableSplitLayout(getActivity());
+                if (!isSplitMode){
+                    enableSplitLayout(getActivity(),position);
+                }
+                isSplitMode=true;
                 loadOrderDetail(order,detailLayout);
                 orderSelected = order;
             }else{
+                isSplitMode=false;
                 disableSplitLayout(getActivity());
             }
         });
@@ -125,9 +129,11 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         OrderService.getAllOrder(OrderType.SALE.toString(), 1, ORDERED.toString(), (success, data) -> {
             if (success){
                 deliveryAdapter.setOrders(data);
+                orderRecyclerView.smoothScrollToPosition(data.size()-1);
                 if (NotificationOrderIdSession.getInstance()!=null){
                     OrderService.getOrderById(NotificationOrderIdSession.getInstance(), (success1, data1) -> {
-                        enableSplitLayout(getActivity());
+                        enableSplitLayout(getActivity(),data.size()-1);
+                        isSplitMode = true;
                         loadOrderDetail(data1,detailLayout);
                         progressLoading.setVisibility(View.GONE);
                         deliveryAdapter.setCurrentOrderId(data1.getId());
@@ -287,10 +293,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private void displayControlLayout(boolean isDisplay){
         if (isDisplay){
             deliveryOrderControlLayout.setVisibility(View.VISIBLE);
-            deliveryOrderControlLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
         }else{
             deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
-            deliveryOrderControlLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,1));
         }
 
     }
@@ -311,6 +315,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 OrderService.confirmOrder(orderSelected.getId(), success -> {
                     if (success){
                         Helper.disableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+                        isSplitMode = false;
                         deliveryAdapter.removeOrder(orderSelected);
                         if(ConfirmedDeliveryOrderCatching.getConfirmedOrderCatching()!=null){
                             ConfirmedDeliveryOrderCatching.addConfirmedDeliveryCatching(orderSelected);
@@ -382,7 +387,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         });
     }
 
-    public void enableSplitLayout(Context context) {
+    public void enableSplitLayout(Context context,int position) {
         final int width = Helper.getDisplayWidth();
 
         ViewGroup.LayoutParams param = deliveriesLayout.getLayoutParams();
@@ -395,6 +400,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         detailLayout.setLayoutParams(param2);
 
         orderRecyclerView.setLayoutManager(new GridLayoutManager(context,3));
+        orderRecyclerView.smoothScrollToPosition(position);
     }
 
     public void disableSplitLayout(Context context) {

@@ -9,8 +9,7 @@ public class NotificationsMessagingService extends MessagingService {
 
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.e("PUSHER: ","Receive order");
+    public void onMessageReceived(RemoteMessage remoteMessage) { Log.e("PUSHER: ","Receive order");
     }
 
 }

@@ -104,11 +104,11 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
                 if (onSelectedItemListener!=null){
                     orders = new ArrayList<>();
                     notifyDataSetChanged();
-                    onSelectedItemListener.OnSelected(null);
+                    onSelectedItemListener.OnSelected(null,position);
                 }
             }else {
                 currentOrderId=order.getId();
-                if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(order);
+                if (onSelectedItemListener!=null) onSelectedItemListener.OnSelected(order,position);
             }
             notifyDataSetChanged();
         });
@@ -157,6 +157,6 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
     }
 
     public interface OnSelectedItemListener{
-        void OnSelected(Order order);
+        void OnSelected(Order order, int position);
     }
 }
