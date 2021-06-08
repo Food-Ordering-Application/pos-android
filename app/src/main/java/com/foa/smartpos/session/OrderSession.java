@@ -9,9 +9,6 @@ public class OrderSession {
     }
 
     public static Order getInstance(){
-        if (currentOrder == null){
-            currentOrder  = new Order();
-        }
         return currentOrder;
     }
 

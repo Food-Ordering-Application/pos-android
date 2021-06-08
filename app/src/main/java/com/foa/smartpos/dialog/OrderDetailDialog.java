@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -50,21 +51,30 @@ public class OrderDetailDialog extends Dialog {
 		setContentView(R.layout.dialog_order_detail);
 		init();
 		loadData();
-
 		progressLoading.setVisibility(View.VISIBLE);
-		if (DetailDeliveryOrderCatching.getOrderCatching(order)==null){
-			OrderService.getOrderById(order.getId(), (success, data) -> {
-				DetailDeliveryOrderCatching.addDeliveryCatching(data);
-				OrderDetailListAdapter detailAdapter = new OrderDetailListAdapter((Activity) context,data.getOrderItems());
-				orderItemsListView.setAdapter(detailAdapter);
-				order = data;
-				loadData();
-				progressLoading.setVisibility(View.GONE);
-			});
-		}
-		progressLoading.setVisibility(View.GONE);
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		OrderDetailListAdapter detailAdapter = new OrderDetailListAdapter((Activity) context);
+		if (order.getDelivery()!=null){
+			if (DetailDeliveryOrderCatching.getOrderCatching(order)==null){
+				OrderService.getOrderById(order.getId(), (success, data) -> {
+					DetailDeliveryOrderCatching.addDeliveryCatching(data);
+					order = data;
+					detailAdapter.set(order.getOrderItems());
+
+					loadData();
+					progressLoading.setVisibility(View.GONE);
+				});
+			}
+		}else{
+			detailAdapter.set(order.getOrderItems());
+		}
+		orderItemsListView.setAdapter(detailAdapter);
+		progressLoading.setVisibility(View.GONE);
+	}
 
 	private void init(){
 		progressLoading = findViewById(R.id.progressLoading);

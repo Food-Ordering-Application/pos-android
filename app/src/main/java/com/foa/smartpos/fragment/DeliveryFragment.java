@@ -53,6 +53,9 @@ import com.pusher.pushnotifications.PushNotifications;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.foa.smartpos.model.enums.OrderStatus.*;
 
@@ -81,6 +84,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private  OrderDetailListAdapter detailAdapter;
     private OrderStatus selectedStatus = ORDERED;
     private boolean isSplitMode = false;
+    private TextView emptyListTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,7 +100,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),4);
         orderRecyclerView.setLayoutManager(layoutManager);
-        deliveryAdapter = new DeliveryGridViewAdapter(getActivity(), orderList);
+        deliveryAdapter = new DeliveryGridViewAdapter(getActivity(), orderList,emptyListTextView);
         detailAdapter = new OrderDetailListAdapter(getActivity());
         orderRecyclerView.setAdapter(deliveryAdapter);
         deliveryAdapter.setOnSelectedItemListener((order, position) -> {
@@ -122,27 +126,43 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         return root;
     }
 
+    private void getOrderList(int pageNumber,OrderStatus status){
+        OrderService.getAllOrder(OrderType.SALE.toString(), pageNumber,status.toString(), (success, data) -> {
+            if (success){
+                orderList = Stream.concat(orderList.stream(), data.stream())
+                        .collect(Collectors.toList());
+                if (data.size()==25){
+                    getOrderList(pageNumber+1,status);
+                }else{
+                    deliveryAdapter.setOrders(data);
+                    if(data.size()>0)
+                        orderRecyclerView.smoothScrollToPosition(data.size()-1);
+                    if (NotificationOrderIdSession.getInstance()!=null){
+                        OrderService.getOrderById(NotificationOrderIdSession.getInstance(), (success1, data1) -> {
+                            enableSplitLayout(getActivity(),orderList.size()-1);
+                            isSplitMode = true;
+                            loadOrderDetail(data1,detailLayout);
+                            progressLoading.setVisibility(View.GONE);
+                            deliveryAdapter.setCurrentOrderId(data1.getId());
+                        });
+                    }else {
+                        progressLoading.setVisibility(View.GONE);
+                    }
+                }
+
+            };
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         progressLoading.setVisibility(View.VISIBLE);
-        OrderService.getAllOrder(OrderType.SALE.toString(), 1, ORDERED.toString(), (success, data) -> {
-            if (success){
-                deliveryAdapter.setOrders(data);
-                orderRecyclerView.smoothScrollToPosition(data.size()-1);
-                if (NotificationOrderIdSession.getInstance()!=null){
-                    OrderService.getOrderById(NotificationOrderIdSession.getInstance(), (success1, data1) -> {
-                        enableSplitLayout(getActivity(),data.size()-1);
-                        isSplitMode = true;
-                        loadOrderDetail(data1,detailLayout);
-                        progressLoading.setVisibility(View.GONE);
-                        deliveryAdapter.setCurrentOrderId(data1.getId());
-                    });
-                }else {
-                    progressLoading.setVisibility(View.GONE);
-                }
-            }
-        });
+        getOrderList(1, ORDERED);
+
+
+
+
     }
 
     private void  init(){
@@ -161,6 +181,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         deliveryOrderControlLayout = root.findViewById(R.id.deliveryOrderControlLayout);
         progressLoading = root.findViewById(R.id.progressLoading);
         progressItemLoading = root.findViewById(R.id.progressItemLoading);
+        emptyListTextView = root.findViewById(R.id.emptyListTextView);
     }
 
     private void initPusher(){
@@ -354,6 +375,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
             detailAdapter.set(orderCatching.getOrderItems());
         }else{
             detailAdapter.set(new ArrayList<>());
+            progressItemLoading.setVisibility(View.VISIBLE);
             OrderService.getOrderById(order.getId(), (success, data) -> {
                 if (success){
                     detailAdapter.set(data.getOrderItems());

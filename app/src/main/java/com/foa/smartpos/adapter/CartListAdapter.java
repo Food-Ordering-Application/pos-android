@@ -86,8 +86,15 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHo
             OrderHelper.removeAllOrderItems();
             if (listener!=null) listener.onChange();
         }
-
     }
+    public void resetCart() {
+        if (dataList.size() > 0) {
+            dataList = new ArrayList<>();
+            notifyDataSetChanged();
+            if (listener!=null) listener.onChange();
+        }
+    }
+
 
     public void removeItem(int pos) {
         dataList.remove(pos);

@@ -27,7 +27,7 @@ public class BackgroundJobReceiver extends BroadcastReceiver {
         try{
             SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
             OrderDataSource orderDS = new OrderDataSource(db);
-            List<Order> orderList = orderDS.getAllOrder(true);
+            List<Order> orderList = orderDS.getAllOrderNotSync(true);
             orderList.forEach(item -> {
                 OrderService.syncOrder(item, success -> {
                     if (success){

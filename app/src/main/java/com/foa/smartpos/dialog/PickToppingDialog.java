@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -43,7 +44,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	private PickToppingListener listener;
 	private LoginData loginData;
 	private boolean enableOkButton;
-	List<ToppingGroup> toppingGroup;
+	List<ToppingGroup> toppingGroups;
 	List<OrderItemTopping> orderItemToppings;
 
 	MenuItemToppingDataSource menuItemToppingDS;
@@ -54,7 +55,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 		this.menuItem = menuItem;
 		this.menuItemToppingGroupRadioButton = new ArrayList<>();
 		this.orderItemToppings = new ArrayList<>();
-		this.toppingGroup = new ArrayList<>();
+		this.toppingGroups = new ArrayList<>();
 	}
 	
 	@Override
@@ -81,8 +82,8 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 
 		SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
 		menuItemToppingDS = new MenuItemToppingDataSource(db);
-		toppingGroup = menuItemToppingDS.getToppingGroupByMenuId(menuItem.getId());
-		addRadioButtons(toppingGroup);
+		toppingGroups = menuItemToppingDS.getToppingGroupByMenuId(menuItem.getId());
+		addRadioButtons(toppingGroups);
 		checkEnableOkButton();
 		progressBar.setVisibility(View.GONE);
 		toppingsGroupContainer.setVisibility(View.VISIBLE);
@@ -92,10 +93,10 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 
 		for (RadioGroup toppingGroup: menuItemToppingGroupRadioButton) {
 			toppingGroup.setOnCheckedChangeListener((group, checkedId) -> {
-				addToOrderItemToppingList(toppingGroup.getCheckedRadioButtonId());
 				boolean isEnable=true;
 				orderItemToppings = new ArrayList<>();
 				for (RadioGroup item : menuItemToppingGroupRadioButton) {
+					Log.e("radio-check: ", String.valueOf(item.getCheckedRadioButtonId()));
 					if(item.getCheckedRadioButtonId()== -1){
 						isEnable = false;
 					}else{
@@ -109,8 +110,9 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 	}
 
 	private void addToOrderItemToppingList(int radioButtonId){
-		for (ToppingGroup toppingGroup : toppingGroup) {
+		for (ToppingGroup toppingGroup : toppingGroups) {
 			for (ToppingItem toppingItem : toppingGroup.getToppingItems()) {
+				Log.e("radio-add: ",toppingItem.getRadioButtonId() +":"+ (radioButtonId));
 				if(toppingItem.getRadioButtonId()==radioButtonId) {
 					orderItemToppings.add(toppingItem.createOrderItemTopping());
 				}
@@ -159,6 +161,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
 				ToppingItem currentMenuItemTopping = currentToppingGroup.getToppingItems().get(j);
 				rdbtn.setId(View.generateViewId());
 				currentMenuItemTopping.setRadioButtonId(rdbtn.getId());
+				Log.e("radio: ", currentMenuItemTopping.getId()+" : "+ currentMenuItemTopping.getRadioButtonId());
 				rdbtn.setText(currentMenuItemTopping.getName() + "  -  "+ currentMenuItemTopping.getPrice() +"đ");
 				rdbtn.setPadding(20, 10, 20, 10);
 				rdbtn.setGravity(Gravity.CENTER);
@@ -192,7 +195,7 @@ public class PickToppingDialog extends Dialog implements View.OnClickListener{
     }
 
     public interface PickToppingListener {
-        void onFinish(List<OrderItemTopping> toppingGroups);
+        void onFinish(List<OrderItemTopping> orderItemToppings);
     }
 
 //	private void getToppingsByMenuItemId(String menuItemId, IResultCallback resultCallback) {

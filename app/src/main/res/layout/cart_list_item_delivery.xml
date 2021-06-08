@@ -15,7 +15,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/btnSubQuantityCartItem"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="4dp"
         android:text="title"
         android:textColor="@color/item"
         android:textSize="17sp" />

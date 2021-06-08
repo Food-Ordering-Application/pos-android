@@ -27,6 +27,7 @@ import com.foa.smartpos.network.utils.NetworkUtils;
 import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
+import com.foa.smartpos.utils.Helper;
 import com.foa.smartpos.utils.LoggerHelper;
 import com.foa.smartpos.session.OrderSession;
 
@@ -54,22 +55,21 @@ public class PaymentDialog  extends DialogFragment implements View.OnClickListen
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
 
-        view = getActivity().getLayoutInflater().inflate(R.layout.payment_dialog, null, false);
+        view = getActivity().getLayoutInflater().inflate(R.layout.dialog_payment, null, false);
 
         // Build dialog
         Dialog builder = new Dialog(getActivity());
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        builder.getWindow().setLayout(400,600);
         builder.setContentView(view);
 
         tvTotalPay = view.findViewById(R.id.tvGrandTotal);
-        tvChange = view.findViewById(R.id.tvChange);
+        tvChange = view.findViewById(R.id.totalChange);
         btnPay =  view.findViewById(R.id.btnPay);
         btnCancel =  view.findViewById(R.id.btnCancel);
 
         currentOrder= OrderSession.getInstance();
-        tvTotalPay.setText(String.valueOf(currentOrder.getSubTotal()));
+        tvTotalPay.setText(Helper.formatMoney(0));
 
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         orderDS = new OrderDataSource(db);
@@ -99,7 +99,9 @@ public class PaymentDialog  extends DialogFragment implements View.OnClickListen
     @Override
     public void onStart() {
         super.onStart();
-        getDialog().getWindow().setLayout(800,1200);
+        int height = getResources().getDimensionPixelOffset(R.dimen.popup_height);
+        int width = getResources().getDimensionPixelOffset(R.dimen.popup_width);
+        getDialog().getWindow().setLayout(width,height);
     }
 
     @Override
@@ -142,9 +144,14 @@ public class PaymentDialog  extends DialogFragment implements View.OnClickListen
                 }
         }
         tvTotalPay.setText(newTotalPay);
-        totalChange = Long.parseLong(newTotalPay)-currentOrder.getGrandTotal();
-        if (totalChange<0) btnPay.setEnabled(false);
-        tvChange.setText(String.valueOf(totalChange));
+        try {
+            totalChange = Long.parseLong(newTotalPay)-currentOrder.getGrandTotal();
+        }catch (Exception e){
+            Toast.makeText(context, "Số tiền không cho phép", Toast.LENGTH_SHORT).show();
+            btnPay.setEnabled(false);
+        }
+        btnPay.setEnabled(totalChange>=0);
+        tvChange.setText(Helper.formatMoney(totalChange));
     }
 
     @Override

@@ -201,6 +201,15 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"/>
             </LinearLayout>
+               <TextView
+                   android:id="@+id/emptyListTextView"
+                   android:text="Không có đơn hàng nào"
+                   android:textSize="20sp"
+                   android:layout_centerInParent="true"
+                   android:visibility="gone"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   />
         </RelativeLayout>
 
     </LinearLayout>

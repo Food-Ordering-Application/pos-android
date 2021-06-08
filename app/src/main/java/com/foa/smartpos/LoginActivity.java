@@ -76,7 +76,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		if (NotificationOrderIdSession.getInstance()!=null ){
 			intent = new Intent(LoginActivity.this,MainActivity.class);
 		}else if(NetworkUtils.getConnectivityStatusString(context)== NetworkStatus.CONNETED){
-			intent = new Intent(LoginActivity.this,SplashActivity.class);
+			intent = new Intent(LoginActivity.this,MainActivity.class);
 		}else {
 			intent = new Intent(LoginActivity.this,MainActivity.class);
 		}

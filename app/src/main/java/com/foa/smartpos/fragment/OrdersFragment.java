@@ -30,11 +30,10 @@ import com.foa.smartpos.utils.Helper;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class OrdersFragment extends Fragment {
     View root;
-    Calendar dateStart;
-    Calendar dateEnd;
     ListView theListView;
     LinearLayout ordersLayout;
     RelativeLayout detailLayout;
@@ -44,9 +43,11 @@ public class OrdersFragment extends Fragment {
     Button btnSearch;
     LinearLayout progressLoading;
     TextView titleCashierOrCustomer;
+    Calendar dateStart;
+    Calendar dateEnd;
 
-    String startDate;
-    String endDate;
+    String startDate = Helper.dateSQLiteFormat.format(new Date());
+    String endDate = startDate;
 
     OrderDataSource DS;
 
@@ -64,9 +65,13 @@ public class OrdersFragment extends Fragment {
         progressLoading = root.findViewById(R.id.progressLoading);
         titleCashierOrCustomer = root.findViewById(R.id.titleCashierOrCustomer);
 
-        String currentDate = Helper.dateFormat.format(Calendar.getInstance().getTime());
-        dateFromTextView.setText(currentDate);
-        dateToTextView.setText(currentDate);
+        GregorianCalendar calendar = new GregorianCalendar();
+        dateStart = calendar;
+        calendar.add(Calendar.DATE,1);
+        dateEnd = calendar;
+
+        dateFromTextView.setText( Helper.dateFormat.format(dateStart.getTime()));
+        dateToTextView.setText( Helper.dateFormat.format(dateEnd.getTime()));
 
         dateFromTextView.setOnClickListener(onPickDateFrom);
         dateToTextView.setOnClickListener(onPickDateTo);
@@ -100,17 +105,14 @@ public class OrdersFragment extends Fragment {
         progressLoading.setVisibility(View.VISIBLE);
         SQLiteDatabase db =  DatabaseManager.getInstance().openDatabase();
         DS = new OrderDataSource(db);
-        String dateNow = Helper.dateTimeformat.format(new Date());
-        final OrdersListViewAdapter adapter = new OrdersListViewAdapter(getActivity(), DS.getAllOrder(dateNow,dateNow));
-        // set elements to adapter
+        final OrdersListViewAdapter adapter = new OrdersListViewAdapter(getActivity(), DS.getAllOrderCurrentDate());
         theListView.setAdapter(adapter);
         progressLoading.setVisibility(View.GONE);
-        adapter.setData(DS.getAllOrder(startDate,endDate));
         btnSearch.setOnClickListener(view -> {
             progressLoading.setVisibility(View.VISIBLE);
             if (orderTypeSpinner.getSelectedItem().equals("Tại quán")){
                 titleCashierOrCustomer.setText("Thu ngân");
-                adapter.setData(DS.getAllOrder(startDate,endDate));
+                adapter.setData(DS.getAllOrderWithDate(startDate,endDate));
                 progressLoading.setVisibility(View.GONE);
 
             }else{
@@ -128,7 +130,6 @@ public class OrdersFragment extends Fragment {
     private final View.OnClickListener onPickDateTo = v -> showDateEndTimePicker();
 
     public void showDateStartTimePicker() {
-        Calendar dateStart = Calendar.getInstance();
         new DatePickerDialog(getActivity(), (view, year, monthOfYear, dayOfMonth) -> {
             dateStart.set(year, monthOfYear, dayOfMonth);
             String dateString = Helper.dateFormat.format(dateStart.getTime());
@@ -140,13 +141,12 @@ public class OrdersFragment extends Fragment {
     }
 
     public void showDateEndTimePicker() {
-        Calendar dateEnd = Calendar.getInstance();
         new DatePickerDialog(getActivity(), (view, year, monthOfYear, dayOfMonth) -> {
             dateEnd.set(year, monthOfYear, dayOfMonth);
             String dateString = Helper.dateFormat.format(dateEnd.getTime());
-            dateEnd.set(year, monthOfYear+1, dayOfMonth);
+            dateEnd.set(year, monthOfYear, dayOfMonth);
             String dateSQLiteString = Helper.dateSQLiteFormat.format(dateEnd.getTime());
-            dateFromTextView.setText(dateString);
+            dateToTextView.setText(dateString);
             endDate = dateSQLiteString;
 
         }, dateEnd.get(Calendar.YEAR), dateEnd.get(Calendar.MONTH), dateEnd.get(Calendar.DATE)).show();

@@ -19,6 +19,7 @@ import androidx.constraintlayout.solver.state.State;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.foa.smartpos.R;
+import com.foa.smartpos.fragment.DeliveryFragment;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.model.OrderItem;
 import com.foa.smartpos.model.enums.OrderStatus;
@@ -35,23 +36,19 @@ import java.util.Random;
 public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridViewAdapter.ViewHolder> {
     List<Order> orders;
     private Context context;
-    LinearLayout deliveriesLayout;
-    RelativeLayout detailLayout;
-    RecyclerView theGridView;
     private OnSelectedItemListener onSelectedItemListener;
     String currentOrderId="";
+    private TextView emptyListTextView;
 
-    public DeliveryGridViewAdapter(Context context) {
-        this.context = context;
-    }
-
-    public DeliveryGridViewAdapter(Context context, List<Order> orderList) {
+    public DeliveryGridViewAdapter(Context context, List<Order> orderList,TextView emptyListTextView) {
         this.context = context;
         this.orders = orderList;
+        this.emptyListTextView = emptyListTextView;
     }
 
     public void addOrder(Order order){
         orders.add(order);
+        checkEmptyList();
         notifyItemInserted(orders.size()-1);
     }
 
@@ -67,18 +64,28 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
 
     public void setOrders(List<Order> orders){
         this.orders = orders;
+        checkEmptyList();
         currentOrderId="";
         this.notifyDataSetChanged();
     }
 
     public void removeOrder(Order order){
         this.orders.remove(order);
+        checkEmptyList();
         notifyDataSetChanged();
     }
 
     public void setCurrentOrderId(String orderId){
         this.currentOrderId = orderId;
         notifyDataSetChanged();
+    }
+
+    private void checkEmptyList(){
+        if (orders.size()>0){
+            emptyListTextView.setVisibility(View.GONE);
+        }else{
+            emptyListTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     @NonNull
@@ -102,8 +109,6 @@ public class DeliveryGridViewAdapter extends RecyclerView.Adapter<DeliveryGridVi
             if (order.getId().equals(currentOrderId)){
                 currentOrderId="";
                 if (onSelectedItemListener!=null){
-                    orders = new ArrayList<>();
-                    notifyDataSetChanged();
                     onSelectedItemListener.OnSelected(null,position);
                 }
             }else {

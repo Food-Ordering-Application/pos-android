@@ -295,7 +295,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
     };
 
     private void updateOrder(Order currentOrder, MenuItem product, List<OrderItemTopping> orderItemToppings) {
-        if (cartAdapter.getCount() == 0 || OrderSession.getInstance()==null) {
+        if (OrderSession.getInstance()==null) {
             Date dt = new Date();
             currentOrder = new Order();
             currentOrder.setId(Helper.getOrderID());
@@ -360,7 +360,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
             PaymentDialog paymentDialog = new PaymentDialog(getActivity());
             paymentDialog.setPaymentListener(result -> {
                 if (result){
-                    cartAdapter.removeAll();
+                    cartAdapter.resetCart();
                     OrderSession.setInstance(null);
                     updateStatistic(null);
                 }

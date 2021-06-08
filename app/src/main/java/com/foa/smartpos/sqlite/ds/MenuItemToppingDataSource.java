@@ -97,8 +97,8 @@ public class MenuItemToppingDataSource {
 		List<ToppingGroup>  toppingGroups = new ArrayList<>();
 
 		if (groupCursor.moveToFirst()) {
-			ToppingGroup toppingGroup = new ToppingGroup();
 			do {
+				ToppingGroup toppingGroup = new ToppingGroup();
 				toppingGroup.setId(groupCursor.getString(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_ID)));
 				toppingGroup.setName(groupCursor.getString(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_NAME)));
 				toppingGroup.setActive(groupCursor.getInt(groupCursor.getColumnIndex(DbSchema.COL_TOPPING_GROUP_IS_ACTIVE))==1);
