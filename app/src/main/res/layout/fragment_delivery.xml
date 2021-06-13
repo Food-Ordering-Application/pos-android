@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="horizontal"
-    tools:context=".DeliveryFragment"
+    tools:context=".fragment.DeliveryFragment"
     >
     <LinearLayout
         android:id="@+id/bgDeliveries"
@@ -18,53 +18,41 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/textbox_large" >
-
-            <ImageButton
-                android:id="@+id/imageView2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="13dp"
-                android:background="@drawable/icon_state"
-                android:src="@drawable/ic_gridview"
-                />
-
-            <View
-                android:id="@+id/sparator"
-                android:layout_width="0.5dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="13dp"
-                android:layout_toRightOf="@+id/imageView2"
-                android:background="@color/line_gray" />
+            android:layout_centerHorizontal="true">
 
             <EditText
                 android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/autoConfirmSwitch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_alignTop="@+id/imageView2"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="20dp"
                 android:layout_toRightOf="@+id/sparator"
-                android:background="@color/putih"
+                android:background="@drawable/textbox_large"
                 android:ems="10"
-                android:hint="Tìm kiếm đơn hàng"
+                android:hint="     Tìm kiếm đơn hàng"
                 android:textColor="@color/text_gray"
                 android:textSize="15dp" >
             </EditText>
-
-            <ImageView
-                android:id="@+id/imageView3"
+            <Switch
+                android:id="@+id/autoConfirmSwitch"
+                android:layout_toStartOf="@+id/scannerQRButton"
+                android:text="Tự nhận đơn"
+                android:padding="10dp"
+                android:layout_marginEnd="50dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:visibility="gone"
-                android:src="@drawable/ic_arrow_down" />
+                android:layout_height="match_parent"/>
+            <ImageButton
+                android:id="@+id/scannerQRButton"
+                android:src="@drawable/ic_qr"
+                android:layout_marginEnd="20dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Quét QR"
+                android:layout_width="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_height="match_parent"/>
         </RelativeLayout>
 
     <RadioGroup
@@ -181,21 +169,43 @@
         </RelativeLayout>
 
     </RadioGroup>
-    <GridView
-        android:id="@+id/deliveryGridView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="5"
-        android:clipToPadding="false"
-        android:layout_margin="5dp"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/deliveryRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="15dp"
+                />
+            <LinearLayout
+                android:id="@+id/progressLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone">
+                <ProgressBar
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"/>
+            </LinearLayout>
+               <TextView
+                   android:id="@+id/emptyListTextView"
+                   android:text="Không có đơn hàng nào"
+                   android:textSize="20sp"
+                   android:layout_centerInParent="true"
+                   android:visibility="gone"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   />
+        </RelativeLayout>
+
     </LinearLayout>
     <RelativeLayout
         android:id="@+id/bgOrderDetail"
         android:layout_width="360dp"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         >
         <!--title cart-->
         <LinearLayout
@@ -207,12 +217,6 @@
             android:gravity="center"
             android:padding="10dp"
             >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chi tiết đơn hàng: #"
-                android:textColor="@color/white"
-                android:textSize="16dp" />
             <TextView
                 android:id="@+id/tvOderId"
                 android:layout_width="wrap_content"
@@ -231,26 +235,35 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/body_cart"
             android:layout_above="@+id/imageView1"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             >
-            <ListView
-                android:id="@+id/listOrderDetails"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/paymentInfo"
-                android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="2dp"
-                android:animateLayoutChanges="true"/>
-
-
-
+                android:layout_above="@+id/summaryPay">
+                <ListView
+                    android:id="@+id/listOrderDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="2dp"
+                    android:animateLayoutChanges="true"/>
+                <LinearLayout
+                    android:id="@+id/progressItemLoading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:visibility="gone">
+                    <ProgressBar
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"/>
+                </LinearLayout>
+            </RelativeLayout>
             <!-- summary pay-->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -285,7 +298,7 @@
                             android:text="Thành tiền" />
 
                         <TextView
-                            android:id="@+id/tvTotal"
+                            android:id="@+id/qtyOrderItemTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
@@ -302,10 +315,10 @@
                             android:layout_height="wrap_content"
                             android:textSize="14dp"
                             android:textColor="@color/item"
-                            android:text="Giảm" />
+                            android:text="Phí giao hàng" />
 
                         <TextView
-                            android:id="@+id/tvDiscount"
+                            android:id="@+id/tvShippingFee"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
@@ -322,7 +335,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp">
                         <TextView
-                            android:id="@+id/twTotlaPay"
+                            android:id="@+id/grandTotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="14dp"
@@ -330,7 +343,7 @@
                             android:text="Tổng cộng" />
 
                         <TextView
-                            android:id="@+id/tvTotalPay"
+                            android:id="@+id/tvGrandTotal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
@@ -346,7 +359,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/relativeLayout2"
+                android:layout_above="@+id/deliveryOrderControlLayout"
                 android:padding="2dp"
                 android:layout_marginStart="4dp"
                 android:id="@+id/paymentInfo"
@@ -362,6 +375,27 @@
                     android:orientation="vertical"
                     android:background="@drawable/card_edge"
                     android:padding="10dp">
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:textColor="@color/item"
+                            android:text="Khách hàng" />
+
+                        <TextView
+                            android:id="@+id/tvCustomerName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="viewEnd"
+                            android:textSize="16sp"
+                            android:text="Nguyễn Văn A" />
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -380,7 +414,7 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
                             android:textSize="16sp"
-                            android:text="Thẻ ATM" />
+                            android:text="Thu hộ" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -397,15 +431,15 @@
                             android:id="@+id/tvReceiveMoney"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="0 đồng"
                             android:textAlignment="viewEnd"
-                            android:textSize="16dp"
-                            android:text="0 đồng" />
+                            android:textSize="16dp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
             <!-- payment button-->
             <LinearLayout
-                android:id="@+id/relativeLayout2"
+                android:id="@+id/deliveryOrderControlLayout"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -414,7 +448,7 @@
                     android:padding="0dp"
                     android:layout_margin="0dp"
                     android:layout_weight="1"
-                    android:id="@+id/btnAcceptOrder"
+                    android:id="@+id/btnConfirm"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/primaryColor"
@@ -424,7 +458,7 @@
                     android:padding="0dp"
                     android:layout_margin="0dp"
                     android:layout_weight="1"
-                    android:id="@+id/btnDenyOrder"
+                    android:id="@+id/btnCancel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/secondaryColor"

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/line_gray"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvCartProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@color/primaryColor"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Ghi chú"
+            android:textColor="@color/putih"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/cashierNoteEditText"
+           android:layout_width="match_parent"
+           android:layout_height="200dp"
+           android:layout_margin="30dp"
+           android:background="@color/white"/>
+        <LinearLayout
+            android:id="@+id/controlLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnDoneTopping"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:backgroundTint="@color/primaryColor"
+                android:layout_weight="1"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp"
+                android:text="Xong"
+                android:textAllCaps="true"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@+id/btnOrder"
+                android:layout_weight="1"
+                android:backgroundTint="@color/secondaryColor"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp"
+                android:text="Huỷ"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginRight="3dp"
+            android:background="@drawable/footer_cart" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

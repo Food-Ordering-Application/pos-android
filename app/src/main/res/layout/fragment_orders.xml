@@ -3,72 +3,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="50dp"
-    android:layout_marginEnd="50dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
     android:orientation="horizontal"
-    tools:context=".OrdersFragment">
+    tools:context=".fragment.OrdersFragment">
 
     <LinearLayout
         android:id="@+id/bgOrders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/relativeLayout3"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@drawable/textbox_large">
-
-            <ImageButton
-                android:id="@+id/imageView2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="13dp"
-                android:background="@drawable/icon_state"
-                android:src="@drawable/ic_gridview" />
-
-            <View
-                android:id="@+id/sparator"
-                android:layout_width="0.5dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="13dp"
-                android:layout_toRightOf="@+id/imageView2"
-                android:background="@color/line_gray" />
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:gravity="end">
 
             <EditText
                 android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
                 android:layout_alignTop="@+id/imageView2"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="20dp"
                 android:layout_toRightOf="@+id/sparator"
-                android:background="@color/putih"
+                android:background="@drawable/stroke_blue"
                 android:ems="10"
-                android:hint="Tìm kiếm hoá đơn"
+                android:hint="Tìm kiếm mã hoá đơn"
                 android:textColor="@color/text_gray"
                 android:textSize="15dp"/>
-
-            <ImageView
-                android:id="@+id/imageView3"
+            <TextView
+                android:text="Loại đơn"
+                android:gravity="center"
+                android:padding="5dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="20dp"
-                android:src="@drawable/ic_arrow_down"
-                android:visibility="gone" />
-
-        </RelativeLayout>
+                android:layout_height="match_parent"/>
+            <Spinner
+                android:id="@+id/orderTypeSpinner"
+                android:background="@drawable/stroke_blue"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:text="Từ"
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/dateFrom"
+                android:background="@drawable/stroke_blue"
+                android:layout_width="150dp"
+                android:gravity="center"
+                android:text="09-03-2021"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_calendar_today"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:text="Đến"
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/dateTo"
+                android:background="@drawable/stroke_blue"
+                android:layout_width="150dp"
+                android:gravity="center"
+                android:clickable="true"
+                android:text="09-03-2021"
+                android:drawableRight="@drawable/ic_calendar_today"
+                android:layout_height="match_parent"/>
+            <Button
+                android:id="@+id/btnSearch"
+                android:drawableLeft="@drawable/ic__search"
+                android:text="Tìm kiếm"
+                android:layout_marginStart="10dp"
+                android:layout_width="150dp"
+                android:background="@color/primaryColor"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="match_parent"
+            android:calendarViewShown="true"
+            android:spinnersShown="false"
+            android:layout_weight="4"
+            android:layout_height="0dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:gravity="center_vertical"
             android:background="@color/line_gray"
             >
@@ -76,9 +103,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 style="@style/TalbleTitle"
                 android:gravity="start"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:paddingStart="5dp"
                 android:text="Mã đơn hàng" />
 
@@ -87,6 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
                 style="@style/TalbleTitle"
                 android:text="Tổng tiền" />
 
@@ -95,6 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
                 style="@style/TalbleTitle"
                 android:text="Thanh toán" />
 
@@ -104,15 +134,28 @@
                 android:layout_weight="1"
                 style="@style/TalbleTitle"
                 android:gravity="center"
-                android:text="Loại" />
+                android:textAppearance="?android:textAppearanceMedium"
+                android:text="Loại đơn" />
+
+            <TextView
+                android:id="@+id/titleCashierOrCustomer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
+                style="@style/TalbleTitle"
+                android:text="Thu ngân" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
+                android:layout_weight="2"
+                android:paddingEnd="5dp"
                 style="@style/TalbleTitle"
-                android:text="Thu ngân" />
+                android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:text="Thời gian" />
 
             <TextView
                 android:layout_width="0dp"
@@ -121,21 +164,34 @@
                 android:paddingEnd="5dp"
                 style="@style/TalbleTitle"
                 android:gravity="end"
-                android:text="Thời gian" />
+                android:textAppearance="?android:textAppearanceMedium" />
         </LinearLayout>
-
-        <ListView
-            android:id="@+id/orderGridView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="10dp"
-            android:horizontalSpacing="10dp"
-            android:numColumns="5"
-            android:scrollbars="none"
-            android:verticalSpacing="10dp" />
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/orderGridView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="10dp"
+                android:horizontalSpacing="10dp"
+                android:numColumns="5"
+                android:scrollbars="none"
+                android:verticalSpacing="10dp" />
+            <LinearLayout
+                android:id="@+id/progressLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone">
+                <ProgressBar
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"/>
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <RelativeLayout
@@ -232,10 +288,10 @@
                             android:textSize="14dp" />
 
                         <TextView
-                            android:id="@+id/tvTotal"
+                            android:id="@+id/qtyOrderItemTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -274,7 +330,7 @@
                         android:layout_marginTop="10dp">
 
                         <TextView
-                            android:id="@+id/twTotlaPay"
+                            android:id="@+id/grandTotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Tổng cộng"
@@ -282,10 +338,10 @@
                             android:textSize="14dp" />
 
                         <TextView
-                            android:id="@+id/tvTotalPay"
+                            android:id="@+id/tvGrandTotal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textColor="@color/red"
                             android:textSize="20dp"
@@ -299,7 +355,7 @@
                 android:id="@+id/paymentInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/relativeLayout2"
+                android:layout_above="@+id/deliveryOrderControlLayout"
                 android:layout_marginStart="4dp"
                 android:elevation="4dp"
                 android:padding="2dp">
@@ -351,7 +407,7 @@
                             android:id="@+id/tvReceiveMoney"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textSize="16dp" />
                     </LinearLayout>
@@ -372,7 +428,7 @@
                             android:id="@+id/tvChange"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0 đồng"
+                            android:text="0 đ"
                             android:textAlignment="viewEnd"
                             android:textSize="16dp" />
                     </LinearLayout>
@@ -380,7 +436,7 @@
             </com.google.android.material.card.MaterialCardView>
             <!-- payment button-->
             <LinearLayout
-                android:id="@+id/relativeLayout2"
+                android:id="@+id/deliveryOrderControlLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"

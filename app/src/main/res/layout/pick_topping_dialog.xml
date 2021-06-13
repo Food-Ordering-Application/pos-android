@@ -28,26 +28,70 @@
             android:layout_alignParentTop="true"
             android:gravity="center_horizontal"
             android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/toppingProductImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/bg1" />
-
-            <TextView
-                android:id="@+id/toppingProductName"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="Ten mon an"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/toppingProductImage"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/bg1" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+                    <TextView
+                        android:id="@+id/tvProductName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Ten mon an"
+                        android:layout_weight="2"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tvProductPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textSize="24sp"
+                        android:layout_weight="1"
+                        android:text="0 đ"
+                        android:textColor="@color/primaryColor"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-          <RadioGroup
-              android:id="@+id/toppingsRadioGroup"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginStart="50dp"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp">
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminate="true" />
+                </LinearLayout>
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp">
+                    <LinearLayout
+                        android:id="@+id/toppingsGroupContainer"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"/>
+                </ScrollView>
+            </RelativeLayout>
+
         </LinearLayout>
 
         <LinearLayout

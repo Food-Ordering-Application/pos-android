@@ -1,53 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.foa.pos">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.foa.smartpos">
 
+    <uses-feature android:name="android.hardware.camera.any" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:allowBackup="true"
-        android:hardwareAccelerated="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_app"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.POS"
         android:windowSoftInputMode="adjustPan">
-        <activity android:name=".VerifyAppActivity">
+        <activity
+            android:name="com.foa.smartpos.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.POS.NoActionBar"
+            android:windowSoftInputMode="adjustPan|stateHidden">
+        </activity>
+        <activity android:name="com.foa.smartpos.VerifyAppActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".PaymentActivity"
-            android:label="@string/title_activity_payment"
-            android:theme="@style/Theme.POS.NoActionBar" />
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.POS.NoActionBar"
-            android:windowSoftInputMode="adjustPan|stateHidden">
 
-        </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name="com.foa.smartpos.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan|adjustResize">
-
         </activity>
+        <activity android:name="com.foa.smartpos.SplashActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.POS.NoActionBar"/>
+        <receiver android:name = "com.foa.smartpos.receiver.NetworkReceiver">
+            <intent-filter>
+                <action android:name = "android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
+                <action android:name = "android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receiver.BackgroundJobReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
+        <service android:name="com.foa.smartpos.service.NotificationsMessagingService">
+            <intent-filter android:priority="1">
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+<!--        <meta-data-->
+<!--            android:name="com.google.firebase.messaging.default_notification_icon"-->
+<!--            android:resource="@drawable/ic_android" />-->
+<!--        <meta-data-->
+<!--            android:name="com.google.firebase.messaging.default_notification_color"-->
+<!--            android:resource="@color/primaryColor" />-->
     </application>
 
 </manifest>

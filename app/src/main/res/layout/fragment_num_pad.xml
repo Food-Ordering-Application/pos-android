@@ -24,7 +24,8 @@
     <ImageButton
         android:id="@+id/numPadButtonBack"
         android:layout_gravity="fill"
-        style="@style/NumPadButtonNumber"
+        android:layout_marginBottom="6dp"
+        android:background="@color/teritaryColor"
         android:src="@drawable/ic_backspace"
         android:layout_rowSpan="2"/>
 
@@ -62,6 +63,7 @@
         android:id="@+id/numPadButtonClear"
         android:text="C"
         style="@style/NumPadButtonNumber"
+
         android:layout_gravity="fill"
         android:layout_rowSpan="2"/>
 

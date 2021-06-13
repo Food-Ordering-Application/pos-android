@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.POS" parent="Theme.MaterialComponents.DayNight">
+    <style name="Theme.POS" parent="Theme.MaterialComponents.Light">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#F2994A</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -13,6 +13,12 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    </style>
+
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/primaryColor</item>
     </style>
 
     <style name="Theme.POS.NoActionBar">`
@@ -58,8 +64,13 @@
     </style>
 
     <style name="NumPadButtonNumber">
-        <item name="android:layout_width">80dp</item>
-        <item name="android:layout_height">80dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:backgroundTint">@color/teritaryColor</item>
+        <item name="buttonStyle">@drawable/numpad_button_style</item>
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">90dp</item>
+        <item name="android:layout_marginTop">-10dp</item>
+        <item name="android:layout_marginRight">2dp</item>
     </style>
 
     <style name="Theme.POS.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

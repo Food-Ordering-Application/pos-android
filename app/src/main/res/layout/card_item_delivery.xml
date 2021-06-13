@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="20dp"
     android:background="@drawable/card_product">
     <LinearLayout
@@ -103,13 +103,7 @@
                         android:id="@+id/deliveryDistance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2"
-                        android:textStyle="bold"
-                        android:gravity="end"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" km"
+                        android:text="2 Km"
                         android:textStyle="bold"
                         android:gravity="end"/>
                 </LinearLayout>

@@ -26,7 +26,9 @@
         android:layout_gravity="fill"
         style="@style/NumPadButtonNumber"
         android:src="@drawable/ic_backspace"
-        android:layout_rowSpan="2"/>
+        android:layout_rowSpan="2"
+        android:layout_marginRight="-2dp"
+        android:layout_marginLeft="-4dp"/>
 
     <Button
         android:id="@+id/numPadButton4"
@@ -60,10 +62,10 @@
 
     <Button
         android:id="@+id/numPadButtonClear"
-        android:text="C"
         style="@style/NumPadButtonNumber"
+        android:layout_rowSpan="2"
         android:layout_gravity="fill"
-        android:layout_rowSpan="2"/>
+        android:text="C" />
 
     <Button
         android:id="@+id/numPadButton0"
