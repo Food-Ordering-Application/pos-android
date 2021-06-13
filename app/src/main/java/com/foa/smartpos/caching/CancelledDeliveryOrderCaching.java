@@ -1,14 +1,14 @@
-package com.foa.smartpos.catching;
+package com.foa.smartpos.caching;
 
 import com.foa.smartpos.model.Order;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CancelledDeliveryOrderCatching {
+public class CancelledDeliveryOrderCaching {
     private static List<Order> orderList = null;
 
-    public CancelledDeliveryOrderCatching() {
+    public CancelledDeliveryOrderCaching() {
     }
 
     public static void setCancelledDeliveryCatching(List<Order> orders){

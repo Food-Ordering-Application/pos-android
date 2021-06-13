@@ -13,33 +13,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.foa.smartpos.R;
+import com.foa.smartpos.adapter.CartListAdapter;
 import com.foa.smartpos.adapter.DeliveryGridViewAdapter;
 import com.foa.smartpos.adapter.OrderDetailListAdapter;
-import com.foa.smartpos.catching.CancelledDeliveryOrderCatching;
-import com.foa.smartpos.catching.CompletedDeliveryOrderCatching;
-import com.foa.smartpos.catching.ConfirmedDeliveryOrderCatching;
-import com.foa.smartpos.catching.DetailDeliveryOrderCatching;
+import com.foa.smartpos.api.RestaurantService;
+import com.foa.smartpos.caching.CancelledDeliveryOrderCaching;
+import com.foa.smartpos.caching.CompletedDeliveryOrderCaching;
+import com.foa.smartpos.caching.ConfirmedDeliveryOrderCaching;
+import com.foa.smartpos.caching.DetailDeliveryOrderCaching;
 import com.foa.smartpos.dialog.EditOrderItemDialog;
 import com.foa.smartpos.dialog.LoadingDialog;
+import com.foa.smartpos.dialog.ScannerQRDialog;
 import com.foa.smartpos.dialog.VoidNoteDialog;
+import com.foa.smartpos.model.IDataResultCallback;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.model.OrderItem;
 import com.foa.smartpos.model.enums.OrderStatus;
 import com.foa.smartpos.model.enums.OrderType;
 import com.foa.smartpos.api.OrderService;
 import com.foa.smartpos.model.enums.StockState;
+import com.foa.smartpos.network.response.AutoConfirmData;
 import com.foa.smartpos.session.NotificationOrderIdSession;
 import com.foa.smartpos.sqlite.DatabaseManager;
 import com.foa.smartpos.sqlite.ds.OrderDataSource;
 import com.foa.smartpos.utils.Constants;
+import com.foa.smartpos.utils.Debouncer;
 import com.foa.smartpos.utils.Helper;
 import com.google.gson.Gson;
 import com.pusher.client.Pusher;
@@ -53,7 +62,7 @@ import com.pusher.pushnotifications.PushNotifications;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -85,6 +94,10 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private OrderStatus selectedStatus = ORDERED;
     private boolean isSplitMode = false;
     private TextView emptyListTextView;
+    private Switch autoConfirmSwitch;
+    private ImageButton scannerQRButton;
+
+    private final Debouncer debouncer = new Debouncer();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -117,10 +130,9 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 disableSplitLayout(getActivity());
             }
         });
-        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(getActivity(), remoteMessage -> {
-           Log.e("beams"," noti");
 
-		});
+        initUpdateAutoConfirm();
+        initQRScanner();
         initPusher();
 
         return root;
@@ -129,28 +141,34 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private void getOrderList(int pageNumber,OrderStatus status){
         OrderService.getAllOrder(OrderType.SALE.toString(), pageNumber,status.toString(), (success, data) -> {
             if (success){
-                orderList = Stream.concat(orderList.stream(), data.stream())
-                        .collect(Collectors.toList());
-                if (data.size()==25){
-                    getOrderList(pageNumber+1,status);
-                }else{
-                    deliveryAdapter.setOrders(data);
-                    if(data.size()>0)
-                        orderRecyclerView.smoothScrollToPosition(data.size()-1);
-                    if (NotificationOrderIdSession.getInstance()!=null){
-                        OrderService.getOrderById(NotificationOrderIdSession.getInstance(), (success1, data1) -> {
-                            enableSplitLayout(getActivity(),orderList.size()-1);
-                            isSplitMode = true;
-                            loadOrderDetail(data1,detailLayout);
+                switch (status){
+                    case ORDERED:
+                        deliveryAdapter.setOrders(data);
+                        if(data.size()>0)
+                            orderRecyclerView.smoothScrollToPosition(data.size()-1);
+                        if (NotificationOrderIdSession.getInstance()!=null){
+                            OrderService.getOrderById(NotificationOrderIdSession.getInstance(), (success1, data1) -> {
+                                enableSplitLayout(getActivity(),orderList.size()-1);
+                                isSplitMode = true;
+                                loadOrderDetail(data1,detailLayout);
+                                progressLoading.setVisibility(View.GONE);
+                                deliveryAdapter.setCurrentOrderId(data1.getId());
+                            });
+                        }else {
                             progressLoading.setVisibility(View.GONE);
-                            deliveryAdapter.setCurrentOrderId(data1.getId());
-                        });
-                    }else {
-                        progressLoading.setVisibility(View.GONE);
-                    }
+                        }
+                        break;
+                    case CONFIRMED:
+                        ConfirmedDeliveryOrderCaching.setConfirmedDeliveryCatching(data);
+                        break;
+                    case COMPLETED:
+                        CompletedDeliveryOrderCaching.setCompletedDeliveryCatching(data);
+                        break;
+                    case CANCELLED:
+                        CancelledDeliveryOrderCaching.setCancelledDeliveryCatching(data);
+                        break;
                 }
-
-            };
+            }
         });
     }
 
@@ -159,9 +177,9 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         super.onResume();
         progressLoading.setVisibility(View.VISIBLE);
         getOrderList(1, ORDERED);
-
-
-
+        getOrderList(1, CONFIRMED);
+        getOrderList(1, COMPLETED);
+        getOrderList(1, CANCELLED);
 
     }
 
@@ -182,6 +200,28 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         progressLoading = root.findViewById(R.id.progressLoading);
         progressItemLoading = root.findViewById(R.id.progressItemLoading);
         emptyListTextView = root.findViewById(R.id.emptyListTextView);
+        autoConfirmSwitch = root.findViewById(R.id.autoConfirmSwitch);
+        scannerQRButton = root.findViewById(R.id.scannerQRButton);
+    }
+
+    private void initUpdateAutoConfirm(){
+        autoConfirmSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            debouncer.debounce(CartListAdapter.class, () ->
+                    RestaurantService.updateIsAutoConfirm(autoConfirmSwitch.isChecked(), (success, data) -> {
+                        if (success){
+                            autoConfirmSwitch.setChecked(data.isAutoConfirm());
+                        }
+                    })
+                    , 1000, TimeUnit.MILLISECONDS);
+
+        });
+    }
+
+    private void initQRScanner(){
+        scannerQRButton.setOnClickListener(view -> {
+            ScannerQRDialog dialog = new ScannerQRDialog(getActivity());
+            dialog.show();
+        });
     }
 
     private void initPusher(){
@@ -225,8 +265,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 if (updatedOrder.getStatus() == COMPLETED){
                     if ( selectedStatus == COMPLETED){
                         deliveryAdapter.addOrder(orderSelected);
-                    }else if(CompletedDeliveryOrderCatching.getCompletedOrderCatching()!=null){
-                        CompletedDeliveryOrderCatching.addCompletedDeliveryCatching(orderSelected);
+                    }else if(CompletedDeliveryOrderCaching.getCompletedOrderCatching()!=null){
+                        CompletedDeliveryOrderCaching.addCompletedDeliveryCatching(orderSelected);
                     }
                 }
 
@@ -264,7 +304,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 break;
             case 1:
                 displayControlLayout(false);
-                List<Order> confirmedorders = ConfirmedDeliveryOrderCatching.getConfirmedOrderCatching();
+                List<Order> confirmedorders = ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching();
                 if (confirmedorders!=null){
                     deliveryAdapter.setOrders(confirmedorders);
                     break;
@@ -272,7 +312,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, CONFIRMED.toString() ,(success, data) -> {
                     deliveryAdapter.setOrders(data);
-                    ConfirmedDeliveryOrderCatching.setConfirmedDeliveryCatching(data);
+                    ConfirmedDeliveryOrderCaching.setConfirmedDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
 
                 });
@@ -280,21 +320,21 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 break;
             case 2:
                 displayControlLayout(false);
-                List<Order> completedOrders = CompletedDeliveryOrderCatching.getCompletedOrderCatching();
+                List<Order> completedOrders = CompletedDeliveryOrderCaching.getCompletedOrderCatching();
                 if (completedOrders!=null){
                     deliveryAdapter.setOrders(completedOrders);
                     break;
                 }
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, COMPLETED.toString(),(success, data) -> {
                     deliveryAdapter.setOrders(data);
-                    CompletedDeliveryOrderCatching.setCompletedDeliveryCatching(data);
+                    CompletedDeliveryOrderCaching.setCompletedDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
                 });
                 selectedStatus= COMPLETED;
                 break;
             case 3:
                 displayControlLayout(false);
-                List<Order> cancelledOrders = CancelledDeliveryOrderCatching.getCancelledOrderCatching();
+                List<Order> cancelledOrders = CancelledDeliveryOrderCaching.getCancelledOrderCatching();
                 if (cancelledOrders!=null){
                     deliveryAdapter.setOrders(cancelledOrders);
                     break;
@@ -302,7 +342,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, CANCELLED.toString(),(success, data) -> {
                     deliveryAdapter.setOrders(data);
-                    CancelledDeliveryOrderCatching.setCancelledDeliveryCatching(data);
+                    CancelledDeliveryOrderCaching.setCancelledDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
 
                 });
@@ -323,10 +363,10 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ConfirmedDeliveryOrderCatching.clearInstance();
-        CompletedDeliveryOrderCatching.clearInstance();
-        CancelledDeliveryOrderCatching.clearInstance();
-        DetailDeliveryOrderCatching.clearInstance();
+        ConfirmedDeliveryOrderCaching.clearInstance();
+        CompletedDeliveryOrderCaching.clearInstance();
+        CancelledDeliveryOrderCaching.clearInstance();
+        DetailDeliveryOrderCaching.clearInstance();
     }
 
     @Override
@@ -338,8 +378,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                         Helper.disableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
                         isSplitMode = false;
                         deliveryAdapter.removeOrder(orderSelected);
-                        if(ConfirmedDeliveryOrderCatching.getConfirmedOrderCatching()!=null){
-                            ConfirmedDeliveryOrderCatching.addConfirmedDeliveryCatching(orderSelected);
+                        if(ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching()!=null){
+                            ConfirmedDeliveryOrderCaching.addConfirmedDeliveryCatching(orderSelected);
                         }
                     }else{
                         Toast.makeText(getActivity(), "Loi xac nhan", Toast.LENGTH_SHORT).show();
@@ -370,7 +410,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         ((TextView)detailLayout.findViewById(R.id.tvReceiveMoney)).setText(Helper.formatMoney(order.getGrandTotal()));
         ((TextView)detailLayout.findViewById(R.id.tvCustomerName)).setText(order.getDelivery().getCustomerName());
 
-        Order orderCatching = DetailDeliveryOrderCatching.getOrderCatching(order);
+        Order orderCatching = DetailDeliveryOrderCaching.getOrderCatching(order);
         if (orderCatching!=null){
             detailAdapter.set(orderCatching.getOrderItems());
         }else{
@@ -380,7 +420,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 if (success){
                     detailAdapter.set(data.getOrderItems());
                     progressItemLoading.setVisibility(View.GONE);
-                    DetailDeliveryOrderCatching.addDeliveryCatching(data);
+                    DetailDeliveryOrderCaching.addDeliveryCatching(data);
                 }
             });
         }

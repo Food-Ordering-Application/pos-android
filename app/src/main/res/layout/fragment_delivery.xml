@@ -18,53 +18,41 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/textbox_large" >
-
-            <ImageButton
-                android:id="@+id/imageView2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="13dp"
-                android:background="@drawable/icon_state"
-                android:src="@drawable/ic_gridview"
-                />
-
-            <View
-                android:id="@+id/sparator"
-                android:layout_width="0.5dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="13dp"
-                android:layout_toRightOf="@+id/imageView2"
-                android:background="@color/line_gray" />
+            android:layout_centerHorizontal="true">
 
             <EditText
                 android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/autoConfirmSwitch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_alignTop="@+id/imageView2"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="20dp"
                 android:layout_toRightOf="@+id/sparator"
-                android:background="@color/putih"
+                android:background="@drawable/textbox_large"
                 android:ems="10"
-                android:hint="Tìm kiếm đơn hàng"
+                android:hint="     Tìm kiếm đơn hàng"
                 android:textColor="@color/text_gray"
                 android:textSize="15dp" >
             </EditText>
-
-            <ImageView
-                android:id="@+id/imageView3"
+            <Switch
+                android:id="@+id/autoConfirmSwitch"
+                android:layout_toStartOf="@+id/scannerQRButton"
+                android:text="Tự nhận đơn"
+                android:padding="10dp"
+                android:layout_marginEnd="50dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:visibility="gone"
-                android:src="@drawable/ic_arrow_down" />
+                android:layout_height="match_parent"/>
+            <ImageButton
+                android:id="@+id/scannerQRButton"
+                android:src="@drawable/ic_qr"
+                android:layout_marginEnd="20dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Quét QR"
+                android:layout_width="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_height="match_parent"/>
         </RelativeLayout>
 
     <RadioGroup

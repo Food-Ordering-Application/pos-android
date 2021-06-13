@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -18,7 +17,7 @@ import android.widget.TextView;
 import com.foa.smartpos.R;
 import com.foa.smartpos.adapter.OrderDetailListAdapter;
 import com.foa.smartpos.api.OrderService;
-import com.foa.smartpos.catching.DetailDeliveryOrderCatching;
+import com.foa.smartpos.caching.DetailDeliveryOrderCaching;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.utils.Helper;
 
@@ -59,9 +58,9 @@ public class OrderDetailDialog extends Dialog {
 		super.onStart();
 		OrderDetailListAdapter detailAdapter = new OrderDetailListAdapter((Activity) context);
 		if (order.getDelivery()!=null){
-			if (DetailDeliveryOrderCatching.getOrderCatching(order)==null){
+			if (DetailDeliveryOrderCaching.getOrderCatching(order)==null){
 				OrderService.getOrderById(order.getId(), (success, data) -> {
-					DetailDeliveryOrderCatching.addDeliveryCatching(data);
+					DetailDeliveryOrderCaching.addDeliveryCatching(data);
 					order = data;
 					detailAdapter.set(order.getOrderItems());
 

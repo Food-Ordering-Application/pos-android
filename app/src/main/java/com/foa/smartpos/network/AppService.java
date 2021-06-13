@@ -8,6 +8,7 @@ import com.foa.smartpos.model.ToppingItem;
 import com.foa.smartpos.network.entity.LoginBody;
 import com.foa.smartpos.network.entity.UpdateStockStateBody;
 import com.foa.smartpos.network.entity.VoidOrderBody;
+import com.foa.smartpos.network.response.AutoConfirmData;
 import com.foa.smartpos.network.response.LoginData;
 import com.foa.smartpos.network.response.MenuData;
 import com.foa.smartpos.network.response.OrderData;
@@ -113,5 +114,11 @@ public interface AppService {
     Call<ResponseAdapter<String>> updateToppingItem(
             @Path("toppingItemId") String toppingItemId,
             @Body UpdateStockStateBody body
+    );
+
+    @PATCH("/user/pos/update-isautoconfirm")
+    Call<ResponseAdapter<AutoConfirmData>> updateIsAutoConfirm(
+            @Query("isAutoConfirm") boolean isAutoConfirm,
+            @Query("restaurantId") String restaurantId
     );
 }
