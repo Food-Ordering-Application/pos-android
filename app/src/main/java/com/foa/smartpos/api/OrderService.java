@@ -202,4 +202,32 @@ public class OrderService {
         });
     }
 
+    public static void finnishOrder(String orderId, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .finnishOrder(orderId);
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>>call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                LoggerHelper.CheckAndLogInfo(this,t.getMessage());
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
 }

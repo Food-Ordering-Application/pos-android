@@ -21,47 +21,27 @@
             android:layout_height="wrap_content"
             >
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="70dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@+id/syncStatus"
                 android:layout_marginStart="100dp"
-                android:background="@drawable/textbox_large"
                 android:layout_marginEnd="20dp">
 
-                <ImageButton
-                    android:id="@+id/imageView2"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="13dp"
-                    android:background="@drawable/icon_state"
-                    android:src="@drawable/ic_gridview"
-                    />
-
-                <View
-                    android:id="@+id/sparator"
-                    android:layout_width="0.5dp"
-                    android:layout_height="25dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="13dp"
-                    android:layout_toRightOf="@+id/imageView2"
-                    android:background="@color/line_gray" />
-
                 <EditText
-                    android:id="@+id/editText1"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_alignTop="@+id/imageView2"
+                    android:id="@+id/saerchEditText"
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
-                    android:layout_toRightOf="@+id/sparator"
-                    android:background="@color/putih"
+                    android:background="@drawable/card_edge"
                     android:ems="10"
                     android:hint="Tìm kiếm món ăn"
                     android:textColor="@color/text_gray"
-                    android:textSize="15dp" >
+                    android:textSize="15dp"
+                    android:paddingEnd="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
                 </EditText>
             </LinearLayout>
             <LinearLayout

@@ -73,7 +73,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
     private PromotionListAdapter promotionAdapter;
     private TextView txtTotal;
     private TextView txtGrandTotal;
-    private EditText txtKeyword;
+    private EditText searchEditText;
     private TextView txtEmpty;
     private Button btnOrder;
     private Button btnClearOrder;
@@ -136,7 +136,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton item = root.findViewById(checkedId);
             String cateName = item.getText().toString();
-            menuAdapter.set(ProductDS.getAll(txtKeyword.getText().toString(), ProductDS.getIdByName(cateName)));
+            menuAdapter.set(ProductDS.getAll(searchEditText.getText().toString(), ProductDS.getIdByName(cateName)));
         });
 
         btnClearOrder.setOnClickListener(view -> {
@@ -168,7 +168,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         txtEmpty = root.findViewById(R.id.textView9);
         txtTotal = root.findViewById(R.id.qtyOrderItemTextView);
         txtGrandTotal = root.findViewById(R.id.tvGrandTotal);
-        txtKeyword = root.findViewById(R.id.editText1);
+        searchEditText = root.findViewById(R.id.saerchEditText);
         btnOrder = root.findViewById(R.id.btnOrder);
         promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
         cartRecyclerview = root.findViewById(R.id.cartListView);
@@ -183,7 +183,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         cartAdapter.setCartListener(cartOnItemClick);
         promotionAdapter.setItemClickListener(promotionOnItemClick);
         //cartList.setOnItemClickListener(editOrderOnitemClick);
-        txtKeyword.addTextChangedListener(keywordOnchange);
+        searchEditText.addTextChangedListener(keywordOnchange);
         btnManualSync.setOnClickListener(syncClick);
     }
 
@@ -332,7 +332,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
             // TODO Auto-generated method stub
             RadioButton item = root.findViewById(radioGroup.getCheckedRadioButtonId());
             String cateName = item.getText().toString();
-            menuAdapter.set(ProductDS.getAll(txtKeyword.getText().toString(), ProductDS.getIdByName(cateName)));
+            menuAdapter.set(ProductDS.getAll(searchEditText.getText().toString(), ProductDS.getIdByName(cateName)));
         }
 
         @Override

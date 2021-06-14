@@ -116,9 +116,18 @@ public interface AppService {
             @Body UpdateStockStateBody body
     );
 
+    @GET("/user/pos/get-isautoconfirm")
+    Call<ResponseAdapter<AutoConfirmData>> getAutoConfirm(
+    );
+
     @PATCH("/user/pos/update-isautoconfirm")
-    Call<ResponseAdapter<AutoConfirmData>> updateIsAutoConfirm(
-            @Query("isAutoConfirm") boolean isAutoConfirm,
+    Call<ResponseAdapter<AutoConfirmData>> updateAutoConfirm(
+            @Query("orderId") boolean isAutoConfirm,
             @Query("restaurantId") String restaurantId
+    );
+
+    @POST("/user/pos/order/{orderId}/finish")
+    Call<ResponseAdapter<String>> finnishOrder(
+            @Path("orderId") String orderId
     );
 }

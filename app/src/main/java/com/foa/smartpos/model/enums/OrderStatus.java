@@ -7,6 +7,8 @@ public enum OrderStatus {
     DRAFT,
     @SerializedName("ORDERED")
     ORDERED,
+    @SerializedName("READY")
+    READY,
     @SerializedName("COMPLETED")
     COMPLETED,
     @SerializedName("CONFIRMED")

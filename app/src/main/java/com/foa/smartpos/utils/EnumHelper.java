@@ -8,6 +8,8 @@ public class EnumHelper {
         switch (orderStatus){
             case ORDERED:
                 return "Chờ xác nhận";
+            case READY:
+                return "Sẵn sàng";
             case COMPLETED:
                 return "Hoàn thành";
             case CONFIRMED:

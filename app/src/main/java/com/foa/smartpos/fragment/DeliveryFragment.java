@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -57,14 +56,11 @@ import com.pusher.client.channel.Channel;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
-import com.pusher.pushnotifications.PushNotifications;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.foa.smartpos.model.enums.OrderStatus.*;
 
@@ -84,6 +80,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private DeliveryGridViewAdapter deliveryAdapter;
     private Button btnConfirm;
     private Button btnCancel;
+    private Button btnReady;
     private Order orderSelected;
     private List<String> listOrderItemsOutStock = new ArrayList<>();
     private LoadingDialog loading;
@@ -148,7 +145,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                             orderRecyclerView.smoothScrollToPosition(data.size()-1);
                         if (NotificationOrderIdSession.getInstance()!=null){
                             OrderService.getOrderById(NotificationOrderIdSession.getInstance(), (success1, data1) -> {
-                                enableSplitLayout(getActivity(),orderList.size()-1);
+                                enableSplitLayout(getActivity(),data.size()-1);
                                 isSplitMode = true;
                                 loadOrderDetail(data1,detailLayout);
                                 progressLoading.setVisibility(View.GONE);
@@ -161,8 +158,10 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                     case CONFIRMED:
                         ConfirmedDeliveryOrderCaching.setConfirmedDeliveryCatching(data);
                         break;
-                    case COMPLETED:
+                    case READY:
                         CompletedDeliveryOrderCaching.setCompletedDeliveryCatching(data);
+//                    case COMPLETED:
+//                        CompletedDeliveryOrderCaching.setCompletedDeliveryCatching(data);
                         break;
                     case CANCELLED:
                         CancelledDeliveryOrderCaching.setCancelledDeliveryCatching(data);
@@ -178,8 +177,14 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         progressLoading.setVisibility(View.VISIBLE);
         getOrderList(1, ORDERED);
         getOrderList(1, CONFIRMED);
-        getOrderList(1, COMPLETED);
+        getOrderList(1, READY);
         getOrderList(1, CANCELLED);
+
+        RestaurantService.getAutoConfirm((success, data) -> {
+            if (success){
+                autoConfirmSwitch.setChecked(data.isAutoConfirm());
+            }
+        });
 
     }
 
@@ -192,8 +197,10 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         radioButtonList = Arrays.asList(waitingAcceptRB,inProcessRB,completedRB,denyRadioButton);
         btnConfirm  = root.findViewById(R.id.btnConfirm);
         btnCancel  = root.findViewById(R.id.btnCancel);
+        btnReady  = root.findViewById(R.id.btnReady);
         btnConfirm.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
+        btnReady.setOnClickListener(this);
         deliveriesLayout =root.findViewById(R.id.bgDeliveries);
         detailLayout = root.findViewById(R.id.bgOrderDetail);
         deliveryOrderControlLayout = root.findViewById(R.id.deliveryOrderControlLayout);
@@ -220,6 +227,26 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private void initQRScanner(){
         scannerQRButton.setOnClickListener(view -> {
             ScannerQRDialog dialog = new ScannerQRDialog(getActivity());
+            dialog.setQRScannerCallback(order -> {
+                if (order!=null){
+                    completedRB.setChecked(true);
+                    deliveryAdapter.setOrders(new ArrayList<>());
+                    getOrderListWithPosition(2);
+
+                    for (int j = 0; j < radioButtonList.size(); j++) {
+                        if(completedRB.getId()!=radioButtonList.get(j).getId()){
+                            radioButtonList.get(j).setChecked(false);
+                        }
+                    }
+
+                    List<Order> orderList  = CompletedDeliveryOrderCaching.getCompletedOrderCatching();
+                    enableSplitLayout(getActivity(),orderList.size()-1);
+                    isSplitMode = true;
+                    loadOrderDetail(order,detailLayout);
+                    progressLoading.setVisibility(View.GONE);
+                    deliveryAdapter.setCurrentOrderId(order.getId());
+                }
+            });
             dialog.show();
         });
     }
@@ -294,7 +321,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private void getOrderListWithPosition(int position){
         switch (position){
             case 0:
-                displayControlLayout(true);
+                displayConfirmControlLayout();
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, ORDERED.toString(), (success, data) -> {
                     deliveryAdapter.setOrders(data);
@@ -303,10 +330,10 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 selectedStatus= ORDERED;
                 break;
             case 1:
-                displayControlLayout(false);
-                List<Order> confirmedorders = ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching();
-                if (confirmedorders!=null){
-                    deliveryAdapter.setOrders(confirmedorders);
+                displayReadyControlLayout();
+                List<Order> confirmedOrders = ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching();
+                if (confirmedOrders!=null){
+                    deliveryAdapter.setOrders(confirmedOrders);
                     break;
                 }
                 progressLoading.setVisibility(View.VISIBLE);
@@ -319,7 +346,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 selectedStatus= CONFIRMED;
                 break;
             case 2:
-                displayControlLayout(false);
+                hideControlLayout();
                 List<Order> completedOrders = CompletedDeliveryOrderCaching.getCompletedOrderCatching();
                 if (completedOrders!=null){
                     deliveryAdapter.setOrders(completedOrders);
@@ -333,7 +360,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 selectedStatus= COMPLETED;
                 break;
             case 3:
-                displayControlLayout(false);
+                hideControlLayout();
                 List<Order> cancelledOrders = CancelledDeliveryOrderCaching.getCancelledOrderCatching();
                 if (cancelledOrders!=null){
                     deliveryAdapter.setOrders(cancelledOrders);
@@ -351,13 +378,22 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void displayControlLayout(boolean isDisplay){
-        if (isDisplay){
-            deliveryOrderControlLayout.setVisibility(View.VISIBLE);
-        }else{
-            deliveryOrderControlLayout.setVisibility(View.INVISIBLE);
-        }
+    private void displayConfirmControlLayout(){
+        btnConfirm.setVisibility(View.VISIBLE);
+        btnCancel.setVisibility(View.VISIBLE);
+        btnReady.setVisibility(View.GONE);
+    }
 
+    private void displayReadyControlLayout(){
+        btnConfirm.setVisibility(View.GONE);
+        btnCancel.setVisibility(View.GONE);
+        btnReady.setVisibility(View.VISIBLE);
+    }
+
+    private void hideControlLayout(){
+        btnConfirm.setVisibility(View.GONE);
+        btnCancel.setVisibility(View.GONE);
+        btnReady.setVisibility(View.GONE);
     }
 
     @Override
@@ -379,6 +415,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                         isSplitMode = false;
                         deliveryAdapter.removeOrder(orderSelected);
                         if(ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching()!=null){
+                            orderSelected.setStatus(CONFIRMED);
                             ConfirmedDeliveryOrderCaching.addConfirmedDeliveryCatching(orderSelected);
                         }
                     }else{
@@ -397,6 +434,21 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                     });
                 });
                 dialog.show();
+                break;
+            case R.id.btnReady:
+                OrderService.finnishOrder(orderSelected.getId(), success -> {
+                    if (success){
+                        Helper.disableSplitLayout(getActivity(),deliveriesLayout,detailLayout,orderRecyclerView);
+                        isSplitMode = false;
+                        deliveryAdapter.removeOrder(orderSelected);
+                        if(CompletedDeliveryOrderCaching.getCompletedOrderCatching()!=null){
+                            orderSelected.setStatus(COMPLETED);
+                            CompletedDeliveryOrderCaching.addCompletedDeliveryCatching(orderSelected);
+                        }
+                    }else{
+                        Toast.makeText(getActivity(), "Loi xac nhan", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
 
         }
@@ -462,6 +514,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         detailLayout.setLayoutParams(param2);
 
         orderRecyclerView.setLayoutManager(new GridLayoutManager(context,3));
+        if (position>0)
         orderRecyclerView.smoothScrollToPosition(position);
     }
 

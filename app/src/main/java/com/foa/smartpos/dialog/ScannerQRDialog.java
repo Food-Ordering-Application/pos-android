@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,8 @@ import com.budiyev.android.codescanner.DecodeCallback;
 import com.budiyev.android.codescanner.ErrorCallback;
 import com.budiyev.android.codescanner.ScanMode;
 import com.foa.smartpos.R;
+import com.foa.smartpos.caching.CompletedDeliveryOrderCaching;
+import com.foa.smartpos.model.Order;
 import com.google.zxing.Result;
 
 public class ScannerQRDialog extends Dialog{
@@ -30,6 +33,7 @@ public class ScannerQRDialog extends Dialog{
 	private static final int PERMISSION_REQUEST_CAMERA = 0;
 	private Context context;
 	private CodeScanner codeScanner;
+	private QRScannerCallback listener;
 
 	public ScannerQRDialog(Context context) {
 		super(context);
@@ -62,6 +66,7 @@ public class ScannerQRDialog extends Dialog{
 
 	private void startScanning() {
 		CodeScannerView scannerView = findViewById(R.id.scanner_view);
+		TextView qrCodeTextView = findViewById(R.id.qrCodeTextView);
 		codeScanner = new CodeScanner(context, scannerView);
 		codeScanner.setCamera(CodeScanner.CAMERA_BACK);
 		codeScanner.setFormats( CodeScanner.ALL_FORMATS);
@@ -72,10 +77,16 @@ public class ScannerQRDialog extends Dialog{
 
 		// Callbacks
 		codeScanner.setDecodeCallback(result -> ((Activity)context).runOnUiThread(()->{
-			Toast.makeText(context, "Mã đơn hàng:" +result.getText(), Toast.LENGTH_LONG).show();
 			try {
-				Thread.sleep(1000);
-				dismiss();
+				qrCodeTextView.setText(result.getText().trim());
+				Order order = CompletedDeliveryOrderCaching.getExistOrder(result.getText().trim());
+				if (order==null){
+					Toast.makeText(context, "Đơn hàng chưa sẵn sàng", Toast.LENGTH_SHORT).show();
+				}else{
+					Thread.sleep(1000);
+					if (listener!=null) listener.onFound(order);
+					dismiss();
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -89,4 +100,13 @@ public class ScannerQRDialog extends Dialog{
 
 		scannerView.setOnClickListener(view -> codeScanner.startPreview());
 	}
+
+	public void setQRScannerCallback(QRScannerCallback callback){
+		this.listener = callback;
+	}
+
+	public interface QRScannerCallback{
+		void onFound(Order order);
+	}
+
 }

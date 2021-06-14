@@ -10,7 +10,6 @@ import com.foa.smartpos.model.ToppingItem;
 import com.foa.smartpos.model.enums.StockState;
 import com.foa.smartpos.network.RetrofitClient;
 import com.foa.smartpos.network.entity.UpdateStockStateBody;
-import com.foa.smartpos.network.entity.VoidOrderBody;
 import com.foa.smartpos.network.response.AutoConfirmData;
 import com.foa.smartpos.network.response.MenuData;
 import com.foa.smartpos.network.response.ResponseAdapter;
@@ -288,10 +287,38 @@ public class RestaurantService {
         });
     }
 
+    public static void getAutoConfirm(IDataResultCallback<AutoConfirmData> resultCallback) {
+        Call<ResponseAdapter<AutoConfirmData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .getAutoConfirm();
+        responseCall.enqueue(new Callback<ResponseAdapter<AutoConfirmData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<AutoConfirmData>>call, Response<ResponseAdapter<AutoConfirmData>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<AutoConfirmData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true,res.getData());
+                    } else {
+                        resultCallback.onSuccess(false,null);
+                    }
+                } else {
+                    resultCallback.onSuccess(false,null);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<AutoConfirmData>> call, Throwable t) {
+                LoggerHelper.CheckAndLogInfo(this,t.getMessage());
+                resultCallback.onSuccess(false,null);
+            }
+        });
+    }
+
     public static void updateIsAutoConfirm(boolean isAutoConfirm, IDataResultCallback<AutoConfirmData> resultCallback) {
         String restaurantId = Helper.read(Constants.RESTAURANT_ID);
         Call<ResponseAdapter<AutoConfirmData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .updateIsAutoConfirm(isAutoConfirm,restaurantId);
+                .updateAutoConfirm(isAutoConfirm,restaurantId);
         responseCall.enqueue(new Callback<ResponseAdapter<AutoConfirmData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<AutoConfirmData>>call, Response<ResponseAdapter<AutoConfirmData>> response) {
