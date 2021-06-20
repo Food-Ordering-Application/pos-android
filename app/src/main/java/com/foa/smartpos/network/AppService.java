@@ -130,4 +130,5 @@ public interface AppService {
     Call<ResponseAdapter<String>> finnishOrder(
             @Path("orderId") String orderId
     );
+
 }

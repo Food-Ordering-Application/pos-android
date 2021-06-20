@@ -156,6 +156,16 @@
                 android:gravity="center"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:text="Thời gian" />
+            <TextView
+                android:id="@+id/invoiceTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="5dp"
+                style="@style/TalbleTitle"
+                android:text="Hoá đơn"
+                android:gravity="end"
+                android:textAppearance="?android:textAppearanceMedium" />
 
             <TextView
                 android:layout_width="0dp"
@@ -165,6 +175,7 @@
                 style="@style/TalbleTitle"
                 android:gravity="end"
                 android:textAppearance="?android:textAppearanceMedium" />
+
         </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"

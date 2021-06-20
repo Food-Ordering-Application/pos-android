@@ -15,4 +15,6 @@ public class Constants {
     public static final String CASHIER_ID="cashier_id";
     public static final String CASHIER_NAME="cashier_name";
     public static final String BEARER_ACCESS_TOKEN ="access_token";
+
+    public static String BASE_URL = "https://apigway.herokuapp.com/";
 }

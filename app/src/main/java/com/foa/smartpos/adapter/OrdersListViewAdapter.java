@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.foa.smartpos.R;
+import com.foa.smartpos.dialog.InvoiceDialog;
 import com.foa.smartpos.dialog.OrderDetailDialog;
 import com.foa.smartpos.model.Order;
 import com.foa.smartpos.utils.Helper;
@@ -74,6 +76,7 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
             holder.orderTypeName = convertView.findViewById(R.id.orderTypeName);
             holder.paymentMethod = convertView.findViewById(R.id.paymentMethod);
             holder.syncStatusIcon = convertView.findViewById(R.id.syncStatusIcon);
+            holder.invoiceButton = convertView.findViewById(R.id.invoiceButton);
             convertView.setTag(holder);
         }else {
             holder = (ViewHolder) convertView.getTag();
@@ -104,11 +107,17 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
         if (order.getDelivery()!=null){
             holder.orderTypeName.setText("Trực tuyến");
             holder.cashierName.setText(order.getDelivery().getCustomerName());
+            holder.invoiceButton.setVisibility(View.VISIBLE);
         }else{
             holder.orderTypeName.setText("Tại quán");
             holder.cashierName.setText(order.getCashierName());
-
+            holder.invoiceButton.setVisibility(View.GONE);
         }
+
+        holder.invoiceButton.setOnClickListener(view -> {
+            InvoiceDialog dialog = new InvoiceDialog(context,order.getId());
+            dialog.show();
+        });
 
         if (order.getDelivery()!=null||order.getSyncedAt()!=null){
             holder.syncStatusIcon.setImageResource(R.drawable.ic_sync_cloud_done);
@@ -129,5 +138,6 @@ public class OrdersListViewAdapter extends ArrayAdapter<Order> {
         TextView cashierName;
         TextView paymentMethod;
         ImageView syncStatusIcon;
+        ImageButton invoiceButton;
     }
 }

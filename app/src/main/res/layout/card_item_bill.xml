@@ -59,6 +59,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/invoiceButton"
+                android:gravity="end"
+                android:paddingEnd="5dp"
+                android:background="@drawable/ic_invoice"
+                style="@style/TalbleRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/syncStatusIcon"
             android:layout_weight="1"

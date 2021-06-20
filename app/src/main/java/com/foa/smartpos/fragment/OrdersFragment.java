@@ -116,7 +116,7 @@ public class OrdersFragment extends Fragment {
                 progressLoading.setVisibility(View.GONE);
 
             }else{
-                OrderService.getAllOrder(OrderType.SALE.toString(), 1, (success, data) -> {
+                OrderService.getAllOrder(OrderType.SALE.toString(), 1,null,startDate,endDate, (success, data) -> {
                     titleCashierOrCustomer.setText("Khách hàng");
                     adapter.setData(data);
                     progressLoading.setVisibility(View.GONE);

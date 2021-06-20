@@ -92,17 +92,18 @@ public class OrderService {
         });
     }
 
-    public static void getAllOrder(String orderType, int pageNumber,IDataResultCallback<List<Order>> resultCallback) {
-        OrderService.getAllOrder(orderType,pageNumber,null, resultCallback);
-    }
 
-
-        public static void getAllOrder(String orderType, int pageNumber, String orderStatus,IDataResultCallback<List<Order>> resultCallback) {
-        String restaurantId = Helper.read(Constants.RESTAURANT_ID);
+    public static void getAllOrder(String orderType, int pageNumber,String orderStatus,IDataResultCallback<List<Order>> resultCallback) {
         GregorianCalendar calendar = new GregorianCalendar();
         String strStartDate = Helper.dateSQLiteFormat.format(calendar.getTime());
         calendar.add(Calendar.DATE,1);
         String strEndDate = Helper.dateSQLiteFormat.format(calendar.getTime());
+        OrderService.getAllOrder(orderType,pageNumber,orderStatus, strStartDate,  strEndDate, resultCallback);
+    }
+
+
+        public static void getAllOrder(String orderType, int pageNumber, String orderStatus,String strStartDate, String strEndDate,IDataResultCallback<List<Order>> resultCallback) {
+        String restaurantId = Helper.read(Constants.RESTAURANT_ID);
         Call<ResponseAdapter<OrderListData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .getAllOrder(restaurantId,orderType,pageNumber, orderStatus, strStartDate,strEndDate);
         responseCall.enqueue(new Callback<ResponseAdapter<OrderListData>>() {

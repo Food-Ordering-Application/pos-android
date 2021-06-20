@@ -1,5 +1,6 @@
 package com.foa.smartpos.network;
 
+import com.foa.smartpos.utils.Constants;
 import com.foa.smartpos.utils.EnumRetrofitConverterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private  Retrofit retrofit;
     private  static RetrofitClient instance;
-    private static final String BASE_URL = "https://apigway.herokuapp.com/";
+    private static final String BASE_URL = Constants.BASE_URL;
 
     private  RetrofitClient() {
 
