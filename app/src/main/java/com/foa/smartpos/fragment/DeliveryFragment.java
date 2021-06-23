@@ -93,7 +93,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
     private TextView emptyListTextView;
     private Switch autoConfirmSwitch;
     private ImageButton scannerQRButton;
-
+    private TextView orderedCountTextView;
+    private TextView confirmedCountTextView;
     private final Debouncer debouncer = new Debouncer();
 
     @Override
@@ -141,6 +142,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 switch (status){
                     case ORDERED:
                         deliveryAdapter.setOrders(data);
+                        orderedCountTextView.setText(String.valueOf(data.size()));
                         if(data.size()>0)
                             orderRecyclerView.smoothScrollToPosition(data.size()-1);
                         if (NotificationOrderIdSession.getInstance()!=null){
@@ -156,6 +158,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                         }
                         break;
                     case CONFIRMED:
+                        confirmedCountTextView.setText(String.valueOf(data.size()));
                         ConfirmedDeliveryOrderCaching.setConfirmedDeliveryCatching(data);
                         break;
                     case READY:
@@ -209,6 +212,8 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
         emptyListTextView = root.findViewById(R.id.emptyListTextView);
         autoConfirmSwitch = root.findViewById(R.id.autoConfirmSwitch);
         scannerQRButton = root.findViewById(R.id.scannerQRButton);
+        confirmedCountTextView = root.findViewById(R.id.confirmedCountTextView);
+        orderedCountTextView = root.findViewById(R.id.orderedCountTextView);
     }
 
     private void initUpdateAutoConfirm(){
@@ -324,6 +329,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 displayConfirmControlLayout();
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, ORDERED.toString(), (success, data) -> {
+                    orderedCountTextView.setText(String.valueOf(data.size()));
                     deliveryAdapter.setOrders(data);
                     progressLoading.setVisibility(View.GONE);
                 });
@@ -334,11 +340,13 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                 List<Order> confirmedOrders = ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching();
                 if (confirmedOrders!=null){
                     deliveryAdapter.setOrders(confirmedOrders);
+                    confirmedCountTextView.setText(String.valueOf(confirmedOrders.size()));
                     break;
                 }
                 progressLoading.setVisibility(View.VISIBLE);
                 OrderService.getAllOrder(OrderType.SALE.name(), 1, CONFIRMED.toString() ,(success, data) -> {
                     deliveryAdapter.setOrders(data);
+                    confirmedCountTextView.setText(String.valueOf(data.size()));
                     ConfirmedDeliveryOrderCaching.setConfirmedDeliveryCatching(data);
                     progressLoading.setVisibility(View.GONE);
 
@@ -417,6 +425,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                         if(ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching()!=null){
                             orderSelected.setStatus(CONFIRMED);
                             ConfirmedDeliveryOrderCaching.addConfirmedDeliveryCatching(orderSelected);
+                            confirmedCountTextView.setText(String.valueOf(ConfirmedDeliveryOrderCaching.getConfirmedOrderCatching().size()));
                         }
                     }else{
                         Toast.makeText(getActivity(), "Loi xac nhan", Toast.LENGTH_SHORT).show();
@@ -431,6 +440,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener{
                         loading.dismiss();
                         dialog.dismiss();
                         deliveryAdapter.removeOrder(orderSelected);
+                        CancelledDeliveryOrderCaching.addCancelledDeliveryCatching(orderSelected);
                     });
                 });
                 dialog.show();

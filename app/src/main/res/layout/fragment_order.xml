@@ -112,7 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_below="@+id/categoryGroup"
-            android:layout_above="@+id/promotionListTitle"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:verticalSpacing="8dp"
             android:horizontalSpacing="8dp"
@@ -127,22 +127,6 @@
             android:layout_marginRight="8dp"
             android:layout_below="@+id/categoryGroup" >
         </ListView>
-        <TextView
-            android:id="@+id/promotionListTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Khuuyến mãi"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_above="@id/promotionRecyclerView"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/promotionRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="15dp"
-            />
-
     </RelativeLayout>
 
     <RelativeLayout

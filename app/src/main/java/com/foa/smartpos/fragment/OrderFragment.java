@@ -66,11 +66,9 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
     private RelativeLayout cartWrapper;
     private GridView menuGrid;
     private RecyclerView cartRecyclerview;
-    private RecyclerView promotionsRecyclerView;
     private RadioGroup radioGroup;
     private ProductGridAdapter menuAdapter;
     private CartListAdapter cartAdapter;
-    private PromotionListAdapter promotionAdapter;
     private TextView txtTotal;
     private TextView txtGrandTotal;
     private EditText searchEditText;
@@ -106,12 +104,6 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
 
         initRecyclerView();
 
-        //Set promotion recycler view
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        promotionsRecyclerView.setLayoutManager(layoutManager);
-        promotionAdapter = new PromotionListAdapter(requireActivity(), Promotion.getPromotionListSample());
-        promotionsRecyclerView.setAdapter(promotionAdapter);
 
         //Init all click listener
         initListener();
@@ -170,7 +162,6 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         txtGrandTotal = root.findViewById(R.id.tvGrandTotal);
         searchEditText = root.findViewById(R.id.saerchEditText);
         btnOrder = root.findViewById(R.id.btnOrder);
-        promotionsRecyclerView = root.findViewById(R.id.promotionRecyclerView);
         cartRecyclerview = root.findViewById(R.id.cartListView);
         radioGroup = root.findViewById(R.id.categoryGroup);
         btnClearOrder = root.findViewById(R.id.btnClearOrder);
@@ -181,7 +172,6 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         menuGrid.setOnItemClickListener(menuItemOnClick);
         btnOrder.setOnClickListener(orderOnlick);
         cartAdapter.setCartListener(cartOnItemClick);
-        promotionAdapter.setItemClickListener(promotionOnItemClick);
         //cartList.setOnItemClickListener(editOrderOnitemClick);
         searchEditText.addTextChangedListener(keywordOnchange);
         btnManualSync.setOnClickListener(syncClick);

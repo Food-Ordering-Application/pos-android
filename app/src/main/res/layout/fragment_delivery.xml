@@ -18,7 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="100dp">
 
             <EditText
                 android:id="@+id/saerchEditText"
@@ -88,12 +89,13 @@
                     android:layout_alignParentEnd="true"
                     />
                 <TextView
+                    android:id="@+id/orderedCountTextView"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:gravity="center"
-                    android:text="12"/>
+                    android:text="0"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="200dp"
@@ -122,10 +124,11 @@
                     android:layout_alignParentEnd="true"
                     />
                 <TextView
+                    android:id="@+id/confirmedCountTextView"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:gravity="center"
-                    android:text="1"
+                    android:text="0"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"/>
 

@@ -39,10 +39,13 @@ public class InvoiceDialog extends Dialog {
 	}
 
 	private void loadInvoice()  {
+		loadingProgress.setVisibility(View.VISIBLE);
 		webView.getSettings().setLoadsImagesAutomatically(true);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-		webView.loadUrl(Constants.BASE_URL+"/order/"+orderId+"/invoice");
+		webView.loadUrl(Constants.BASE_URL+"order/"+orderId+"/invoice");
+		loadingProgress.setVisibility(View.GONE);
+
 	}
 
 }
